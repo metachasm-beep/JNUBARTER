@@ -14,26 +14,26 @@
 
 @layer base {
   :root {
-    --background: 30 20% 96%; /* Sandstone / Paper */
+    --background: 210 20% 98%; /* Soft Off-White */
     --foreground: 240 10% 3.9%;
-    --card: 30 20% 98%;
+    --card: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;
-    --popover: 30 20% 98%;
+    --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
     --primary: 0 100% 27%; /* JNU Crimson */
     --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 0%; /* Brutalist Black */
-    --secondary-foreground: 0 0% 100%;
-    --muted: 30 10% 90%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
     --accent: 0 100% 27%;
-    --accent-foreground: 0 0% 100%;
+    --accent-foreground: 240 5.9% 10%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 0%; /* Sharp Black Borders */
-    --input: 0 0% 0%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
     --ring: 0 100% 27%;
-    --radius: 0px; /* STRICT BRUTALISM: SHARP CORNERS */
+    --radius: 1rem; /* SOFT SCHOLASTIC ROUNDING */
   }
 }
 

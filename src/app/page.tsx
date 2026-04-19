@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { ListingType, EffortEstimate } from "@prisma/client";
-import { ArrowRight, GraduationCap, Share2, Filter, LayoutGrid, Activity, Search, Info } from "lucide-react";
+import { ArrowRight, GraduationCap, Share2, Info, Zap, Globe, Search, Plus, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ListingSkeleton } from "@/components/ListingSkeleton";
 import { ListingCard } from "@/components/ListingCard";
 import { FAQSection } from "@/components/FAQSection";
@@ -48,151 +48,144 @@ export default function DiscoveryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20 overflow-x-hidden selection:bg-primary/20 scroll-smooth">
+    <div className="min-h-screen bg-[#F8FAFC] pb-20 overflow-x-hidden font-sans selection:bg-primary/20 scroll-smooth">
       
-      {/* FOLD 1: JNU BRUTALIST HERO */}
-      <section className="relative w-full h-screen flex flex-col bg-background border-b-4 border-black overflow-hidden">
-        {/* Subtle Sandstone Texture Overlay */}
-        <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/concrete-wall.png')]" />
+      {/* FOLD 1: APPLE SCHOLASTIC GLASS HERO */}
+      <section className="relative w-full h-screen flex flex-col bg-white overflow-hidden border-b border-zinc-100">
+        {/* Cinematic Backdrop */}
+        <div className="absolute inset-0 z-0">
+           <div className="absolute top-[-10%] left-[-5%] w-[120%] h-[120%] bg-[radial-gradient(circle_at_50%_50%,_rgba(139,0,0,0.05)_0%,_rgba(255,255,255,0)_60%)]" />
+        </div>
 
-        <nav className="relative z-50 w-full px-8 py-12 flex justify-between items-center max-w-7xl mx-auto">
-           <div className="flex items-center gap-6">
-              <div className="h-14 w-14 bg-primary flex items-center justify-center border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all cursor-pointer">
-                 <Share2 className="h-8 w-8 text-white" />
+        {/* Glass Navigation Bar */}
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[100] w-full max-w-2xl px-6">
+           <nav className="glass rounded-full px-8 py-4 flex justify-between items-center shadow-xl shadow-black/5 border border-white/20">
+              <div className="flex items-center gap-3">
+                 <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center">
+                    <Share2 className="h-4 w-4 text-white" />
+                 </div>
+                 <h2 className="text-sm font-black tracking-tight text-zinc-800 font-serif italic">JNU BARTER</h2>
               </div>
-              <div className="border-l-4 border-black pl-6">
-                 <h2 className="text-3xl font-black tracking-tighter text-zinc-900 leading-none uppercase italic font-sans">JNU BARTER</h2>
-                 <p className="text-[10px] font-bold text-primary uppercase tracking-[0.4em] mt-2 font-mono">Registry_Node_v6.0</p>
+              <div className="flex items-center gap-6">
+                 {['Market', 'Pulse', 'FAQ'].map((item) => (
+                   <button 
+                    key={item} 
+                    onClick={() => scrollToFold(item.toLowerCase())}
+                    className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-primary transition-colors"
+                   >
+                    {item}
+                   </button>
+                 ))}
+                 <div className="h-4 w-[1px] bg-zinc-200" />
+                 <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+                    <User className="h-4 w-4 text-zinc-400" />
+                 </Button>
               </div>
-           </div>
-           
-           <div className="hidden lg:flex items-center gap-12">
-              {[
-                { label: 'Market', id: 'market' },
-                { label: 'Pulse', id: 'pulse' },
-                { label: 'FAQ', id: 'faq' }
-              ].map((item) => (
-                <button 
-                  key={item.label} 
-                  onClick={() => scrollToFold(item.id)}
-                  className="text-xs font-black uppercase tracking-widest text-zinc-500 hover:text-primary transition-colors font-mono"
-                >
-                  [{item.label}]
-                </button>
-              ))}
-           </div>
+           </nav>
+        </div>
 
-           <Button 
-             onClick={() => window.location.href = '/setup'}
-             className="bg-primary text-white text-xs font-black uppercase tracking-widest px-10 h-14 border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] rounded-none hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
-           >
-              Initialize Node
-           </Button>
-        </nav>
-
-        <div className="relative z-10 flex-1 flex flex-col items-start justify-center px-8 md:px-20 max-w-7xl mx-auto">
+        <div className="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-8">
             <motion.div 
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
               className="space-y-12"
             >
-               <div className="inline-block bg-black text-white px-6 py-2 text-[10px] font-black uppercase tracking-[0.3em] font-mono">
-                  Gated_Institutional_Reciprocity
-               </div>
+               <Badge className="bg-primary/5 text-primary rounded-full px-6 py-2 text-[10px] font-bold uppercase tracking-widest border border-primary/10">
+                  Institutional Reciprocity Protocol v7.0
+               </Badge>
                
-               <h1 className="text-8xl md:text-[180px] font-black tracking-[-0.06em] leading-[0.75] text-zinc-900 font-sans uppercase">
+               <h1 className="text-7xl md:text-[150px] font-black tracking-[-0.07em] leading-[0.8] text-zinc-900 font-serif">
                  Academic <br/> 
-                 <span className="text-primary italic">Labor.</span>
+                 <span className="text-primary italic font-serif">Exchange.</span>
                </h1>
                
-               <div className="max-w-3xl space-y-8">
-                  <p className="text-zinc-600 font-serif text-2xl md:text-4xl leading-tight border-l-8 border-primary pl-8">
-                    A decentralized protocol facilitating the exchange of intellectual and material resources within the JNU academic ecosystem.
-                  </p>
-                  <p className="text-zinc-400 font-mono text-sm uppercase tracking-tight">
-                    // Zero-Money Axiom Active <br/>
-                    // @jnu.ac.in Gating Enforced
-                  </p>
-               </div>
+               <p className="text-zinc-500 font-medium text-lg md:text-2xl max-w-3xl mx-auto leading-relaxed font-sans">
+                 A cinematic-grade platform for the non-monetary circulation of intellectual labor within the JNU academic ecosystem.
+               </p>
                
-               <div className="flex items-center gap-4 pt-4">
+               <div className="flex items-center justify-center gap-6 pt-6">
                   <Button 
                     onClick={() => scrollToFold('market')}
-                    className="bg-zinc-900 text-white text-sm font-black uppercase tracking-widest px-14 h-20 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all"
+                    className="rounded-full bg-zinc-900 text-white text-xs font-bold uppercase tracking-widest px-12 h-16 shadow-2xl shadow-black/20 hover:scale-105 transition-all"
                   >
                     Open Registry
                   </Button>
                   <Button 
                     variant="ghost" 
                     onClick={() => scrollToFold('faq')}
-                    className="text-sm font-black uppercase tracking-widest text-zinc-500 hover:text-primary px-10 h-20 font-mono"
+                    className="text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-primary px-10 h-16"
                   >
-                    Technical_Specs _-&gt;
+                    Specifications <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                </div>
             </motion.div>
         </div>
+        
+        <div className="relative z-10 py-12 flex justify-center">
+           <motion.div 
+             animate={{ y: [0, 8, 0] }}
+             transition={{ duration: 3, repeat: Infinity }}
+             className="text-[9px] font-black uppercase text-zinc-300 tracking-[0.6em] cursor-pointer"
+             onClick={() => scrollToFold('market')}
+           >
+             Scroll to Discovery
+           </motion.div>
+        </div>
       </section>
 
-      {/* FOLD 2: ACTIVE REGISTRY (BRUTALIST GRID) */}
+      {/* FOLD 2: ACTIVE REGISTRY (GLASS CARDS) */}
       <section id="market" className="max-w-7xl mx-auto px-8 py-40 relative z-20">
-        <div className="mb-24 flex flex-col md:flex-row md:items-end justify-between gap-12 border-b-8 border-black pb-16">
-           <div className="space-y-6">
-              <h3 className="text-7xl font-black tracking-tighter text-zinc-900 uppercase italic font-sans">Scholarly Marketplace</h3>
-              <p className="text-zinc-500 font-serif text-2xl max-w-2xl italic">Validating the peer-to-peer circulation of research commodities and pedagogical services.</p>
-           </div>
-           <div className="flex gap-4">
-              <Button variant="outline" className="border-4 border-black rounded-none h-14 px-8 text-xs font-black uppercase font-mono">Filter_By_School</Button>
-              <Button variant="outline" className="border-4 border-black rounded-none h-14 px-8 text-xs font-black uppercase font-mono">Sort_By_Rep</Button>
-           </div>
+        <div className="mb-24 space-y-4 text-center">
+           <h3 className="text-5xl font-black tracking-tighter text-zinc-900 uppercase font-serif italic">Scholarly Registry</h3>
+           <div className="h-1 w-20 bg-primary mx-auto rounded-full" />
+           <p className="text-zinc-400 font-medium max-w-xl mx-auto text-lg leading-relaxed">
+             Validating bilateral matching nodes across university departments.
+           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
            {isLoading ? (
              Array(3).fill(0).map((_, i) => <ListingSkeleton key={i} />)
            ) : (
              MOCK_LISTINGS.map((listing) => (
-               <div key={listing.id} className="group relative">
-                  <div className="absolute inset-0 bg-primary translate-x-3 translate-y-3 -z-10 group-hover:translate-x-5 group-hover:translate-y-5 transition-all" />
-                  <ListingCard 
-                    listing={listing} 
-                    className="bg-white rounded-none border-4 border-black p-8 transition-all group-hover:-translate-x-2 group-hover:-translate-y-2"
-                  />
-               </div>
+               <ListingCard 
+                key={listing.id} 
+                listing={listing} 
+                className="bg-white rounded-[2rem] border border-zinc-100 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.03)] p-4 transition-all hover:shadow-[0_40px_80px_-20px_rgba(139,0,0,0.08)] hover:-translate-y-3 group"
+               />
              ))
            )}
         </div>
       </section>
 
-      {/* FOLD 3: NETWORK NODES (TERMINAL STYLE) */}
-      <section id="pulse" className="bg-black py-48 px-8 border-y-8 border-primary">
-        <div className="max-w-7xl mx-auto space-y-24">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 border-b-4 border-zinc-800 pb-20">
-               <div className="space-y-8">
-                  <div className="inline-block bg-primary text-white px-4 py-1 text-[9px] font-black uppercase tracking-[0.5em] font-mono">Live_Network_Visualizer</div>
-                  <h3 className="text-8xl font-black tracking-tighter text-white uppercase font-sans">Pulse <span className="text-primary italic">Nodes.</span></h3>
-                  <p className="text-zinc-500 font-mono text-lg leading-relaxed max-w-xl">
-                    &gt; Monitoring institutional matching vectors... <br/>
-                    &gt; Active clusters detected in SIS, SLL&CS, and SSS.
-                  </p>
-               </div>
+      {/* FOLD 3: NETWORK PULSE (GLASS NODES) */}
+      <section id="pulse" className="relative py-48 px-8 bg-white border-y border-zinc-50">
+        <div className="absolute inset-0 opacity-40 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
+        
+        <div className="max-w-7xl mx-auto space-y-24 relative z-10">
+            <div className="flex flex-col items-center text-center space-y-6">
+               <Badge className="bg-primary/5 text-primary border-none rounded-full px-4 py-1 text-[9px] font-bold uppercase tracking-[0.3em]">Institutional Pulse</Badge>
+               <h3 className="text-6xl font-black tracking-tighter text-zinc-900 uppercase font-serif">Campus <span className="text-primary italic">Nodes.</span></h3>
+               <p className="text-zinc-500 font-medium max-w-lg text-lg leading-relaxed">
+                 Real-time visualization of academic matching vectors within the university network.
+               </p>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-1">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
                {isLoading ? (
                   Array(6).fill(0).map((_, i) => <ListingSkeleton key={i} />)
                ) : (
                   Array(12).fill(0).map((_, i) => (
                     <motion.div 
                       key={i}
-                      whileHover={{ scale: 1.02, backgroundColor: "rgba(139, 0, 0, 0.4)" }}
-                      className="aspect-square bg-zinc-900 border border-zinc-800 flex flex-col items-center justify-center p-8 gap-6 cursor-pointer transition-all group"
+                      whileHover={{ scale: 1.05 }}
+                      className="aspect-square glass rounded-[2.5rem] flex flex-col items-center justify-center p-8 gap-6 cursor-pointer shadow-sm border border-white transition-all group"
                     >
-                        <div className="h-16 w-16 bg-zinc-800 flex items-center justify-center border-2 border-zinc-700 group-hover:border-primary transition-all">
-                           <GraduationCap className="h-8 w-8 text-zinc-500 group-hover:text-white transition-all" />
+                        <div className="h-16 w-16 rounded-3xl bg-zinc-50 flex items-center justify-center border border-zinc-100 group-hover:bg-primary/5 transition-all">
+                           <GraduationCap className="h-8 w-8 text-zinc-300 group-hover:text-primary transition-all" />
                         </div>
                         <div className="text-center">
-                          <p className="text-[10px] font-black uppercase text-zinc-600 tracking-widest font-mono group-hover:text-zinc-300">N_{i+300}</p>
+                          <p className="text-[10px] font-black uppercase text-zinc-400 tracking-widest font-mono">Node_{i+400}</p>
                         </div>
                     </motion.div>
                   ))
@@ -201,7 +194,7 @@ export default function DiscoveryPage() {
         </div>
       </section>
 
-      {/* FOLD 4: INSTITUTIONAL FAQ (BRUTALIST ACCORDION) */}
+      {/* FOLD 4: INSTITUTIONAL FAQ (CLEAN GLASS ACCORDION) */}
       <FAQSection />
 
       {/* PWA INSTALLATION TRIGGER */}
