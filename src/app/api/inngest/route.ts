@@ -1,7 +1,7 @@
 import { serve } from "inngest/next";
-import { inngest, autonomousDiscovery, onSwapExecuted, expireStaleSwaps } from "@/lib/inngest";
+import { inngest, autonomousDiscovery, onSwapExecuted, expireStaleSwaps, auditListingPolicy, verifyPeerAuthority, analyzeNetworkSentiment } from "@/lib/inngest";
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
-  functions: [autonomousDiscovery, onSwapExecuted, expireStaleSwaps],
+  functions: [autonomousDiscovery, onSwapExecuted, expireStaleSwaps, auditListingPolicy, verifyPeerAuthority, analyzeNetworkSentiment],
 });

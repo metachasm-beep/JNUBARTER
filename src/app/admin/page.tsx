@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { Users, Package, RefreshCw, Star, Zap, Activity } from "lucide-react";
+import { Users, Package, RefreshCw, Star, ShieldAlert, Cpu, Activity, TrendingUp, Search, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 export default async function AdminDashboard() {
@@ -7,90 +7,116 @@ export default async function AdminDashboard() {
   const listingCount = await prisma.listing.count();
   const swapCount = await prisma.swap.count();
   const averageReputation = await prisma.user.aggregate({ _avg: { reputation: true } });
-
-  const recentUsers = await prisma.user.findMany({
-    take: 5,
+  
+  // Enhancement #1 & #7 — Alerts
+  const flaggedCount = await prisma.listing.count({ where: { isFlagged: true } });
+  const recentAlerts = await prisma.auditLog.findMany({ 
+    take: 5, 
     orderBy: { createdAt: "desc" },
-    select: { id: true, name: true, email: true, role: true, createdAt: true }
+    include: { user: { select: { name: true } } }
   });
 
+  // Enhancement #3 — Usage
+  const usageStats = await prisma.usageLog.aggregate({
+    _sum: { cost: true, tokens: true }
+  });
+
+  // Enhancement #9 — Sentiment
+  const networkSentiment = await prisma.auditLog.findFirst({
+    where: { action: "SENTIMENT_ANALYSIS" },
+    orderBy: { createdAt: "desc" }
+  });
+  const sentimentData = (networkSentiment?.metadata as any) || { label: "STABLE", score: 50 };
+
   return (
-    <div className="space-y-12">
-      <header className="space-y-2">
-        <h2 className="text-4xl font-extrabold tracking-tighter text-primary uppercase italic">Intelligence Hub</h2>
-        <p className="text-stone-400 font-medium">Real-time telemetry and protocol health overview.</p>
+    <div className="space-y-12 pb-24">
+      <header className="flex items-end justify-between border-b border-stone-200 pb-12">
+        <div className="space-y-2">
+           <div className="flex items-center gap-2 mb-2">
+              <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-[10px] font-mono font-bold text-emerald-600 uppercase tracking-widest italic">Live Telemetry Active</span>
+           </div>
+           <h2 className="text-6xl font-extrabold tracking-tighter text-primary uppercase italic leading-[0.8]">Command<br />Center</h2>
+           <p className="text-stone-400 font-medium max-w-sm pt-4 italic">Aggregated network intelligence and protocol health telemetry.</p>
+        </div>
+        
+        {/* Enhancement #3 — Cost Summary */}
+        <div className="text-right glass-card p-6 rounded-3xl border-stone-200">
+           <p className="text-[10px] font-mono font-bold text-stone-400 uppercase tracking-widest">Compute Overhead</p>
+           <h4 className="text-3xl font-black text-primary tracking-tighter">${(usageStats._sum.cost || 0).toFixed(4)}</h4>
+           <p className="text-[9px] font-mono text-stone-300 uppercase italic">{(usageStats._sum.tokens || 0).toLocaleString()} Tokens used</p>
+        </div>
       </header>
 
-      {/* High-Density Metric Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <MetricCard 
-          icon={<Users className="h-5 w-5 text-accent" />} 
-          label="Nodes Online" 
-          value={userCount.toString()} 
-          detail="Total registered peers" 
-        />
-        <MetricCard 
-          icon={<Package className="h-5 w-5 text-blue-500" />} 
-          label="Assets" 
-          value={listingCount.toString()} 
-          detail="Active service/commodity nodes" 
-        />
-        <MetricCard 
-          icon={<RefreshCw className="h-5 w-5 text-emerald-500" />} 
-          label="Flows" 
-          value={swapCount.toString()} 
-          detail="Total reciprocity chains" 
-        />
-        <MetricCard 
-          icon={<Star className="h-5 w-5 text-yellow-500" />} 
-          label="Reputation Avg" 
-          value={Math.round(averageReputation._avg.reputation || 0).toString()} 
-          detail="Network integrity index" 
-        />
+      {/* Primary Metrics Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+        <MetricCard icon={<Users className="h-5 w-5" />} label="Nodes" value={userCount} detail="Peers on network" />
+        <MetricCard icon={<Package className="h-5 w-5" />} label="Assets" value={listingCount} detail="Service/Commodity" />
+        <MetricCard icon={<RefreshCw className="h-5 w-5" />} label="Chains" value={swapCount} detail="Discovery loops" />
+        <MetricCard icon={<ShieldAlert className="h-5 w-5 text-red-500" />} label="Threats" value={flaggedCount} detail="Policy violations" />
+        <div className="glass-card border-stone-200 rounded-[2rem] p-8 space-y-4 shadow-lg flex flex-col justify-center items-center text-center">
+           <TrendingUp className={`h-6 w-6 ${sentimentData.label === 'VIBRANT' ? 'text-emerald-500' : 'text-stone-400'}`} />
+           <p className="text-[10px] font-mono font-bold text-stone-400 uppercase tracking-widest">Sentiment</p>
+           <h4 className="text-2xl font-black text-primary uppercase italic">{sentimentData.label}</h4>
+           <div className="w-full bg-stone-100 h-1 rounded-full overflow-hidden mt-2">
+              <div className="bg-primary h-full transition-all" style={{ width: `${sentimentData.score}%` }} />
+           </div>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 pt-8">
-        {/* Recent Ingress */}
-        <section className="glass-card border-stone-200 rounded-[2.5rem] p-10 space-y-8 shadow-xl shadow-stone-200/40">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        {/* Enhancement #7 — Security Feed */}
+        <div className="lg:col-span-2 glass-card border-stone-200 rounded-[3rem] p-10 space-y-8 bg-white/50 backdrop-blur-3xl shadow-2xl shadow-stone-200/40 border-t-white">
            <div className="flex items-center justify-between">
-              <h3 className="text-xl font-sans font-black uppercase tracking-tight text-primary">Recent Ingress</h3>
-              <Badge className="bg-stone-100 text-stone-500 text-[9px] font-mono tracking-widest uppercase px-4 py-1">Last 5 Nodes</Badge>
+              <div className="flex items-center gap-3">
+                 <ShieldAlert className="h-6 w-6 text-primary" />
+                 <h3 className="text-2xl font-black uppercase tracking-tight text-primary italic">Security Pulse</h3>
+              </div>
+              <Badge className="bg-stone-100 text-stone-500 text-[10px] uppercase tracking-widest">Real-time Feed</Badge>
            </div>
            
            <div className="space-y-4">
-              {recentUsers.map((user) => (
-                <div key={user.id} className="flex items-center justify-between p-4 rounded-2xl bg-stone-50/50 border border-stone-100">
-                  <div className="flex items-center gap-4">
-                    <div className="h-10 w-10 rounded-full bg-white border border-stone-200 flex items-center justify-center font-bold text-stone-400 text-xs uppercase">
-                       {user.name?.[0] || 'U'}
+              {recentAlerts.map((log) => (
+                <div key={log.id} className="group flex items-center justify-between p-6 rounded-3xl bg-white border border-stone-100 hover:border-primary/20 hover:shadow-xl hover:shadow-stone-200/20 transition-all">
+                  <div className="flex items-center gap-6">
+                    <div className="h-12 w-12 rounded-2xl bg-stone-50 flex items-center justify-center text-stone-400 font-bold group-hover:bg-primary group-hover:text-white transition-colors">
+                       <Zap className="h-5 w-5" />
                     </div>
                     <div>
-                      <p className="text-sm font-extrabold text-primary uppercase">{user.name}</p>
-                      <p className="text-[10px] font-mono text-stone-400">{user.email}</p>
+                      <p className="text-sm font-black text-primary uppercase">{log.action}</p>
+                      <p className="text-[10px] font-mono text-stone-400 flex items-center gap-2">
+                        <Activity className="h-3 w-3" /> {log.entity} • {new Date(log.createdAt).toLocaleTimeString()}
+                      </p>
                     </div>
                   </div>
-                  <Badge className={user.role === 'ADMIN' ? 'bg-primary text-white' : 'bg-white text-stone-400 border-stone-200'}>
-                    {user.role}
+                  <Badge variant="outline" className="text-[9px] font-mono border-stone-200 text-stone-400">
+                    {log.user?.name || 'System'}
                   </Badge>
                 </div>
               ))}
            </div>
-        </section>
+        </div>
 
-        {/* System Pulse */}
-        <section className="glass-card border-stone-200 rounded-[2.5rem] p-10 space-y-8 shadow-xl shadow-stone-200/40">
-           <div className="flex items-center justify-between">
-              <h3 className="text-xl font-sans font-black uppercase tracking-tight text-primary">System Pulse</h3>
-              <Activity className="h-5 w-5 text-accent animate-pulse" />
+        {/* Enhancement #10 — Simulation Lab Access */}
+        <div className="space-y-8">
+           <div className="glass-card border-stone-200 rounded-[3rem] p-10 space-y-6 bg-primary text-white shadow-2xl shadow-primary/20 relative overflow-hidden group">
+              <div className="relative z-10 space-y-4">
+                 <Cpu className="h-8 w-8 text-white/50 group-hover:scale-125 transition-transform" />
+                 <h3 className="text-3xl font-black uppercase italic leading-none tracking-tighter">Simulation<br />Lab</h3>
+                 <p className="text-white/60 text-xs font-medium leading-relaxed">Benchmark the Godmode Graph Discovery logic against synthetic network states.</p>
+                 <button className="w-full h-12 rounded-2xl bg-white text-primary text-[10px] font-mono font-black uppercase tracking-widest mt-4">Initialize Benchmark</button>
+              </div>
+              <div className="absolute -right-8 -bottom-8 h-40 w-40 bg-white/10 rounded-full blur-3xl" />
            </div>
-           
-           <div className="space-y-6">
-              <PulseItem label="Prisma Adapter" status="Operational" />
-              <PulseItem label="Neon DB Engine" status="Optimized" />
-              <PulseItem label="Inngest Queue" status="Healthy" />
-              <PulseItem label="Semantic Search" status="Active" />
+
+           {/* Enhancement #6 — Verification Access */}
+           <div className="glass-card border-stone-200 rounded-[3rem] p-10 space-y-6 bg-white shadow-xl shadow-stone-200/20 border-t-white">
+              <Search className="h-6 w-6 text-stone-300" />
+              <h3 className="text-xl font-black uppercase italic text-primary">Authority Intel</h3>
+              <p className="text-stone-400 text-xs font-medium">Research and verify scholarly claims using autonomous deep-search agents.</p>
+              <button className="w-full h-12 rounded-2xl border border-stone-200 text-stone-400 text-[10px] font-mono font-bold uppercase tracking-widest">Verify Claims</button>
            </div>
-        </section>
+        </div>
       </div>
     </div>
   );
@@ -98,27 +124,15 @@ export default async function AdminDashboard() {
 
 function MetricCard({ icon, label, value, detail }: any) {
   return (
-    <div className="glass-card border-stone-200 rounded-[2rem] p-8 space-y-4 shadow-lg shadow-stone-200/20 hover:border-accent/20 transition-all group">
-      <div className="h-10 w-10 rounded-xl bg-stone-50 flex items-center justify-center group-hover:bg-accent/10 transition-colors">
+    <div className="glass-card border-stone-200 rounded-[2.5rem] p-8 space-y-4 shadow-xl shadow-stone-200/20 hover:border-primary/20 transition-all group bg-white/80">
+      <div className="h-12 w-12 rounded-2xl bg-stone-50 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all shadow-inner">
         {icon}
       </div>
       <div>
-        <p className="text-[10px] font-mono font-bold text-stone-400 uppercase tracking-widest">{label}</p>
-        <h4 className="text-4xl font-black tracking-tighter text-primary group-hover:text-accent transition-colors">{value}</h4>
+        <p className="text-[10px] font-mono font-bold text-stone-400 uppercase tracking-widest mb-1">{label}</p>
+        <h4 className="text-5xl font-black tracking-tighter text-primary group-hover:scale-105 origin-left transition-transform">{value}</h4>
       </div>
-      <p className="text-[9px] font-mono text-stone-300 uppercase tracking-tight">{detail}</p>
-    </div>
-  );
-}
-
-function PulseItem({ label, status }: any) {
-  return (
-    <div className="flex items-center justify-between p-4 rounded-2xl bg-white border border-stone-100">
-      <span className="text-[10px] font-mono font-bold text-stone-500 uppercase tracking-widest">{label}</span>
-      <div className="flex items-center gap-2">
-        <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-        <span className="text-[9px] font-black uppercase tracking-widest text-emerald-600 italic">{status}</span>
-      </div>
+      <p className="text-[9px] font-mono text-stone-300 uppercase italic tracking-tight">{detail}</p>
     </div>
   );
 }

@@ -25,6 +25,7 @@ model User {
   reputation    Int       @default(0)
   isVerified    Boolean   @default(false)
   role          UserRole  @default(USER)
+  isSuspended   Boolean   @default(false)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -37,6 +38,44 @@ model User {
   vouchesReceived Vouch[]        @relation("VouchReceiver")
   notifications   Notification[]
   pushSubscriptions PushSubscription[]
+  auditLogs       AuditLog[]
+  verificationReports VerificationReport[]
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  action    String
+  entity    String
+  entityId  String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+}
+
+model UsageLog {
+  id        String   @id @default(cuid())
+  feature   String
+  tokens    Int
+  cost      Float
+  metadata  Json?
+  createdAt DateTime @default(now())
+}
+
+model SystemConfig {
+  id        String   @id @default("GLOBAL")
+  config    Json
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationReport {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  status    String   // PENDING, COMPLETED, FAILED
+  findings  String?
+  evidence  Json?
+  createdAt DateTime @default(now())
 }
 
 enum UserRole {
@@ -92,6 +131,8 @@ model Listing {
   tags          String[]
   effortEstimate EffortEstimate? // Only for services
   condition     String?     // Only for commodities (E.g. New, Used)
+  isFlagged     Boolean   @default(false)
+  flagReason    String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

@@ -33,3 +33,15 @@ export { onSwapExecuted } from "./functions/on-swap-executed";
 
 // Enhancement #7 — Auto-cancel expired PROPOSED swaps every 6h
 export { expireStaleSwaps } from "./functions/expire-swaps";
+
+// Enhancement #1 — Safety Guard & Policy Audit
+export { auditListingPolicy } from "./functions/audit-listing";
+
+// Enhancement #6 — Deep Research Peer Verifier
+export { verifyPeerAuthority } from "./functions/verify-authority";
+
+// Enhancement #9 — Sentiment Engine
+export { analyzeNetworkSentiment } from "./functions/sentiment-engine";
+
+
+
