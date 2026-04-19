@@ -39,7 +39,7 @@ export function FAQSection() {
           <p className="text-zinc-500 font-medium tracking-tight">Technical specifications and governance protocols for the JNU reciprocity network.</p>
         </div>
         
-        <Accordion type="single" collapsible className="w-full">
+        <Accordion className="w-full">
           {FAQ_DATA.map((item, i) => (
             <AccordionItem key={i} value={`item-${i}`} className="border-zinc-100 py-2">
               <AccordionTrigger className="text-left text-sm font-bold uppercase tracking-tight text-zinc-800 hover:no-underline hover:text-primary transition-colors">
