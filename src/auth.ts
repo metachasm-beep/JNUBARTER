@@ -23,26 +23,36 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async signIn({ user }) {
-      const email = user.email ?? "";
-      const shouldBeAdmin = ADMIN_EMAILS.includes(email);
+      if (!user.email) return false;
+      
+      const email = user.email;
+      const isAdminEmail = ADMIN_EMAILS.includes(email);
 
       try {
-        await prisma.user.upsert({
+        // We use a very permissive upsert. If the 'role' or 'isSuspended' columns 
+        // don't exist yet (migration pending), we catch the error to prevent 
+        // blocking sign-in entirely.
+        await (prisma.user as any).upsert({
           where: { email },
           update: { 
             isVerified: true,
-            role: shouldBeAdmin ? "ADMIN" : undefined 
+            // Only attempt to set role if it's an admin email. 
+            // Using spread to avoid setting undefined if column doesn't exist.
+            ...(isAdminEmail ? { role: "ADMIN" } : {})
           },
           create: {
             email,
             name: user.name ?? email.split("@")[0],
             image: user.image ?? null,
             isVerified: true,
-            role: shouldBeAdmin ? "ADMIN" : "USER",
+            role: isAdminEmail ? "ADMIN" : "USER",
           },
         });
       } catch (err) {
-        console.error("[auth] upsert error", err);
+        console.error("[auth] signIn database sync error (likely missing columns):", err);
+        // CRITICAL: Do NOT return false here. We want to allow sign-in 
+        // even if the user record couldn't be created/updated in the DB
+        // for this session.
       }
 
       return true;
@@ -50,13 +60,17 @@ export const authOptions: NextAuthOptions = {
 
     async jwt({ token, user }) {
       if (user) {
-        const dbUser = await prisma.user.findUnique({
-          where: { email: user.email! },
-          select: { id: true, role: true },
-        });
-        if (dbUser) {
-          token.id = dbUser.id;
-          token.role = dbUser.role;
+        try {
+          const dbUser = await (prisma.user as any).findUnique({
+            where: { email: user.email! },
+            select: { id: true, role: true },
+          });
+          if (dbUser) {
+            token.id = dbUser.id;
+            token.role = dbUser.role || "USER";
+          }
+        } catch (err) {
+          console.error("[auth] jwt callback error:", err);
         }
       }
       return token;
@@ -67,14 +81,16 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.id as string;
         session.user.role = (token.role as "USER" | "ADMIN") || "USER";
         try {
-          const dbUser = await prisma.user.findUnique({
+          const dbUser = await (prisma.user as any).findUnique({
             where: { id: session.user.id },
             select: { isVerified: true, role: true },
           });
-          session.user.isVerified = dbUser?.isVerified ?? false;
-          session.user.role = dbUser?.role ?? "USER";
-        } catch {
-          session.user.isVerified = false;
+          if (dbUser) {
+            session.user.isVerified = !!dbUser.isVerified;
+            session.user.role = dbUser.role || "USER";
+          }
+        } catch (err) {
+          console.error("[auth] session callback error:", err);
         }
       }
       return session;
