@@ -24,6 +24,7 @@ import CommandMenu from "@/components/CommandMenu";
 import { BottomNav } from "@/components/BottomNav";
 
 import AuthProvider from "@/components/AuthProvider";
+import QueryProvider from "@/components/QueryProvider";
 
 export default function RootLayout({
   children,
@@ -32,16 +33,18 @@ export default function RootLayout({
 }>) {
   return (
     <AuthProvider>
-      <html
-        lang="en"
-        className={`${firaSans.variable} ${firaCode.variable} h-full antialiased`}
-      >
-        <body className="min-h-full flex flex-col bg-background text-foreground selection:bg-primary/30">
-          <CommandMenu />
-          <AppContainer>{children}</AppContainer>
-          <BottomNav />
-        </body>
-      </html>
+      <QueryProvider>
+        <html
+          lang="en"
+          className={`${firaSans.variable} ${firaCode.variable} h-full antialiased`}
+        >
+          <body className="min-h-full flex flex-col bg-background text-foreground selection:bg-primary/30">
+            <CommandMenu />
+            <AppContainer>{children}</AppContainer>
+            <BottomNav />
+          </body>
+        </html>
+      </QueryProvider>
     </AuthProvider>
   );
 }
