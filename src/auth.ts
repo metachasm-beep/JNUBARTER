@@ -11,12 +11,6 @@ declare module "next-auth" {
   }
 }
 
-const JNU_DOMAINS = ["@jnu.ac.in", "@mail.jnu.ac.in"];
-
-function isJnuEmail(email: string): boolean {
-  return JNU_DOMAINS.some((domain) => email.toLowerCase().endsWith(domain));
-}
-
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
@@ -28,12 +22,7 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user }) {
       const email = user.email ?? "";
 
-      // Gate: only @jnu.ac.in / @mail.jnu.ac.in allowed
-      if (!isJnuEmail(email)) {
-        return "/auth/error?reason=jnu-only";
-      }
-
-      // Mark the user as institutionally verified on first sign-in
+      // Remove institutional restriction — allow any Google account (including Gmail)
       try {
         await prisma.user.upsert({
           where: { email },

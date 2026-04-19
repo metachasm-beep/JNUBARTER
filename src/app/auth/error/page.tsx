@@ -1,19 +1,15 @@
 "use client";
 
-import { GraduationCap, ShieldX, ArrowLeft } from "lucide-react";
+import { ShieldX, ArrowLeft, Key } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
 const ERRORS: Record<string, { title: string; body: string }> = {
-  "jnu-only": {
-    title: "Institutional Access Only",
-    body: "JNU BARTER is exclusively available to active students and faculty of Jawaharlal Nehru University. Please sign in with your @jnu.ac.in institutional email address.",
-  },
   default: {
-    title: "Authentication Error",
-    body: "An error occurred during sign-in. Please try again.",
+    title: "Access Restricted",
+    body: "An authentication error occurred. Please ensure you are signing in with a valid account and try again.",
   },
 };
 
@@ -34,7 +30,7 @@ function ErrorContent() {
         <div className="flex flex-col items-center gap-4">
           <div className="relative">
             <div className="h-20 w-20 bg-primary/5 rounded-[2rem] flex items-center justify-center border border-primary/10">
-              <GraduationCap className="h-10 w-10 text-primary/40" />
+              <Key className="h-10 w-10 text-primary/40" />
             </div>
             <div className="absolute -bottom-2 -right-2 h-8 w-8 bg-red-50 rounded-xl flex items-center justify-center border border-red-100">
               <ShieldX className="h-4 w-4 text-red-400" />
@@ -45,7 +41,7 @@ function ErrorContent() {
         {/* Copy */}
         <div className="space-y-4">
           <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary">
-            JNU BARTER // ACCESS DENIED
+            BARTER // AUTHENTICATION ERROR
           </p>
           <h1 className="text-3xl font-black tracking-tighter uppercase italic text-zinc-800">
             {title}
@@ -58,7 +54,7 @@ function ErrorContent() {
         {/* Mono detail */}
         <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-100">
           <p className="text-[9px] font-mono text-zinc-400 uppercase tracking-widest">
-            Accepted domains: @jnu.ac.in · @mail.jnu.ac.in
+            Protocol: Google OAuth 2.0 // Status: Blocked
           </p>
         </div>
 
@@ -68,7 +64,7 @@ function ErrorContent() {
             onClick={() => (window.location.href = "/api/auth/signin")}
             className="w-full h-14 rounded-2xl bg-primary text-white font-black uppercase tracking-widest text-xs shadow-xl shadow-primary/20"
           >
-            Sign In with JNU Account
+            Retry Authentication
           </Button>
           <Button
             variant="ghost"

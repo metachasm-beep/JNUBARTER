@@ -139,7 +139,7 @@ export default function ProfileSetup() {
       <div className="flex flex-col items-center mb-16 space-y-4">
         <GraduationCap className="h-12 w-12 text-accent" />
         <h1 className="text-4xl font-extrabold tracking-tighter uppercase text-primary">Initialize Node</h1>
-        <p className="text-stone-400 text-center font-medium max-w-sm">Setup your academic presence and define your reciprocity parameters.</p>
+        <p className="text-stone-400 text-center font-medium max-w-sm">Setup your scholarly presence and define your reciprocity parameters.</p>
       </div>
 
       <StepCard num={1} title="Identity" description="Your scholarly metadata" isCompleted={step > 1}>
@@ -154,12 +154,12 @@ export default function ProfileSetup() {
           </div>
           <div className="grid grid-cols-2 gap-4">
              <div className="space-y-2">
-                <Label className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-400">School / Dept</Label>
-                <Input value={school} onChange={(e) => setSchool(e.target.value)} placeholder="E.g. SIS" className="h-14 rounded-2xl bg-white border-stone-200" />
+                <Label className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-400">Field / Dept</Label>
+                <Input value={school} onChange={(e) => setSchool(e.target.value)} placeholder="E.g. COMPUTER SCIENCE" className="h-14 rounded-2xl bg-white border-stone-200" />
              </div>
              <div className="space-y-2">
-                <Label className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-400">Hostel</Label>
-                <Input value={hostel} onChange={(e) => setHostel(e.target.value)} placeholder="E.g. TAPTI" className="h-14 rounded-2xl bg-white border-stone-200" />
+                <Label className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-400">Institutional ID / Key</Label>
+                <Input value={hostel} onChange={(e) => setHostel(e.target.value)} placeholder="E.g. REG-001" className="h-14 rounded-2xl bg-white border-stone-200" />
              </div>
           </div>
           <Button onClick={() => setStep(2)} disabled={!name || !school} className="w-full h-14 rounded-2xl btn-premium text-white font-bold uppercase text-[10px] tracking-widest">Continue</Button>

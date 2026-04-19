@@ -110,7 +110,7 @@ export default function DiscoveryPage() {
                </h1>
                
                <p className="text-secondary font-medium text-lg md:text-2xl max-w-3xl mx-auto leading-tight">
-                 Premium peer-to-peer reciprocity within the JNU academic ecosystem. No cash. No credit. Pure merit.
+                 Premium peer-to-peer reciprocity within the global academic ecosystem. No cash. No credit. Pure merit.
                </p>
                
                <div className="flex flex-col md:flex-row items-center justify-center gap-6 pt-8">

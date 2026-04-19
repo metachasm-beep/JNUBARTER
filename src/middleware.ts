@@ -25,18 +25,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(signInUrl);
   }
 
-  // Has token but email not from JNU (shouldn't happen after signIn gate,
-  // but defensive check for stale sessions)
-  const email = (token.email as string) ?? "";
-  const isJnu =
-    email.endsWith("@jnu.ac.in") || email.endsWith("@mail.jnu.ac.in");
-
-  if (!isJnu) {
-    return NextResponse.redirect(
-      new URL("/auth/error?reason=jnu-only", req.url)
-    );
-  }
-
+  // Institutional restriction removed — any authenticated user can proceed
   return NextResponse.next();
 }
 
