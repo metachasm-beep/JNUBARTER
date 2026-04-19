@@ -8,9 +8,12 @@ import { getNeo4jDriver } from "@/lib/neo4j";
  * marks them CANCELLED, releases Neo4j listing locks, and
  * notifies both parties with a SWAP_EXPIRED notification.
  */
-export const expireStaleSwaps = (inngest as any).createFunction(
-  { id: "expire-stale-swaps", name: "Auto-Cancel Expired Swaps" },
-  { cron: "0 */6 * * *" },
+export const expireStaleSwaps = inngest.createFunction(
+  { 
+    id: "expire-stale-swaps", 
+    name: "Auto-Cancel Expired Swaps",
+    triggers: [{ cron: "0 */6 * * *" }]
+  },
   async ({ step }: any) => {
     // Step 1 — Find expired swaps
     const expired = await step.run("find-expired", async () => {

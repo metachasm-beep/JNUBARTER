@@ -5,9 +5,12 @@ export { inngest };
 /**
  * Existing: Autonomous swap discovery on profile update.
  */
-export const autonomousDiscovery = (inngest as any).createFunction(
-  { id: "autonomous-discovery" },
-  { event: "barter/profile.updated" },
+export const autonomousDiscovery = inngest.createFunction(
+  { 
+    id: "autonomous-discovery", 
+    name: "Autonomous Swap Discovery",
+    triggers: [{ event: "barter/profile.updated" }] 
+  },
   async ({ event, step }: any) => {
     const { userId } = event.data;
 

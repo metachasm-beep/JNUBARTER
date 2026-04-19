@@ -5,9 +5,12 @@ import { prisma } from "@/lib/prisma";
  * Fires when a swap reaches EXECUTED state (both parties confirmed).
  * Creates VOUCH_PROMPT notifications for both parties and bumps reputation.
  */
-export const onSwapExecuted = (inngest as any).createFunction(
-  { id: "on-swap-executed", name: "Vouch Prompt on Swap Execution" },
-  { event: "barter/swap.executed" },
+export const onSwapExecuted = inngest.createFunction(
+  { 
+    id: "on-swap-executed", 
+    name: "Vouch Prompt on Swap Execution",
+    triggers: [{ event: "barter/swap.executed" }]
+  },
   async ({ event, step }: any) => {
     const { swapId, initiatorId, receiverId } = event.data as {
       swapId: string;
