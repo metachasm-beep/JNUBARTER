@@ -1,19 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ShieldCheck, Video, CheckCircle2, GraduationCap, Package, Briefcase, Trash2 } from "lucide-react";
+import { ShieldCheck, Video, CheckCircle2, GraduationCap, Package, Briefcase, Trash2, AlertCircle, ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
 import { ProfileSchema } from "@/lib/schemas";
 import { atomicSyncUser } from "@/lib/barter-sync";
 import { motion, AnimatePresence } from "framer-motion";
 
-import { validatePolicy } from "@/lib/agents/policy-guard";
+import { validatePolicy, PolicyValidationResult } from "@/lib/agents/policy-guard";
 
 export default function ProfileSetup() {
   const [step, setStep] = useState(1);
@@ -27,8 +27,40 @@ export default function ProfileSetup() {
   const [effort, setEffort] = useState<"LOW" | "MEDIUM" | "HIGH">("MEDIUM");
   const [condition, setCondition] = useState<string>("GOOD");
   
+  // Suggestion #5: Policy Guard Micro-Feedback
+  const [policyStatus, setPolicyStatus] = useState<PolicyValidationResult | null>(null);
+  const [isValidating, setIsValidating] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      if (offerTitle.trim().length > 3) {
+        setIsValidating(true);
+        const result = await validatePolicy(offerTitle);
+        setPolicyStatus(result);
+        setIsValidating(false);
+      } else {
+        setPolicyStatus(null);
+      }
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [offerTitle]);
+
   const [offers, setOffers] = useState<{title: string, category: "SERVICE" | "COMMODITY", effort?: any, condition?: string, tags: string[]}[]>([]);
+  const [wantInput, setWantInput] = useState<string>("");
+  const [wants, setWants] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const addWant = () => {
+    const trimmed = wantInput.trim().toUpperCase();
+    if (trimmed && !wants.includes(trimmed) && wants.length < 10) {
+      setWants([...wants, trimmed]);
+      setWantInput("");
+    }
+  };
+
+  const removeWant = (idx: number) => {
+    setWants(wants.filter((_, i) => i !== idx));
+  };
 
   const StepCard = ({ num, title, description, children, isCompleted }: any) => (
     <motion.div 
@@ -38,20 +70,20 @@ export default function ProfileSetup() {
         opacity: step >= num ? 1 : 0.6
       }}
       className={`overflow-hidden rounded-3xl border-2 transition-all duration-500 mb-4 ${
-        step === num ? "border-primary/20 bg-primary/[0.01]" : "border-zinc-100 bg-white"
+        step === num ? "border-accent/20 bg-accent/[0.01]" : "border-stone-100 bg-white"
       }`}
     >
       <div className="p-6 flex items-center justify-between cursor-pointer" onClick={() => step > num && setStep(num)}>
         <div className="flex items-center gap-4">
-          <div className={`h-8 w-8 rounded-full flex items-center justify-center border-2 ${isCompleted ? "bg-primary border-primary text-white" : "border-zinc-200 text-zinc-400"}`}>
-            {isCompleted ? <CheckCircle2 className="h-4 w-4" /> : <span className="text-[10px] font-bold">{num}</span>}
+          <div className={`h-8 w-8 rounded-full flex items-center justify-center border-2 transition-colors ${isCompleted ? "bg-accent border-accent text-white" : "border-stone-200 text-stone-400"}`}>
+            {isCompleted ? <CheckCircle2 className="h-4 w-4" /> : <span className="text-[10px] font-mono font-bold">{num}</span>}
           </div>
           <div>
-            <h3 className="text-xs font-black uppercase tracking-tight text-zinc-800">{title}</h3>
-            {step !== num && <p className="text-[9px] text-zinc-400 uppercase font-bold">{description}</p>}
+            <h3 className="text-sm font-sans font-extrabold uppercase tracking-tight text-primary">{title}</h3>
+            {step !== num && <p className="text-[9px] font-mono text-stone-400 uppercase font-bold">{description}</p>}
           </div>
         </div>
-        {step !== num && step > num && <Button variant="ghost" size="sm" className="text-[9px] uppercase font-bold text-primary">Modify</Button>}
+        {step !== num && step > num && <Button variant="ghost" size="sm" className="text-[9px] uppercase font-bold text-accent">Modify</Button>}
       </div>
       <AnimatePresence>
         {step === num && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="px-6 pb-6">{children}</motion.div>}
@@ -61,10 +93,8 @@ export default function ProfileSetup() {
 
   const addOffer = async () => {
     if (offerTitle) {
-      // Zero-Money Policy Check
-      const policyCheck = await validatePolicy(offerTitle);
-      if (policyCheck.isViolating) {
-        toast.error(`POLICY VIOLATION: ${policyCheck.reason}. Flagged: "${policyCheck.flaggedContent}"`);
+      if (policyStatus?.isViolating) {
+        toast.error(`POLICY VIOLATION: ${policyStatus.reason}`);
         return;
       }
 
@@ -76,6 +106,7 @@ export default function ProfileSetup() {
         tags: [] 
       }]);
       setOfferTitle("");
+      setPolicyStatus(null);
     }
   };
 
@@ -85,175 +116,163 @@ export default function ProfileSetup() {
 
   const handleLaunch = async () => {
     setIsLoading(true);
-
-    // Bio Policy Check
-    const bioCheck = await validatePolicy(bio);
-    if (bioCheck.isViolating) {
-      toast.error(`POLICY VIOLATION IN BIO: ${bioCheck.reason}`);
-      setIsLoading(false);
-      return;
-    }
-
-    const mockUserId = "jnu_user_" + Math.random().toString(36).substr(2, 9);
-    const validation = ProfileSchema.safeParse({ 
-        userId: mockUserId, name, bio, school, hostel, offers, wants: [] 
-    });
-
-    if (!validation.success) {
-      toast.error("IDENTITY ERROR: " + validation.error.issues[0].message);
+    const result = ProfileSchema.safeParse({ name, bio, school, hostel, offers, wants });
+    if (!result.success) {
+      toast.error("Profile validation failed. Ensure all fields are valid.");
       setIsLoading(false);
       return;
     }
 
     try {
-      await atomicSyncUser(validation.data as any);
-      toast.success("CAMPUS IDENTITY DEPLOYED");
-      window.location.href = '/';
-    } catch (error: any) {
-      toast.error("PROTOCOL SYNC FAILED");
+      await atomicSyncUser(result.data);
+      toast.success("NODE DEPLOYED: Reciprocity Engine Initialized");
+      window.location.href = "/";
+    } catch (err) {
+      toast.error("Deployment failed — try again.");
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   return (
-    <div className="min-h-screen bg-white text-zinc-900 font-sans p-6 max-w-2xl mx-auto pb-40">
-      <header className="mb-12 flex justify-between items-center">
-        <div className="flex items-center gap-3">
-           <div className="h-10 w-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
-              <GraduationCap className="h-6 w-6 text-white" />
-           </div>
-           <div>
-              <h1 className="text-2xl font-black tracking-tighter text-zinc-800 uppercase italic">JNU BARTER</h1>
-              <p className="text-[8px] font-bold text-primary tracking-[0.3em] uppercase">Protocol v2.5 // Registry</p>
-           </div>
+    <div className="min-h-screen bg-background p-6 pb-20 max-w-2xl mx-auto font-sans">
+      <div className="flex flex-col items-center mb-16 space-y-4">
+        <GraduationCap className="h-12 w-12 text-accent" />
+        <h1 className="text-4xl font-extrabold tracking-tighter uppercase text-primary">Initialize Node</h1>
+        <p className="text-stone-400 text-center font-medium max-w-sm">Setup your academic presence and define your reciprocity parameters.</p>
+      </div>
+
+      <StepCard num={1} title="Identity" description="Your scholarly metadata" isCompleted={step > 1}>
+        <div className="space-y-6 pt-4">
+          <div className="space-y-2">
+            <Label className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-400">Public Name</Label>
+            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="E.g. ARYA SHARMA" className="h-14 rounded-2xl bg-white border-stone-200" />
+          </div>
+          <div className="space-y-2">
+             <Label className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-400">Research Manifesto (Bio)</Label>
+             <Textarea value={bio} onChange={(e) => setBio(e.target.value)} placeholder="What are you currently exploring?" className="rounded-2xl bg-white border-stone-200 min-h-[100px]" />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+             <div className="space-y-2">
+                <Label className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-400">School / Dept</Label>
+                <Input value={school} onChange={(e) => setSchool(e.target.value)} placeholder="E.g. SIS" className="h-14 rounded-2xl bg-white border-stone-200" />
+             </div>
+             <div className="space-y-2">
+                <Label className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-400">Hostel</Label>
+                <Input value={hostel} onChange={(e) => setHostel(e.target.value)} placeholder="E.g. TAPTI" className="h-14 rounded-2xl bg-white border-stone-200" />
+             </div>
+          </div>
+          <Button onClick={() => setStep(2)} disabled={!name || !school} className="w-full h-14 rounded-2xl btn-premium text-white font-bold uppercase text-[10px] tracking-widest">Continue</Button>
         </div>
-      </header>
+      </StepCard>
 
-      <main>
-        <StepCard num={1} title="Campus Profile" description="Basic student metadata" isCompleted={step > 1}>
-           <div className="space-y-6 pt-4">
-              <div className="grid grid-cols-2 gap-4">
-                 <div className="space-y-2">
-                    <Label className="uppercase text-[9px] font-bold text-zinc-400">Student Name</Label>
-                    <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="E.G. ROHAN V." className="rounded-2xl border-zinc-100 bg-zinc-50 h-12 text-xs font-bold" />
+      <StepCard num={2} title="Assets" description="Your intellectual labor" isCompleted={step > 2}>
+        <div className="space-y-8 pt-4">
+           <div className="space-y-4">
+              <Label className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-400">New Offering</Label>
+              <div className="flex gap-2">
+                 <div className="relative flex-1">
+                   <Input 
+                    value={offerTitle} 
+                    onChange={(e) => setOfferTitle(e.target.value)} 
+                    placeholder="E.g. PYTHON TUTORING" 
+                    className={`h-14 rounded-2xl bg-white transition-all ${policyStatus?.isViolating ? "border-destructive ring-1 ring-destructive/20" : "border-stone-200"}`} 
+                   />
+                   {/* Suggestion #5: Micro-Feedback UI */}
+                   <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                      {isValidating ? (
+                        <div className="h-3 w-3 rounded-full border border-accent border-t-transparent animate-spin" />
+                      ) : policyStatus ? (
+                        policyStatus.isViolating ? (
+                          <ShieldAlert className="h-4 w-4 text-destructive animate-pulse" />
+                        ) : (
+                          <ShieldCheck className="h-4 w-4 text-emerald-500" />
+                        )
+                      ) : null}
+                   </div>
                  </div>
-                 <div className="space-y-2">
-                    <Label className="uppercase text-[9px] font-bold text-zinc-400">School/Dept</Label>
-                    <Input value={school} onChange={(e) => setSchool(e.target.value.toUpperCase())} placeholder="E.G. SIS" className="rounded-2xl border-zinc-100 bg-zinc-50 h-12 text-xs font-bold" />
-                 </div>
+                 <Button onClick={addOffer} size="icon" className="h-14 w-14 rounded-2xl bg-primary text-white"><CheckCircle2 className="h-5 w-5" /></Button>
               </div>
-              <div className="space-y-2">
-                 <Label className="uppercase text-[9px] font-bold text-zinc-400">Hostel (Optional)</Label>
-                 <Input value={hostel} onChange={(e) => setHostel(e.target.value.toUpperCase())} placeholder="E.G. TAPTI" className="rounded-2xl border-zinc-100 bg-zinc-50 h-12 text-xs font-bold" />
-              </div>
-              <div className="space-y-2">
-                <Label className="uppercase text-[9px] font-bold text-zinc-400">Bio / Research Focus</Label>
-                <Textarea value={bio} onChange={(e) => setBio(e.target.value)} placeholder="WHAT ARE YOU SPECIALIZING IN?" className="rounded-2xl border-zinc-100 bg-zinc-50 min-h-[80px] text-xs" />
-              </div>
-              <Button onClick={() => setStep(2)} className="w-full h-14 rounded-2xl bg-primary text-white font-bold uppercase tracking-widest text-xs">Proceed to Registry</Button>
-           </div>
-        </StepCard>
-
-        <StepCard num={2} title="Offer Registry" description="Services & Commodities" isCompleted={step > 2}>
-           <div className="space-y-8 pt-4">
-              <div className="p-6 rounded-3xl bg-zinc-50 border border-zinc-100 space-y-6">
-                 <div className="flex gap-2">
-                    <Button 
-                        variant={category === "SERVICE" ? "default" : "outline"}
-                        onClick={() => setCategory("SERVICE")}
-                        className="flex-1 rounded-xl h-10 text-[9px] font-bold uppercase tracking-widest"
-                    >
-                        <Briefcase className="h-3 w-3 mr-2" /> Service
-                    </Button>
-                    <Button 
-                        variant={category === "COMMODITY" ? "default" : "outline"}
-                        onClick={() => setCategory("COMMODITY")}
-                        className="flex-1 rounded-xl h-10 text-[9px] font-bold uppercase tracking-widest"
-                    >
-                        <Package className="h-3 w-3 mr-2" /> Commodity
-                    </Button>
-                 </div>
-
-                 <div className="space-y-4">
-                    <div className="space-y-2">
-                       <Label className="uppercase text-[9px] font-bold text-zinc-400">Title</Label>
-                       <Input value={offerTitle} onChange={(e) => setOfferTitle(e.target.value)} placeholder={category === "SERVICE" ? "E.G. PYTHON TUTORING" : "E.G. STATS TEXTBOOK"} className="rounded-xl border-zinc-200 bg-white h-12 text-xs font-bold" />
-                    </div>
-                    
-                    {category === "SERVICE" ? (
-                       <div className="space-y-2">
-                          <Label className="uppercase text-[9px] font-bold text-zinc-400">Effort Level</Label>
-                          <Select value={effort} onValueChange={setEffort as any}>
-                            <SelectTrigger className="rounded-xl h-12 bg-white border-zinc-200 text-xs">
-                               <SelectValue placeholder="Select Effort" />
-                            </SelectTrigger>
-                            <SelectContent>
-                               <SelectItem value="LOW">LOW (1-2 HOURS)</SelectItem>
-                               <SelectItem value="MEDIUM">MEDIUM (SESSIONS)</SelectItem>
-                               <SelectItem value="HIGH">HIGH (PROJECT-BASED)</SelectItem>
-                            </SelectContent>
-                          </Select>
-                       </div>
-                    ) : (
-                       <div className="space-y-2">
-                          <Label className="uppercase text-[9px] font-bold text-zinc-400">Item Condition</Label>
-                          <Input value={condition} onChange={(e) => setCondition(e.target.value.toUpperCase())} placeholder="E.G. LIKE NEW" className="rounded-xl border-zinc-200 bg-white h-12 text-xs font-bold" />
-                       </div>
-                    )}
-                    
-                    <Button onClick={addOffer} className="w-full h-12 rounded-xl bg-zinc-900 text-white font-bold uppercase text-[9px] tracking-widest">
-                       Add to Profile Registry
-                    </Button>
-                 </div>
-              </div>
-
-              <div className="space-y-3">
-                 <Label className="uppercase text-[9px] font-bold text-zinc-400 tracking-widest">Profile Listings ({offers.length})</Label>
-                 <div className="space-y-2">
-                    {offers.map((offer, idx) => (
-                       <div key={idx} className="flex items-center justify-between p-4 rounded-2xl bg-white border border-zinc-100 shadow-sm">
-                          <div className="flex items-center gap-4">
-                             <div className="h-8 w-8 rounded-full bg-primary/5 flex items-center justify-center">
-                                {offer.category === "SERVICE" ? <Briefcase className="h-4 w-4 text-primary" /> : <Package className="h-4 w-4 text-primary" />}
-                             </div>
-                             <div>
-                                <p className="text-[10px] font-black tracking-tight text-zinc-800">{offer.title}</p>
-                                <p className="text-[8px] text-zinc-400 font-bold uppercase">{offer.category} // {offer.effort || offer.condition}</p>
-                             </div>
-                          </div>
-                          <Button variant="ghost" size="icon" onClick={() => removeOffer(idx)} className="text-zinc-300 hover:text-red-500">
-                             <Trash2 className="h-4 w-4" />
-                          </Button>
-                       </div>
-                    ))}
-                 </div>
-              </div>
-
-              <Button onClick={() => setStep(3)} className="w-full h-14 rounded-2xl bg-primary text-white font-bold uppercase tracking-widest text-xs">Finalize Registry</Button>
-           </div>
-        </StepCard>
-
-        <StepCard num={3} title="Zero-Money Policy" description="Verification & Deployment" isCompleted={isLoading}>
-           <div className="space-y-8 pt-4">
-              <div className="p-8 rounded-3xl bg-primary/5 border border-primary/10 space-y-6">
-                <div className="flex items-center gap-3">
-                  <ShieldCheck className="h-6 w-6 text-primary" />
-                  <h4 className="text-xs font-black uppercase tracking-widest text-primary">JNU BARTER PROTOCOL</h4>
-                </div>
-                <p className="text-[10px] text-zinc-600 leading-relaxed font-bold uppercase">
-                  BY DEPLOYING THIS NODE, YOU AGREE THAT ALL EXCHANGES ON THIS PLATFORM ARE STRICTLY NON-MONETARY. ANY ATTEMPT TO SOLICIT CURRENCY WILL RESULT IN IMMEDIATE NODE TERMINATION.
+              {policyStatus?.isViolating && (
+                <p className="text-[10px] font-mono font-bold text-destructive uppercase tracking-tight animate-bounce">
+                  Violation: {policyStatus.reason}
                 </p>
-                <div className="flex items-center gap-2">
-                   <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-                   <span className="text-[8px] font-mono uppercase text-zinc-400">Zero-Money Integrity Active</span>
-                </div>
-              </div>
-              <Button onClick={handleLaunch} disabled={isLoading} className="w-full h-20 rounded-3xl bg-primary text-white font-black uppercase tracking-[0.2em] text-sm shadow-2xl shadow-primary/30">
-                {isLoading ? "Synchronizing..." : "Deploy to Campus Registry"}
-              </Button>
+              )}
            </div>
-        </StepCard>
-      </main>
+
+           <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                 <Label className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-400">Category</Label>
+                 <Select value={category} onValueChange={(val: any) => setCategory(val)}>
+                    <SelectTrigger className="h-14 rounded-2xl bg-white border-stone-200"><SelectValue /></SelectTrigger>
+                    <SelectContent><SelectItem value="SERVICE">SERVICE</SelectItem><SelectItem value="COMMODITY">COMMODITY</SelectItem></SelectContent>
+                 </Select>
+              </div>
+              <div className="space-y-2">
+                 {category === "SERVICE" ? (
+                   <>
+                    <Label className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-400">Effort Level</Label>
+                    <Select value={effort} onValueChange={(val: any) => setEffort(val)}>
+                       <SelectTrigger className="h-14 rounded-2xl bg-white border-stone-200"><SelectValue /></SelectTrigger>
+                       <SelectContent><SelectItem value="LOW">LOW</SelectItem><SelectItem value="MEDIUM">MEDIUM</SelectItem><SelectItem value="HIGH">HIGH</SelectItem></SelectContent>
+                    </Select>
+                   </>
+                 ) : (
+                    <>
+                    <Label className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-400">Condition</Label>
+                    <Input value={condition} onChange={(e) => setCondition(e.target.value)} className="h-14 rounded-2xl bg-white border-stone-200" />
+                   </>
+                 )}
+              </div>
+           </div>
+
+           <div className="space-y-3">
+              <Label className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-400">Profile Listings ({offers.length})</Label>
+              <AnimatePresence>
+                {offers.map((off, i) => (
+                  <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, scale: 0.95 }} key={i} className="flex items-center justify-between p-4 rounded-2xl bg-stone-50 border border-stone-100 group">
+                    <div className="flex items-center gap-3">
+                       {off.category === "SERVICE" ? <Briefcase className="h-4 w-4 text-stone-400" /> : <Package className="h-4 w-4 text-stone-400" />}
+                       <span className="text-[11px] font-extrabold text-primary uppercase">{off.title}</span>
+                    </div>
+                    <Button variant="ghost" size="icon" onClick={() => removeOffer(i)} className="text-stone-300 hover:text-destructive transition-colors"><Trash2 className="h-4 w-4" /></Button>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+           </div>
+           
+           <Button onClick={() => setStep(3)} disabled={offers.length === 0} className="w-full h-14 rounded-2xl btn-premium text-white font-bold uppercase text-[10px] tracking-widest">Continue</Button>
+        </div>
+      </StepCard>
+
+      <StepCard num={3} title="Wants" description="Your intellectual needs" isCompleted={step > 3}>
+        <div className="space-y-8 pt-4">
+           <div className="space-y-2">
+              <Label className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-400">What do you need?</Label>
+              <div className="flex gap-2">
+                 <Input value={wantInput} onChange={(e) => setWantInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && addWant()} placeholder="E.g. DATA STRUCTURES HELP" className="h-14 rounded-2xl bg-white border-stone-200" />
+                 <Button onClick={addWant} size="icon" className="h-14 w-14 rounded-2xl bg-primary text-white"><CheckCircle2 className="h-5 w-5" /></Button>
+              </div>
+           </div>
+
+           <div className="flex flex-wrap gap-2">
+              <AnimatePresence>
+                {wants.map((want, i) => (
+                  <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.8, opacity: 0 }} key={i}>
+                    <Badge className="bg-white border-stone-200 text-primary h-10 px-4 rounded-xl flex gap-2 items-center group shadow-sm">
+                      <span className="text-[10px] font-mono font-bold">{want}</span>
+                      <Trash2 onClick={() => removeWant(i)} className="h-3 w-3 text-stone-300 cursor-pointer hover:text-destructive" />
+                    </Badge>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+           </div>
+
+           <Button onClick={handleLaunch} disabled={wants.length === 0 || isLoading} className="w-full h-16 rounded-2xl btn-premium text-white font-black uppercase text-xs tracking-[0.2em] shadow-2xl shadow-accent/20">
+              {isLoading ? "Synchronizing Node..." : "Launch Presence"}
+           </Button>
+        </div>
+      </StepCard>
     </div>
   );
 }

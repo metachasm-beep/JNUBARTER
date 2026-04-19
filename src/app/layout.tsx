@@ -1,19 +1,14 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Serif, JetBrains_Mono, Geist } from "next/font/google";
+import { Fira_Sans, Fira_Code } from "next/font/google";
 import "./globals.css";
 
-const ibmPlexSerif = IBM_Plex_Serif({
-  variable: "--font-serif",
-  subsets: ["latin"],
-  weight: ["300", "400", "600", "700"],
-});
-
-const geist = Geist({
+const firaSans = Fira_Sans({
   variable: "--font-sans",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
 });
 
-const jetbrainsMono = JetBrains_Mono({
+const firaCode = Fira_Code({
   variable: "--font-mono",
   subsets: ["latin"],
 });
@@ -39,7 +34,7 @@ export default function RootLayout({
     <AuthProvider>
       <html
         lang="en"
-        className={`${ibmPlexSerif.variable} ${geist.variable} ${jetbrainsMono.variable} h-full antialiased`}
+        className={`${firaSans.variable} ${firaCode.variable} h-full antialiased`}
       >
         <body className="min-h-full flex flex-col bg-background text-foreground selection:bg-primary/30">
           <CommandMenu />

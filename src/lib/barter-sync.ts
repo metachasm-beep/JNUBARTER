@@ -44,15 +44,23 @@ export async function atomicSyncUser(data: z.infer<typeof ProfileSchema>) {
     if (pgError) throw new Error(`PG_SYNC_FAILURE: ${pgError.message}`);
 
     // 2. Neo4j Sync (Graph Engine)
-    await session.executeWrite(tx => 
+    await session.executeWrite(tx =>
       tx.run(
         `MERGE (u:User {id: $id})
          SET u.name = $name, u.updatedAt = datetime()
+         
+         // Sync offers
          WITH u
          UNWIND $offers as offer
          MERGE (s:Service {title: offer.title})
-         MERGE (u)-[:OFFERS {effort: offer.effort}]->(s)`,
-        { id: data.userId, name: sanitizedName, offers: data.offers }
+         MERGE (u)-[:OFFERS {effort: offer.effort}]->(s)
+         
+         // Sync wants (tags) — enables triangular chain discovery
+         WITH u
+         UNWIND $wants as wantTag
+         MERGE (t:Tag {name: wantTag})
+         MERGE (u)-[:WANTS_TAG]->(t)`,
+        { id: data.userId, name: sanitizedName, offers: data.offers, wants: data.wants ?? [] }
       )
     );
 

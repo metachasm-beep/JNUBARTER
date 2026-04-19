@@ -1,12 +1,20 @@
 import NextAuth, { NextAuthOptions, type DefaultSession } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import { prisma } from "@/lib/prisma";
 
 declare module "next-auth" {
   interface Session {
     user: {
       id: string;
+      isVerified: boolean;
     } & DefaultSession["user"];
   }
+}
+
+const JNU_DOMAINS = ["@jnu.ac.in", "@mail.jnu.ac.in"];
+
+function isJnuEmail(email: string): boolean {
+  return JNU_DOMAINS.some((domain) => email.toLowerCase().endsWith(domain));
 }
 
 export const authOptions: NextAuthOptions = {
@@ -17,12 +25,66 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
+    async signIn({ user }) {
+      const email = user.email ?? "";
+
+      // Gate: only @jnu.ac.in / @mail.jnu.ac.in allowed
+      if (!isJnuEmail(email)) {
+        return "/auth/error?reason=jnu-only";
+      }
+
+      // Mark the user as institutionally verified on first sign-in
+      try {
+        await prisma.user.upsert({
+          where: { email },
+          update: { isVerified: true },
+          create: {
+            email,
+            name: user.name ?? email.split("@")[0],
+            image: user.image ?? null,
+            isVerified: true,
+          },
+        });
+      } catch (err) {
+        console.error("[auth] upsert error", err);
+        // Don't block sign-in for DB errors — log and continue
+      }
+
+      return true;
+    },
+
+    async jwt({ token, user }) {
+      if (user) {
+        // Find the user in DB by email to get our CUID
+        const dbUser = await prisma.user.findUnique({
+          where: { email: user.email! },
+          select: { id: true },
+        });
+        if (dbUser) {
+          token.id = dbUser.id;
+        }
+      }
+      return token;
+    },
+
     async session({ session, token }) {
-      if (session.user && token.sub) {
-        session.user.id = token.sub;
+      if (session.user && token.id) {
+        session.user.id = token.id as string;
+        try {
+          const dbUser = await prisma.user.findUnique({
+            where: { id: session.user.id },
+            select: { isVerified: true },
+          });
+          session.user.isVerified = dbUser?.isVerified ?? false;
+        } catch {
+          session.user.isVerified = false;
+        }
       }
       return session;
     },
+  },
+  pages: {
+    error: "/auth/error",
   },
   session: {
     strategy: "jwt",

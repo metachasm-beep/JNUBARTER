@@ -27,13 +27,15 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  accounts      Account[]
-  sessions      Session[]
-  listings      Listing[]
-  swapsInitiated Swap[]    @relation("Initiator")
-  swapsReceived  Swap[]    @relation("Receiver")
-  vouchesSent    Vouch[]   @relation("VouchSender")
-  vouchesReceived Vouch[]  @relation("VouchReceiver")
+  accounts        Account[]
+  sessions        Session[]
+  listings        Listing[]
+  swapsInitiated  Swap[]         @relation("Initiator")
+  swapsReceived   Swap[]         @relation("Receiver")
+  vouchesSent     Vouch[]        @relation("VouchSender")
+  vouchesReceived Vouch[]        @relation("VouchReceiver")
+  notifications   Notification[]
+  pushSubscriptions PushSubscription[]
 }
 
 model Account {
@@ -113,12 +115,14 @@ model Swap {
   receiverId    String
   receiver      User      @relation("Receiver", fields: [receiverId], references: [id])
   status        SwapStatus @default(PROPOSED)
+  expiresAt     DateTime  @default(dbgenerated("NOW() + INTERVAL '72 hours'"))
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
   items         SwapItem[]
   messages      Message[]
   vouch         Vouch?
+  notifications Notification[]
 }
 
 enum SwapStatus {
@@ -158,4 +162,32 @@ model Vouch {
   content       String
   skillsVouched String[]
   createdAt     DateTime  @default(now())
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id])
+  type      NotificationType
+  refId     String           // swapId for VOUCH_PROMPT
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  swap      Swap?            @relation(fields: [refId], references: [id])
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+}
+
+enum NotificationType {
+  VOUCH_PROMPT
+  SWAP_MATCHED
+  SWAP_EXPIRED
 }

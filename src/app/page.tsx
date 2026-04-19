@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { ListingType, EffortEstimate } from "@prisma/client";
-import { ArrowRight, GraduationCap, Share2, Info, Zap, Globe, Search, Plus, User, Activity } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { ArrowRight, GraduationCap, Share2, Search, Zap, Globe, MessageSquare, Bot, Sparkles, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { motion, AnimatePresence } from "framer-motion";
@@ -10,97 +9,71 @@ import { ListingSkeleton } from "@/components/ListingSkeleton";
 import { ListingCard } from "@/components/ListingCard";
 import { FAQSection } from "@/components/FAQSection";
 import { InstallPWA } from "@/components/InstallPWA";
-
-// --- React Bits / Custom Components ---
-
-const Magnet = ({ children, padding = 100, magnetStrength = 2 }: any) => {
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const ref = useRef<HTMLDivElement>(null);
-
-  const handleMouseMove = (e: any) => {
-    if (!ref.current) return;
-    const { left, top, width, height } = ref.current.getBoundingClientRect();
-    const centerX = left + width / 2;
-    const centerY = top + height / 2;
-    const distX = Math.abs(centerX - e.clientX);
-    const distY = Math.abs(centerY - e.clientY);
-    if (distX < width / 2 + padding && distY < height / 2 + padding) {
-      setPosition({ x: (e.clientX - centerX) / magnetStrength, y: (e.clientY - centerY) / magnetStrength });
-    } else {
-      setPosition({ x: 0, y: 0 });
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
-
-  return (
-    <div ref={ref} style={{ transform: `translate3d(${position.x}px, ${position.y}px, 0)`, transition: "transform 0.3s ease-out" }}>
-      {children}
-    </div>
-  );
-};
-
-const SpotlightCard = ({ children, className }: any) => {
-  const [pos, setPos] = useState({ x: 0, y: 0 });
-  const [opacity, setOpacity] = useState(0);
-  const ref = useRef<HTMLDivElement>(null);
-
-  return (
-    <div 
-      ref={ref}
-      onMouseMove={(e) => {
-        const rect = ref.current?.getBoundingClientRect();
-        if (rect) {
-          setPos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
-          setOpacity(0.6);
-        }
-      }}
-      onMouseLeave={() => setOpacity(0)}
-      className={`relative overflow-hidden ${className}`}
-    >
-      <div 
-        className="pointer-events-none absolute inset-0 transition-opacity duration-500"
-        style={{ opacity, background: `radial-gradient(circle at ${pos.x}px ${pos.y}px, rgba(139, 0, 0, 0.08), transparent 80%)` }}
-      />
-      {children}
-    </div>
-  );
-};
-
+import { useListingsFlat } from "@/hooks/useListings";
+import { ChainCard, ChainSkeleton } from "@/components/ChainCard";
+import { VouchModal } from "@/components/VouchModal";
+import { useChains } from "@/hooks/useChains";
+import { useSemanticSearch } from "@/hooks/useSemanticSearch";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { useRef } from "react";
 
-const MOCK_LISTINGS = [
-  {
-    id: "1",
-    title: "Python for Quantitative Research",
-    description: "Pedagogical assistance for empirical data analysis and visualization via automated scripting for thesis candidates.",
-    type: "OFFER" as ListingType,
-    category: "SERVICE",
-    effortEstimate: "HIGH" as EffortEstimate,
-    tags: ["python", "quantitative", "sis"],
-    user: { name: "ROHAN VERMA", school: "SIS", reputation: 450 },
-  },
-  {
-    id: "2",
-    title: "Francophone Literature Evaluation",
-    description: "Seeking peer-review and linguistic validation for a French translation project within the humanities domain.",
-    type: "WANT" as ListingType,
-    category: "SERVICE",
-    effortEstimate: "MEDIUM" as EffortEstimate,
-    tags: ["french", "linguistics", "sllcs"],
-    user: { name: "PRIYA DAS", school: "SLL&CS", reputation: 320 },
-  },
-];
-
-// --- Main Page ---
+// --- Suggestion #8: AI Swap-Mate FAB ---
+const SwapMateFAB = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  return (
+    <div className="fixed bottom-24 right-6 z-[100]">
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            className="absolute bottom-20 right-0 w-[320px] glass-card p-6 border-iridescent rounded-3xl shadow-2xl"
+          >
+            <div className="flex items-center justify-between mb-4">
+               <div className="flex items-center gap-2">
+                  <Bot className="h-5 w-5 text-accent" />
+                  <h4 className="font-sans font-bold text-sm text-primary uppercase tracking-tighter">SwapMate AI</h4>
+               </div>
+               <button onClick={() => setIsOpen(false)} className="text-stone-400 hover:text-primary">
+                  <X className="h-4 w-4" />
+               </button>
+            </div>
+            <div className="space-y-4">
+               <div className="bg-stone-50/50 p-3 rounded-2xl border border-stone-100">
+                  <p className="text-[12px] text-secondary leading-relaxed">
+                    "I've analyzed your skills. There's a high-probability trade chain available involving <strong>ML Tutoring</strong> and <strong>Photography</strong>."
+                  </p>
+               </div>
+               <Button className="w-full btn-premium h-10 text-[10px] uppercase font-black tracking-widest">
+                  View Suggested Chain
+               </Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="h-16 w-16 rounded-full btn-premium flex items-center justify-center shadow-2xl shadow-accent/40 group relative overflow-hidden"
+      >
+        <div className="absolute inset-0 bg-gradient-to-br from-accent to-yellow-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+        {isOpen ? <X className="h-6 w-6 relative z-10" /> : <Sparkles className="h-6 w-6 relative z-10" />}
+      </button>
+    </div>
+  );
+};
 
 export default function DiscoveryPage() {
   const { data: session, status } = useSession();
-  const isLoading = status === "loading";
+  const { data: listingsData, isLoading: listingsLoading } = useListingsFlat();
+  const listings = listingsData?.listings ?? [];
+  const { data: chainsData, isLoading: chainsLoading } = useChains();
+  const chains = chainsData?.chains ?? [];
+
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const { data: searchData, isFetching: searchFetching } = useSemanticSearch(searchQuery);
+  const isSearchActive = searchQuery.trim().length >= 3;
+  const searchResults = searchData?.results ?? [];
+  const searchMode = searchData?.mode;
 
   const scrollToFold = (id: string) => {
     const el = document.getElementById(id);
@@ -108,46 +81,17 @@ export default function DiscoveryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFDFD] pb-20 overflow-x-hidden font-sans selection:bg-primary/20 scroll-smooth">
+    <div className="min-h-screen bg-background pb-20 overflow-x-hidden font-sans scroll-smooth">
       
-      {/* FOLD 1: APPLE SCHOLASTIC GLASS HERO */}
-      <section className="relative w-full h-screen flex flex-col bg-white overflow-hidden">
+      {/* FOLD 1: LIQUID GLASS HERO */}
+      <section className="relative w-full h-screen flex flex-col bg-background overflow-hidden">
+        {/* Iridescent Ambient Glow */}
         <div className="absolute inset-0 z-0">
-           <div className="absolute top-[-10%] left-[-5%] w-[120%] h-[120%] bg-[radial-gradient(circle_at_50%_50%,_rgba(139,0,0,0.04)_0%,_rgba(255,255,255,0)_60%)]" />
+           <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-accent/10 blur-[150px] rounded-full" />
+           <div className="absolute bottom-[-20%] left-[-10%] w-[60%] h-[60%] bg-stone-200/40 blur-[150px] rounded-full" />
         </div>
 
-        {/* Floating Glass Navigation */}
-        <div className="fixed top-8 left-1/2 -translate-x-1/2 z-[100] w-full max-w-xl px-6">
-           <nav className="glass rounded-full px-8 py-4 flex justify-between items-center shadow-2xl shadow-black/5 border border-white/40 backdrop-blur-3xl">
-              <div className="flex items-center gap-3">
-                 <div className="h-8 w-8 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
-                    <Share2 className="h-4 w-4 text-white" />
-                 </div>
-                 <h2 className="text-sm font-black tracking-tighter text-zinc-800 font-serif italic">JNU BARTER</h2>
-              </div>
-              <div className="flex items-center gap-8">
-                 {['Market', 'Pulse', 'FAQ'].map((item) => (
-                   <button 
-                    key={item} 
-                    onClick={() => scrollToFold(item.toLowerCase())}
-                    className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-primary transition-all hover:scale-110 active:scale-95"
-                   >
-                    {item}
-                   </button>
-                 ))}
-                 <div className="h-4 w-[1px] bg-zinc-200/50" />
-                 {session ? (
-                   <button onClick={() => signOut()} className="h-8 w-8 rounded-full overflow-hidden border border-white shadow-sm ring-2 ring-primary/20">
-                      <img src={session.user?.image || ""} alt="User" className="h-full w-full object-cover" />
-                   </button>
-                 ) : (
-                    <Button onClick={() => signIn("google")} variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-zinc-50">
-                        <User className="h-4 w-4 text-zinc-400" />
-                    </Button>
-                 )}
-              </div>
-           </nav>
-        </div>
+        {/* Suggestion #9: Desktop-to-Mobile QR Integration Concept would be here */}
 
         <div className="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-8">
             <motion.div 
@@ -156,140 +100,108 @@ export default function DiscoveryPage() {
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
               className="space-y-12"
             >
-               <Badge className="bg-primary/5 text-primary rounded-full px-6 py-2 text-[10px] font-bold uppercase tracking-widest border border-primary/10">
-                  Institutional Reciprocity Protocol v7.7
+               <Badge className="bg-stone-100 text-stone-500 rounded-full px-6 py-2 text-[10px] font-mono font-bold uppercase tracking-widest border border-stone-200">
+                  <Globe className="h-3 w-3 mr-2 inline" /> Node Identity Protocol v2.4
                </Badge>
                
-               <h1 className="text-8xl md:text-[160px] font-black tracking-[-0.08em] leading-[0.75] text-zinc-900 font-serif">
-                 Academic <br/> 
-                 <span className="text-primary italic font-serif">Exchange.</span>
+               <h1 className="text-7xl md:text-[140px] font-extrabold tracking-[-0.06em] leading-[0.8] text-primary">
+                 BEYOND <br/> 
+                 <span className="text-accent italic">CURRENCY.</span>
                </h1>
                
-               <p className="text-zinc-500 font-medium text-xl md:text-3xl max-w-4xl mx-auto leading-tight font-sans">
-                 A cinematic-grade platform for the non-monetary circulation of intellectual labor within the JNU academic ecosystem.
+               <p className="text-secondary font-medium text-lg md:text-2xl max-w-3xl mx-auto leading-tight">
+                 Premium peer-to-peer reciprocity within the JNU academic ecosystem. No cash. No credit. Pure merit.
                </p>
                
-               <div className="flex items-center justify-center gap-8 pt-8">
-                  <Magnet magnetStrength={5}>
-                    {session ? (
-                      <Button 
-                        onClick={() => window.location.href = '/setup'}
-                        className="rounded-full bg-zinc-900 text-white text-xs font-bold uppercase tracking-widest px-14 h-20 shadow-[0_20px_50px_rgba(0,0,0,0.2)] hover:shadow-[0_30px_60px_rgba(0,0,0,0.3)] transition-all"
-                      >
-                        Launch Node
-                      </Button>
-                    ) : (
-                      <Button 
-                        onClick={() => signIn("google")}
-                        className="rounded-full bg-zinc-900 text-white text-xs font-bold uppercase tracking-widest px-14 h-20 shadow-[0_20px_50px_rgba(0,0,0,0.2)] hover:shadow-[0_30px_60px_rgba(0,0,0,0.3)] transition-all"
-                      >
-                        Initialize Node
-                      </Button>
-                    )}
-                  </Magnet>
+               <div className="flex flex-col md:flex-row items-center justify-center gap-6 pt-8">
+                  <Button 
+                    onClick={() => session ? (window.location.href = '/setup') : signIn("google")}
+                    className="rounded-full btn-premium text-[10px] font-black uppercase tracking-widest px-16 h-20 shadow-2xl shadow-accent/20"
+                  >
+                    Initialize Node
+                  </Button>
                   <Button 
                     variant="ghost" 
-                    onClick={() => scrollToFold('faq')}
-                    className="text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-primary px-10 h-20 group"
+                    onClick={() => scrollToFold('market')}
+                    className="text-[10px] font-bold uppercase tracking-widest text-stone-400 hover:text-accent px-10 h-20 group"
                   >
-                    Technical Specifications <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-2 transition-transform" />
+                    View Registry <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-2 transition-transform" />
                   </Button>
                </div>
             </motion.div>
         </div>
       </section>
 
-      {/* FOLD 2: ACTIVE REGISTRY (SPOTLIGHT GLASS CARDS) */}
-      <section id="market" className="max-w-7xl mx-auto px-8 py-48 relative z-20">
-        <div className="mb-32 space-y-6 text-center">
-           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-           >
-            <h3 className="text-6xl font-black tracking-tighter text-zinc-900 uppercase font-serif italic">Scholarly Registry</h3>
-            <div className="h-1.5 w-24 bg-primary mx-auto rounded-full mt-6" />
-            <p className="text-zinc-400 font-medium max-w-2xl mx-auto text-xl leading-relaxed mt-8">
-              Validating bilateral matching nodes across university departments through peer-vouched reciprocity.
-            </p>
-           </motion.div>
+      {/* FOLD 2: SEMANTIC REGISTRY */}
+      <section id="market" className="max-w-7xl mx-auto px-8 py-32 relative z-20">
+        <div className="mb-24 space-y-6 text-center">
+            <h3 className="text-5xl font-extrabold tracking-tighter text-primary uppercase">Peer Registry</h3>
+            <div className="h-1 w-20 bg-accent mx-auto rounded-full" />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-           {isLoading ? (
-             Array(3).fill(0).map((_, i) => <ListingSkeleton key={i} />)
+        {/* Suggestion #4: Glass Search Bar with Shimmer */}
+        <div className="relative max-w-3xl mx-auto mb-20 group">
+          <div className="relative glass-card border-iridescent rounded-full overflow-hidden p-1 transition-all group-focus-within:shadow-2xl">
+            <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-stone-400" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search by skill, need, or department..."
+              className="w-full h-16 pl-14 pr-6 bg-transparent text-sm font-medium text-primary placeholder:text-stone-300 focus:outline-none"
+            />
+            {searchFetching && (
+              <div className="absolute right-6 top-1/2 -translate-y-1/2 h-5 w-5 rounded-full border-2 border-accent border-t-transparent animate-spin" />
+            )}
+          </div>
+          {isSearchActive && searchMode && (
+            <p className="text-[9px] font-mono font-bold uppercase tracking-[0.2em] text-accent text-center mt-4 animate-pulse">
+              {searchMode === "semantic" ? "✦ Semantic similarity logic active" : "Vector fallback active"}
+            </p>
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+           {isSearchActive ? (
+             searchFetching ? (
+               Array(3).fill(0).map((_, i) => <ListingSkeleton key={i} />)
+             ) : (
+               searchResults.map((listing, idx) => (
+                 <motion.div
+                  key={listing.id}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: idx * 0.05 }}
+                 >
+                   <ListingCard listing={listing} />
+                 </motion.div>
+               ))
+             )
            ) : (
-             MOCK_LISTINGS.map((listing) => (
-               <motion.div
-                key={listing.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.1 }}
-               >
-                 <SpotlightCard className="bg-white rounded-[2.5rem] border border-zinc-100 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.03)] p-6 group transition-all">
-                   <ListingCard 
-                    listing={listing} 
-                    className="bg-transparent border-none p-0 group-hover:-translate-y-2 transition-transform"
-                   />
-                 </SpotlightCard>
-               </motion.div>
-             ))
+             listingsLoading ? (
+               Array(6).fill(0).map((_, i) => <ListingSkeleton key={i} />)
+             ) : (
+               listings.map((listing, idx) => (
+                 <motion.div
+                  key={listing.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                 >
+                   <ListingCard listing={listing} />
+                 </motion.div>
+               ))
+             )
            )}
         </div>
       </section>
 
-      {/* FOLD 3: NETWORK PULSE (GAUGE NODES) */}
-      <section id="pulse" className="relative py-60 px-8 bg-white overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
-        
-        <div className="max-w-7xl mx-auto space-y-32 relative z-10">
-            <div className="flex flex-col items-center text-center space-y-8">
-               <Badge className="bg-primary/5 text-primary border-none rounded-full px-6 py-2 text-[10px] font-bold uppercase tracking-[0.4em]">Node Velocity</Badge>
-               <h3 className="text-7xl font-black tracking-tighter text-zinc-900 uppercase font-serif">Network <span className="text-primary italic">Integrity.</span></h3>
-               <p className="text-zinc-500 font-medium max-w-2xl text-xl leading-relaxed">
-                 Real-time visualization of academic matching vectors. Every node represents a verified @jnu.ac.in participation point.
-               </p>
-            </div>
+      {/* Suggestion #8: AI FAB */}
+      <SwapMateFAB />
 
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8">
-               {isLoading ? (
-                  Array(6).fill(0).map((_, i) => <ListingSkeleton key={i} />)
-               ) : (
-                  Array(12).fill(0).map((_, i) => (
-                    <motion.div 
-                      key={i}
-                      whileHover={{ scale: 1.1, rotate: 2 }}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ type: "spring", stiffness: 200, damping: 15 }}
-                      className="aspect-square glass rounded-[3rem] flex flex-col items-center justify-center p-8 gap-6 cursor-pointer shadow-[0_15px_40px_rgba(0,0,0,0.02)] border border-white transition-all group"
-                    >
-                        <div className="h-20 w-20 rounded-[2rem] bg-zinc-50 flex items-center justify-center border border-zinc-100 group-hover:bg-primary/5 transition-all relative overflow-hidden">
-                           <GraduationCap className="h-10 w-10 text-zinc-300 group-hover:text-primary transition-all z-10" />
-                           <motion.div 
-                            animate={{ rotate: 360 }}
-                            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                            className="absolute inset-0 border-2 border-dashed border-primary/10 rounded-[2rem] opacity-0 group-hover:opacity-100"
-                           />
-                        </div>
-                        <div className="text-center">
-                          <p className="text-[10px] font-black uppercase text-zinc-400 tracking-[0.3em] font-mono">Node_{i+500}</p>
-                          <p className="text-[8px] font-bold text-primary/40 uppercase mt-1">Verified</p>
-                        </div>
-                    </motion.div>
-                  ))
-               )}
-            </div>
-        </div>
-      </section>
-
-      {/* FOLD 4: LAYMAN FAQ */}
       <FAQSection />
-
-      {/* PWA INSTALLATION TRIGGER */}
       <InstallPWA />
+      <VouchModal />
     </div>
   );
 }
