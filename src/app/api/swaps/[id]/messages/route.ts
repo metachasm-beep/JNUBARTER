@@ -3,12 +3,12 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
 
-interface RouteContext {
-  params: { id: string };
-}
-
 // GET /api/swaps/[id]/messages — load message history
-export async function GET(_req: Request, { params }: RouteContext) {
+export async function GET(
+  _req: Request, 
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
   const session = await getServerSession(authOptions);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -16,7 +16,7 @@ export async function GET(_req: Request, { params }: RouteContext) {
 
   try {
     const swap = await prisma.swap.findUnique({
-      where: { id: params.id },
+      where: { id },
       select: { initiatorId: true, receiverId: true },
     });
 
@@ -31,7 +31,7 @@ export async function GET(_req: Request, { params }: RouteContext) {
     }
 
     const messages = await prisma.message.findMany({
-      where: { swapId: params.id },
+      where: { swapId: id },
       orderBy: { createdAt: "asc" },
       take: 200, // reasonable cap
     });
@@ -47,7 +47,11 @@ export async function GET(_req: Request, { params }: RouteContext) {
 }
 
 // POST /api/swaps/[id]/messages — persist a new message
-export async function POST(req: Request, { params }: RouteContext) {
+export async function POST(
+  req: Request, 
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
   const session = await getServerSession(authOptions);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -65,7 +69,7 @@ export async function POST(req: Request, { params }: RouteContext) {
 
     // Verify the user is a participant in this swap
     const swap = await prisma.swap.findUnique({
-      where: { id: params.id },
+      where: { id },
       select: { initiatorId: true, receiverId: true, status: true },
     });
 
@@ -88,7 +92,7 @@ export async function POST(req: Request, { params }: RouteContext) {
 
     const message = await prisma.message.create({
       data: {
-        swapId: params.id,
+        swapId: id,
         senderId: userId,
         content: content.trim().slice(0, 2000), // length cap
       },

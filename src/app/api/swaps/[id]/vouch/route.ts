@@ -10,11 +10,11 @@ const VouchSchema = z.object({
   skillsVouched: z.array(z.string()).max(10),
 });
 
-interface RouteContext {
-  params: { id: string };
-}
-
-export async function POST(req: Request, { params }: RouteContext) {
+export async function POST(
+  req: Request, 
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
   const session = await getServerSession(authOptions);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -30,7 +30,7 @@ export async function POST(req: Request, { params }: RouteContext) {
   }
 
   const swap = await prisma.swap.findUnique({
-    where: { id: params.id },
+    where: { id },
     select: { initiatorId: true, receiverId: true, status: true },
   });
 
@@ -49,7 +49,7 @@ export async function POST(req: Request, { params }: RouteContext) {
   try {
     const vouch = await prisma.vouch.create({
       data: {
-        swapId: params.id,
+        swapId: id,
         senderId,
         receiverId: parsed.data.receiverId,
         content: parsed.data.content,

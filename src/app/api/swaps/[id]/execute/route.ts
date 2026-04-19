@@ -4,23 +4,23 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
 import { inngest } from "@/lib/inngest";
 
-interface RouteContext {
-  params: { id: string };
-}
-
 /**
  * PATCH /api/swaps/[id]/execute
  * Called when both parties confirm in NegotiationChat.
  * Moves swap to EXECUTED and fires the Inngest vouch-prompt event.
  */
-export async function PATCH(_req: Request, { params }: RouteContext) {
+export async function PATCH(
+  _req: Request, 
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
   const session = await getServerSession(authOptions);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const swap = await prisma.swap.findUnique({
-    where: { id: params.id },
+    where: { id },
     select: { initiatorId: true, receiverId: true, status: true },
   });
 
@@ -46,7 +46,7 @@ export async function PATCH(_req: Request, { params }: RouteContext) {
 
   // Move to EXECUTED
   const updated = await prisma.swap.update({
-    where: { id: params.id },
+    where: { id },
     data: { status: "EXECUTED" },
     select: { id: true, status: true, initiatorId: true, receiverId: true },
   });
