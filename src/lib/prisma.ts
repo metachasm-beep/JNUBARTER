@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import { Pool, neonConfig } from '@neondatabase/serverless'
-import { PrismaNeon } from '@prisma/adapter-pg'
+import { PrismaNeon } from '@prisma/adapter-neon'
 import ws from 'ws'
 
 // Required for Neon serverless to work in Node.js environments (like Vercel builds)
