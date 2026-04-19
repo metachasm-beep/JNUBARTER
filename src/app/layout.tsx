@@ -28,7 +28,7 @@ import AppContainer from "@/components/AppContainer";
 import CommandMenu from "@/components/CommandMenu";
 import { BottomNav } from "@/components/BottomNav";
 
-import { ClerkProvider } from "@clerk/nextjs";
+import AuthProvider from "@/components/AuthProvider";
 
 export default function RootLayout({
   children,
@@ -36,7 +36,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
+    <AuthProvider>
       <html
         lang="en"
         className={`${ibmPlexSerif.variable} ${geist.variable} ${jetbrainsMono.variable} h-full antialiased`}
@@ -47,6 +47,6 @@ export default function RootLayout({
           <BottomNav />
         </body>
       </html>
-    </ClerkProvider>
+    </AuthProvider>
   );
 }

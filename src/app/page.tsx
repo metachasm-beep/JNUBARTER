@@ -70,7 +70,7 @@ const SpotlightCard = ({ children, className }: any) => {
   );
 };
 
-import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { signIn, signOut, useSession } from "next-auth/react";
 import { useRef } from "react";
 
 const MOCK_LISTINGS = [
@@ -99,12 +99,8 @@ const MOCK_LISTINGS = [
 // --- Main Page ---
 
 export default function DiscoveryPage() {
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 800);
-    return () => clearTimeout(timer);
-  }, []);
+  const { data: session, status } = useSession();
+  const isLoading = status === "loading";
 
   const scrollToFold = (id: string) => {
     const el = document.getElementById(id);
@@ -140,16 +136,15 @@ export default function DiscoveryPage() {
                    </button>
                  ))}
                  <div className="h-4 w-[1px] bg-zinc-200/50" />
-                 <SignedIn>
-                   <UserButton appearance={{ elements: { userButtonAvatarBox: "h-8 w-8 shadow-sm border border-white" } }} />
-                 </SignedIn>
-                 <SignedOut>
-                    <SignInButton mode="modal">
-                      <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-zinc-50">
-                          <User className="h-4 w-4 text-zinc-400" />
-                      </Button>
-                    </SignInButton>
-                 </SignedOut>
+                 {session ? (
+                   <button onClick={() => signOut()} className="h-8 w-8 rounded-full overflow-hidden border border-white shadow-sm ring-2 ring-primary/20">
+                      <img src={session.user?.image || ""} alt="User" className="h-full w-full object-cover" />
+                   </button>
+                 ) : (
+                    <Button onClick={() => signIn("google")} variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-zinc-50">
+                        <User className="h-4 w-4 text-zinc-400" />
+                    </Button>
+                 )}
               </div>
            </nav>
         </div>
@@ -162,7 +157,7 @@ export default function DiscoveryPage() {
               className="space-y-12"
             >
                <Badge className="bg-primary/5 text-primary rounded-full px-6 py-2 text-[10px] font-bold uppercase tracking-widest border border-primary/10">
-                  Institutional Reciprocity Protocol v7.6
+                  Institutional Reciprocity Protocol v7.7
                </Badge>
                
                <h1 className="text-8xl md:text-[160px] font-black tracking-[-0.08em] leading-[0.75] text-zinc-900 font-serif">
@@ -176,23 +171,21 @@ export default function DiscoveryPage() {
                
                <div className="flex items-center justify-center gap-8 pt-8">
                   <Magnet magnetStrength={5}>
-                    <SignedIn>
+                    {session ? (
                       <Button 
                         onClick={() => window.location.href = '/setup'}
                         className="rounded-full bg-zinc-900 text-white text-xs font-bold uppercase tracking-widest px-14 h-20 shadow-[0_20px_50px_rgba(0,0,0,0.2)] hover:shadow-[0_30px_60px_rgba(0,0,0,0.3)] transition-all"
                       >
                         Launch Node
                       </Button>
-                    </SignedIn>
-                    <SignedOut>
-                      <SignInButton mode="modal">
-                        <Button 
-                          className="rounded-full bg-zinc-900 text-white text-xs font-bold uppercase tracking-widest px-14 h-20 shadow-[0_20px_50px_rgba(0,0,0,0.2)] hover:shadow-[0_30px_60px_rgba(0,0,0,0.3)] transition-all"
-                        >
-                          Initialize Node
-                        </Button>
-                      </SignInButton>
-                    </SignedOut>
+                    ) : (
+                      <Button 
+                        onClick={() => signIn("google")}
+                        className="rounded-full bg-zinc-900 text-white text-xs font-bold uppercase tracking-widest px-14 h-20 shadow-[0_20px_50px_rgba(0,0,0,0.2)] hover:shadow-[0_30px_60px_rgba(0,0,0,0.3)] transition-all"
+                      >
+                        Initialize Node
+                      </Button>
+                    )}
                   </Magnet>
                   <Button 
                     variant="ghost" 
