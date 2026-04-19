@@ -1,38 +1,47 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #FAFAF9; /* Soft Stone */
-  --color-foreground: #0C0A09; /* Deep Stone */
-  --color-primary: #1C1917;    /* Stone 900 */
-  --color-secondary: #44403C;  /* Stone 700 */
-  --color-muted: #F5F5F4;
-  --color-accent: #CA8A04;     /* Premium Gold */
-  --color-border: #E7E5E4;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  
   --font-mono: "Fira Code", monospace;
   --font-sans: "Fira Sans", system-ui, sans-serif;
+  
+  --radius: var(--radius);
 }
 
 @layer base {
   :root {
-    --background: 40 10% 98%;
-    --foreground: 24 10% 3%;
-    --card: 0 0% 100%;
-    --card-foreground: 24 10% 3%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 24 10% 3%;
-    --primary: 24 10% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 30 5% 90%;
-    --secondary-foreground: 24 10% 10%;
-    --muted: 30 5% 96%;
-    --muted-foreground: 25 5% 45%;
-    --accent: 45 93% 40%; /* Gold */
-    --accent-foreground: 24 10% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 30 5% 90%;
-    --input: 30 5% 90%;
-    --ring: 45 93% 40%;
+    --background: #FAFAF9;
+    --foreground: #0C0A09;
+    --card: #FFFFFF;
+    --card-foreground: #0C0A09;
+    --popover: #FFFFFF;
+    --popover-foreground: #0C0A09;
+    --primary: #1C1917;
+    --primary-foreground: #FAFAF9;
+    --secondary: #F5F5F4;
+    --secondary-foreground: #1C1917;
+    --muted: #F5F5F4;
+    --muted-foreground: #78716C;
+    --accent: #CA8A04;
+    --accent-foreground: #1C1917;
+    --destructive: #EF4444;
+    --destructive-foreground: #FAFAF9;
+    --border: #E7E5E4;
+    --input: #E7E5E4;
+    --ring: #CA8A04;
     --radius: 1.25rem;
   }
 }
@@ -53,7 +62,6 @@
     letter-spacing: -0.04em;
     color: var(--primary);
   }
-  /* Suggestion #2: Fira Code for data/stats */
   .font-data {
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
