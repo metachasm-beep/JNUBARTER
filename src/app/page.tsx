@@ -71,6 +71,30 @@ const SpotlightCard = ({ children, className }: any) => {
 };
 
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { useRef } from "react";
+
+const MOCK_LISTINGS = [
+  {
+    id: "1",
+    title: "Python for Quantitative Research",
+    description: "Pedagogical assistance for empirical data analysis and visualization via automated scripting for thesis candidates.",
+    type: "OFFER" as ListingType,
+    category: "SERVICE",
+    effortEstimate: "HIGH" as EffortEstimate,
+    tags: ["python", "quantitative", "sis"],
+    user: { name: "ROHAN VERMA", school: "SIS", reputation: 450 },
+  },
+  {
+    id: "2",
+    title: "Francophone Literature Evaluation",
+    description: "Seeking peer-review and linguistic validation for a French translation project within the humanities domain.",
+    type: "WANT" as ListingType,
+    category: "SERVICE",
+    effortEstimate: "MEDIUM" as EffortEstimate,
+    tags: ["french", "linguistics", "sllcs"],
+    user: { name: "PRIYA DAS", school: "SLL&CS", reputation: 320 },
+  },
+];
 
 // --- Main Page ---
 
