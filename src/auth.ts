@@ -7,9 +7,12 @@ declare module "next-auth" {
     user: {
       id: string;
       isVerified: boolean;
+      role: "USER" | "ADMIN";
     } & DefaultSession["user"];
   }
 }
+
+const ADMIN_EMAILS = ["metachasm@gmail.com"];
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -21,22 +24,25 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async signIn({ user }) {
       const email = user.email ?? "";
+      const shouldBeAdmin = ADMIN_EMAILS.includes(email);
 
-      // Remove institutional restriction — allow any Google account (including Gmail)
       try {
         await prisma.user.upsert({
           where: { email },
-          update: { isVerified: true },
+          update: { 
+            isVerified: true,
+            role: shouldBeAdmin ? "ADMIN" : undefined 
+          },
           create: {
             email,
             name: user.name ?? email.split("@")[0],
             image: user.image ?? null,
             isVerified: true,
+            role: shouldBeAdmin ? "ADMIN" : "USER",
           },
         });
       } catch (err) {
         console.error("[auth] upsert error", err);
-        // Don't block sign-in for DB errors — log and continue
       }
 
       return true;
@@ -44,13 +50,13 @@ export const authOptions: NextAuthOptions = {
 
     async jwt({ token, user }) {
       if (user) {
-        // Find the user in DB by email to get our CUID
         const dbUser = await prisma.user.findUnique({
           where: { email: user.email! },
-          select: { id: true },
+          select: { id: true, role: true },
         });
         if (dbUser) {
           token.id = dbUser.id;
+          token.role = dbUser.role;
         }
       }
       return token;
@@ -59,12 +65,14 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (session.user && token.id) {
         session.user.id = token.id as string;
+        session.user.role = (token.role as "USER" | "ADMIN") || "USER";
         try {
           const dbUser = await prisma.user.findUnique({
             where: { id: session.user.id },
-            select: { isVerified: true },
+            select: { isVerified: true, role: true },
           });
           session.user.isVerified = dbUser?.isVerified ?? false;
+          session.user.role = dbUser?.role ?? "USER";
         } catch {
           session.user.isVerified = false;
         }

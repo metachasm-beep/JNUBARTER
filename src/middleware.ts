@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 
 // Routes that require authentication
-const PROTECTED_ROUTES = ["/swap", "/profile", "/setup"];
+const PROTECTED_ROUTES = ["/swap", "/profile", "/setup", "/admin"];
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -23,6 +23,11 @@ export async function middleware(req: NextRequest) {
     const signInUrl = new URL("/api/auth/signin", req.url);
     signInUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(signInUrl);
+  }
+
+  // Admin check
+  if (pathname.startsWith("/admin") && token.role !== "ADMIN") {
+    return NextResponse.redirect(new URL("/", req.url));
   }
 
   // Institutional restriction removed — any authenticated user can proceed
