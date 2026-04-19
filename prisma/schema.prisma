@@ -1,0 +1,123 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  image         String?
+  bio           String?
+  school        String?   // E.g. SIS, SLL&CS, SSS
+  hostel        String?   // E.g. Tapti, Mahi-Mandavi
+  program       String?   // E.g. PhD, MA, BA
+  year          String?   
+  skills        String[]  // Array of skill tags
+  interests     String[]  // Things they want to learn
+  reputation    Int       @default(0)
+  isVerified    Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  listings      Listing[]
+  swapsInitiated Swap[]    @relation("Initiator")
+  swapsReceived  Swap[]    @relation("Receiver")
+  vouchesSent    Vouch[]   @relation("VouchSender")
+  vouchesReceived Vouch[]  @relation("VouchReceiver")
+}
+
+model Listing {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  type          ListingType // OFFER or WANT
+  category      Category    @default(SERVICE) // SERVICE or COMMODITY
+  title         String
+  description   String
+  videoUrl      String?
+  images        String[]    // Support for commodity photos
+  tags          String[]
+  effortEstimate EffortEstimate? // Only for services
+  condition     String?     // Only for commodities (E.g. New, Used)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  swapItems     SwapItem[]
+}
+
+enum ListingType {
+  OFFER
+  WANT
+}
+
+enum Category {
+  SERVICE
+  COMMODITY
+}
+
+enum EffortEstimate {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+model Swap {
+  id            String    @id @default(cuid())
+  initiatorId   String
+  initiator     User      @relation("Initiator", fields: [initiatorId], references: [id])
+  receiverId    String
+  receiver      User      @relation("Receiver", fields: [receiverId], references: [id])
+  status        SwapStatus @default(PROPOSED)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  items         SwapItem[]
+  messages      Message[]
+  vouch         Vouch?
+}
+
+enum SwapStatus {
+  PROPOSED
+  COUNTERED
+  ACCEPTED
+  EXECUTED
+  CANCELLED
+}
+
+model SwapItem {
+  id            String    @id @default(cuid())
+  swapId        String
+  swap          Swap      @relation(fields: [swapId], references: [id])
+  listingId     String
+  listing       Listing   @relation(fields: [listingId], references: [id])
+  addedById     String
+}
+
+model Message {
+  id            String    @id @default(cuid())
+  swapId        String
+  swap          Swap      @relation(fields: [swapId], references: [id])
+  senderId      String
+  content       String
+  createdAt     DateTime  @default(now())
+}
+
+model Vouch {
+  id            String    @id @default(cuid())
+  swapId        String    @unique
+  swap          Swap      @relation(fields: [swapId], references: [id])
+  senderId      String
+  sender        User      @relation("VouchSender", fields: [senderId], references: [id])
+  receiverId    String
+  receiver      User      @relation("VouchReceiver", fields: [receiverId], references: [id])
+  content       String
+  skillsVouched String[]
+  createdAt     DateTime  @default(now())
+}

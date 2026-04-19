@@ -30,5 +30,17 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "antigravity-awesome-skills-main",
+    "antigravity-skills-main",
+    "awesome-design-md-main",
+    "everything-claude-code-main",
+    "get-shit-done-for-antigravity-main",
+    "react-bits-main",
+    "shadcnui-main",
+    "stitch-skills-main",
+    "v0-skills-main",
+    "shadcn-skills-main"
+  ]
 }
