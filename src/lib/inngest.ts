@@ -7,12 +7,11 @@ export const inngest = new Inngest({ id: "jnu-barter" });
  * 4. Context-Compressed Logging (Inngest)
  * 5. Multi-Agent Swap Discovery
  */
-// @ts-ignore: Inngest version mismatch in build container
-export const autonomousDiscovery = inngest.createFunction(
+export const autonomousDiscovery = (inngest as any).createFunction(
   { id: "autonomous-discovery" },
   { event: "barter/profile.updated" },
-  async ({ event, step }) => {
-    const { userId } = event.data as any;
+  async ({ event, step }: any) => {
+    const { userId } = event.data;
 
     const matches = await step.run("graph-discovery", async () => {
       return await GodmodeEngine.findOptimalSwaps(userId);
