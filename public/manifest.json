@@ -1,21 +1,24 @@
 {
-  "name": "Barter - Pure Service Exchange",
-  "short_name": "Barter",
-  "description": "Zero-currency service exchange platform",
+  "name": "JNU BARTER | Student Reciprocity",
+  "short_name": "JNUBARTER",
+  "description": "Premium zero-money exchange for JNU students.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#000000",
+  "orientation": "portrait",
+  "background_color": "#F6F9FC",
+  "theme_color": "#8B0000",
   "icons": [
     {
       "src": "/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }
