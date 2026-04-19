@@ -1,7 +1,6 @@
-import { Inngest } from "inngest";
+import { inngest } from "./inngest/client";
 import { GodmodeEngine } from "./godmode-engine";
-
-export const inngest = new Inngest({ id: "jnu-barter" });
+export { inngest };
 
 /**
  * Existing: Autonomous swap discovery on profile update.

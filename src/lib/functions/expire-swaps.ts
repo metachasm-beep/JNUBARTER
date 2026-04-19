@@ -1,4 +1,4 @@
-import { inngest } from "@/lib/inngest";
+import { inngest } from "@/lib/inngest/client";
 import { prisma } from "@/lib/prisma";
 import { getNeo4jDriver } from "@/lib/neo4j";
 
