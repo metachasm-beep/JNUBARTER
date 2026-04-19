@@ -28,21 +28,25 @@ import AppContainer from "@/components/AppContainer";
 import CommandMenu from "@/components/CommandMenu";
 import { BottomNav } from "@/components/BottomNav";
 
+import { ClerkProvider } from "@clerk/nextjs";
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${ibmPlexSerif.variable} ${geist.variable} ${jetbrainsMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col bg-background text-foreground selection:bg-primary/30">
-        <CommandMenu />
-        <AppContainer>{children}</AppContainer>
-        <BottomNav />
-      </body>
-    </html>
+    <ClerkProvider>
+      <html
+        lang="en"
+        className={`${ibmPlexSerif.variable} ${geist.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      >
+        <body className="min-h-full flex flex-col bg-background text-foreground selection:bg-primary/30">
+          <CommandMenu />
+          <AppContainer>{children}</AppContainer>
+          <BottomNav />
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

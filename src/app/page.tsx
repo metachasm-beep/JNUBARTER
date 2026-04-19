@@ -70,7 +70,7 @@ const SpotlightCard = ({ children, className }: any) => {
   );
 };
 
-import { useRef } from "react";
+import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 // --- Main Page ---
 
@@ -116,9 +116,16 @@ export default function DiscoveryPage() {
                    </button>
                  ))}
                  <div className="h-4 w-[1px] bg-zinc-200/50" />
-                 <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-zinc-50">
-                    <User className="h-4 w-4 text-zinc-400" />
-                 </Button>
+                 <SignedIn>
+                   <UserButton appearance={{ elements: { userButtonAvatarBox: "h-8 w-8 shadow-sm border border-white" } }} />
+                 </SignedIn>
+                 <SignedOut>
+                    <SignInButton mode="modal">
+                      <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-zinc-50">
+                          <User className="h-4 w-4 text-zinc-400" />
+                      </Button>
+                    </SignInButton>
+                 </SignedOut>
               </div>
            </nav>
         </div>
@@ -131,7 +138,7 @@ export default function DiscoveryPage() {
               className="space-y-12"
             >
                <Badge className="bg-primary/5 text-primary rounded-full px-6 py-2 text-[10px] font-bold uppercase tracking-widest border border-primary/10">
-                  Institutional Reciprocity Protocol v7.5
+                  Institutional Reciprocity Protocol v7.6
                </Badge>
                
                <h1 className="text-8xl md:text-[160px] font-black tracking-[-0.08em] leading-[0.75] text-zinc-900 font-serif">
@@ -145,12 +152,23 @@ export default function DiscoveryPage() {
                
                <div className="flex items-center justify-center gap-8 pt-8">
                   <Magnet magnetStrength={5}>
-                    <Button 
-                      onClick={() => scrollToFold('market')}
-                      className="rounded-full bg-zinc-900 text-white text-xs font-bold uppercase tracking-widest px-14 h-20 shadow-[0_20px_50px_rgba(0,0,0,0.2)] hover:shadow-[0_30px_60px_rgba(0,0,0,0.3)] transition-all"
-                    >
-                      Open Registry
-                    </Button>
+                    <SignedIn>
+                      <Button 
+                        onClick={() => window.location.href = '/setup'}
+                        className="rounded-full bg-zinc-900 text-white text-xs font-bold uppercase tracking-widest px-14 h-20 shadow-[0_20px_50px_rgba(0,0,0,0.2)] hover:shadow-[0_30px_60px_rgba(0,0,0,0.3)] transition-all"
+                      >
+                        Launch Node
+                      </Button>
+                    </SignedIn>
+                    <SignedOut>
+                      <SignInButton mode="modal">
+                        <Button 
+                          className="rounded-full bg-zinc-900 text-white text-xs font-bold uppercase tracking-widest px-14 h-20 shadow-[0_20px_50px_rgba(0,0,0,0.2)] hover:shadow-[0_30px_60px_rgba(0,0,0,0.3)] transition-all"
+                        >
+                          Initialize Node
+                        </Button>
+                      </SignInButton>
+                    </SignedOut>
                   </Magnet>
                   <Button 
                     variant="ghost" 
