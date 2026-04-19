@@ -39,7 +39,7 @@ export const auditListingPolicy = inngest.createFunction(
       const text = result.response.text();
       try {
         // Simple regex to extract JSON if model adds markdown wrappers
-        const jsonMatch = text.match(/\{.*\}/s);
+        const jsonMatch = text.match(/\{[\s\S]*\}/);
         return JSON.parse(jsonMatch ? jsonMatch[0] : text);
       } catch (err) {
         return { isViolating: false, reason: "Analysis failed" };

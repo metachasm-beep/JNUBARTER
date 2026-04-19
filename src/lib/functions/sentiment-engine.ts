@@ -39,7 +39,7 @@ export const analyzeNetworkSentiment = inngest.createFunction(
       const result = await model.generateContent(prompt);
       const text = result.response.text();
       try {
-        const jsonMatch = text.match(/\{.*\}/s);
+        const jsonMatch = text.match(/\{[\s\S]*\}/);
         return JSON.parse(jsonMatch ? jsonMatch[0] : text);
       } catch (err) {
         return { label: "STABLE", score: 50, summary: "Analysis inconclusive." };
