@@ -30,6 +30,35 @@ export default function ProfileSetup() {
   const [offers, setOffers] = useState<{title: string, category: "SERVICE" | "COMMODITY", effort?: any, condition?: string, tags: string[]}[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  const StepCard = ({ num, title, description, children, isCompleted }: any) => (
+    <motion.div 
+      initial={false}
+      animate={{ 
+        height: step === num ? "auto" : "75px",
+        opacity: step >= num ? 1 : 0.6
+      }}
+      className={`overflow-hidden rounded-3xl border-2 transition-all duration-500 mb-4 ${
+        step === num ? "border-primary/20 bg-primary/[0.01]" : "border-zinc-100 bg-white"
+      }`}
+    >
+      <div className="p-6 flex items-center justify-between cursor-pointer" onClick={() => step > num && setStep(num)}>
+        <div className="flex items-center gap-4">
+          <div className={`h-8 w-8 rounded-full flex items-center justify-center border-2 ${isCompleted ? "bg-primary border-primary text-white" : "border-zinc-200 text-zinc-400"}`}>
+            {isCompleted ? <CheckCircle2 className="h-4 w-4" /> : <span className="text-[10px] font-bold">{num}</span>}
+          </div>
+          <div>
+            <h3 className="text-xs font-black uppercase tracking-tight text-zinc-800">{title}</h3>
+            {step !== num && <p className="text-[9px] text-zinc-400 uppercase font-bold">{description}</p>}
+          </div>
+        </div>
+        {step !== num && step > num && <Button variant="ghost" size="sm" className="text-[9px] uppercase font-bold text-primary">Modify</Button>}
+      </div>
+      <AnimatePresence>
+        {step === num && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="px-6 pb-6">{children}</motion.div>}
+      </AnimatePresence>
+    </motion.div>
+  );
+
   const addOffer = async () => {
     if (offerTitle) {
       // Zero-Money Policy Check
