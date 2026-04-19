@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { IBM_Plex_Serif, JetBrains_Mono, Geist } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
+const ibmPlexSerif = IBM_Plex_Serif({
+  variable: "--font-serif",
+  subsets: ["latin"],
+  weight: ["300", "400", "600", "700"],
+});
+
+const geist = Geist({
   variable: "--font-sans",
   subsets: ["latin"],
-  display: "swap",
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -31,7 +36,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`${ibmPlexSerif.variable} ${geist.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground selection:bg-primary/30">
         <CommandMenu />
