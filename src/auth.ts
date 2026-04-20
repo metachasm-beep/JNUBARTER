@@ -83,17 +83,16 @@ export const authOptions: NextAuthOptions = {
             token.role = dbUser.role || "USER";
             token.hasProfile = !!dbUser.school;
           }
-          
-          // CRITICAL: Force admin role if whitelisted email
-          if (ADMIN_EMAILS.includes(user.email!)) {
-            token.role = "ADMIN";
-          }
-          
-          console.log(`[auth] JWT Callback: user=${user.email} role=${token.role}`);
         } catch (err) {
           console.error("[auth] jwt callback error:", err);
         }
       }
+
+      // CRITICAL: Force admin role if whitelisted email (runs on every session check)
+      if (token.email && ADMIN_EMAILS.includes(token.email)) {
+        token.role = "ADMIN";
+      }
+
       return token;
     },
 

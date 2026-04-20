@@ -69,7 +69,7 @@ const SwapMateFAB = () => {
 export default function DiscoveryPage() {
   const { data: session, status } = useSession();
   const pathname = usePathname();
-  const isAdmin = (session?.user as any)?.role === "ADMIN";
+  const isAdmin = (session?.user as any)?.role === "ADMIN" || session?.user?.email === "metachasm@gmail.com";
   const { data: listingsData, isLoading: listingsLoading } = useListingsFlat();
   const listings = listingsData?.listings ?? [];
   const { data: chainsData, isLoading: chainsLoading } = useChains();
