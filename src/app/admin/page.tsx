@@ -7,6 +7,7 @@ export default async function AdminDashboard() {
   const listingCount = await prisma.listing.count();
   const swapCount = await prisma.swap.count();
   const averageReputation = await prisma.user.aggregate({ _avg: { reputation: true } });
+  const avgRep = averageReputation._avg.reputation ?? 0;
   
   // Enhancement #1 & #7 — Alerts
   const flaggedCount = await prisma.listing.count({ where: { isFlagged: true } });
@@ -20,6 +21,8 @@ export default async function AdminDashboard() {
   const usageStats = await prisma.usageLog.aggregate({
     _sum: { cost: true, tokens: true }
   });
+  const usageCost = usageStats?._sum?.cost ?? 0;
+  const usageTokens = usageStats?._sum?.tokens ?? 0;
 
   // Enhancement #9 — Sentiment
   const networkSentiment = await prisma.auditLog.findFirst({
@@ -43,8 +46,8 @@ export default async function AdminDashboard() {
         {/* Enhancement #3 — Cost Summary */}
         <div className="text-right glass-card p-6 rounded-3xl border-stone-200">
            <p className="text-[10px] font-mono font-bold text-stone-400 uppercase tracking-widest">Compute Overhead</p>
-           <h4 className="text-3xl font-black text-primary tracking-tighter">${(usageStats._sum.cost || 0).toFixed(4)}</h4>
-           <p className="text-[9px] font-mono text-stone-300 uppercase italic">{(usageStats._sum.tokens || 0).toLocaleString()} Tokens used</p>
+           <h4 className="text-3xl font-black text-primary tracking-tighter">${Number(usageCost).toFixed(4)}</h4>
+           <p className="text-[9px] font-mono text-stone-300 uppercase italic">{(usageTokens || 0).toLocaleString()} Tokens used</p>
         </div>
       </header>
 
