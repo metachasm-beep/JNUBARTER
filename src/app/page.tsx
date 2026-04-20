@@ -80,6 +80,7 @@ export default function DiscoveryPage() {
 
   const [isHowItWorksOpen, setIsHowItWorksOpen] = useState(false);
   const [isSetupModalOpen, setIsSetupModalOpen] = useState(false);
+  const [setupStep, setSetupStep] = useState(1);
 
   const [hasAttemptedAutoOpen, setHasAttemptedAutoOpen] = useState(false);
 
@@ -98,10 +99,19 @@ export default function DiscoveryPage() {
   if (status === "authenticated") {
     return (
       <div className="min-h-screen bg-background pb-20 overflow-x-hidden font-sans scroll-smooth">
-        <Dashboard />
+        <Dashboard 
+          openSetup={(step?: number) => {
+            if (step) setSetupStep(step);
+            setIsSetupModalOpen(true);
+          }} 
+        />
         <SwapMateFAB />
         <VouchModal />
-        <InitializeNodeModal isOpen={isSetupModalOpen} onClose={() => setIsSetupModalOpen(false)} />
+        <InitializeNodeModal 
+          isOpen={isSetupModalOpen} 
+          onClose={() => setIsSetupModalOpen(false)} 
+          initialStep={setupStep}
+        />
       </div>
     );
   }
@@ -230,7 +240,11 @@ export default function DiscoveryPage() {
       <InstallPWA />
       <VouchModal />
       <HowItWorksModal isOpen={isHowItWorksOpen} onClose={() => setIsHowItWorksOpen(false)} />
-      <InitializeNodeModal isOpen={isSetupModalOpen} onClose={() => setIsSetupModalOpen(false)} />
+      <InitializeNodeModal 
+        isOpen={isSetupModalOpen} 
+        onClose={() => setIsSetupModalOpen(false)} 
+        initialStep={setupStep}
+      />
     </div>
   );
 }

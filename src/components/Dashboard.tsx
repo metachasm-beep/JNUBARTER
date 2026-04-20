@@ -20,7 +20,11 @@ import { ListingCard } from "@/components/ListingCard";
 import { ListingSkeleton } from "@/components/ListingSkeleton";
 import { useListingsFlat } from "@/hooks/useListings";
 
-export function Dashboard() {
+interface DashboardProps {
+  openSetup: (step?: number) => void;
+}
+
+export function Dashboard({ openSetup }: DashboardProps) {
   const { data: session } = useSession();
   const { data: listingsData, isLoading } = useListingsFlat();
   const listings = listingsData?.listings ?? [];
@@ -151,7 +155,10 @@ export function Dashboard() {
                     <Badge className="bg-accent/5 text-accent border-accent/10 text-[10px] px-3 py-1 rounded-lg italic font-bold">Scientific Calc</Badge>
                   </div>
                 </div>
-                <Button className="w-full mt-4 h-12 rounded-xl border border-stone-100 bg-stone-50 text-primary text-[10px] font-black uppercase tracking-widest hover:bg-stone-100 transition-colors">
+                <Button 
+                  onClick={() => openSetup(1)}
+                  className="w-full mt-4 h-12 rounded-xl border border-stone-100 bg-stone-50 text-primary text-[10px] font-black uppercase tracking-widest hover:bg-stone-100 transition-colors"
+                >
                   Edit Portfolio
                 </Button>
               </div>
@@ -161,9 +168,12 @@ export function Dashboard() {
               <Sparkles className="h-8 w-8 mb-4 opacity-50" />
               <h3 className="text-xl font-black uppercase tracking-tighter italic leading-tight mb-2">Network Expansion</h3>
               <p className="text-[11px] opacity-80 leading-relaxed mb-6">
-                You've only listed 2 items. Nodes with 5+ assets see a 400% increase in triangular match probability.
+                Nodes with 5+ assets see a 400% increase in triangular match probability.
               </p>
-              <Button className="w-full h-12 rounded-xl bg-white text-accent text-[10px] font-black uppercase tracking-widest hover:scale-[1.02] transition-transform">
+              <Button 
+                onClick={() => openSetup(2)}
+                className="w-full h-12 rounded-xl bg-white text-accent text-[10px] font-black uppercase tracking-widest hover:scale-[1.02] transition-transform"
+              >
                 List New Asset
               </Button>
             </section>

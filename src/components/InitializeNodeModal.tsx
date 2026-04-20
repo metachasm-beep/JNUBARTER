@@ -57,11 +57,18 @@ const StepCard = ({ num, title, label, children, activeStep, onStepClick, isComp
 interface InitializeNodeModalProps {
   isOpen: boolean;
   onClose: () => void;
+  initialStep?: number;
 }
 
-export function InitializeNodeModal({ isOpen, onClose }: InitializeNodeModalProps) {
+export function InitializeNodeModal({ isOpen, onClose, initialStep }: InitializeNodeModalProps) {
   const { data: session } = useSession();
   const [step, setStep] = useState(1);
+
+  useEffect(() => {
+    if (isOpen && initialStep) {
+      setStep(initialStep);
+    }
+  }, [isOpen, initialStep]);
   const [name, setName] = useState<string>("");
   const [bio, setBio] = useState<string>("");
   const [school, setSchool] = useState<string>("");
