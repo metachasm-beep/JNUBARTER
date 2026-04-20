@@ -88,11 +88,12 @@ export default function DiscoveryPage() {
   const [hasAttemptedAutoOpen, setHasAttemptedAutoOpen] = useState(false);
 
   useEffect(() => {
-    if (status === "authenticated" && session?.user && !(session?.user as any)?.hasProfile && !hasAttemptedAutoOpen) {
+    // Only auto-open setup for regular users, and only if they don't have a profile
+    if (status === "authenticated" && !isAdmin && session?.user && !(session?.user as any)?.hasProfile && !hasAttemptedAutoOpen) {
       setIsSetupModalOpen(true);
       setHasAttemptedAutoOpen(true);
     }
-  }, [status, session, hasAttemptedAutoOpen]);
+  }, [status, session, hasAttemptedAutoOpen, isAdmin]);
 
   useEffect(() => {
     if (status === "authenticated" && isAdmin && pathname === "/") {
