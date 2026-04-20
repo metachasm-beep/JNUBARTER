@@ -27,6 +27,12 @@ export const authOptions: NextAuthOptions = {
       
       const email = user.email;
       const isAdminEmail = ADMIN_EMAILS.includes(email);
+      const isJNUEmail = email.endsWith("@jnu.ac.in");
+
+      // Only allow JNU emails or whitelisted admin emails
+      if (!isAdminEmail && !isJNUEmail) {
+        return false;
+      }
 
       try {
         // We use a very permissive upsert. If the 'role' or 'isSuspended' columns 

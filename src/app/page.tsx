@@ -119,14 +119,14 @@ export default function DiscoveryPage() {
                       onClick={() => signIn("google")}
                       className="rounded-full btn-premium text-[10px] font-black uppercase tracking-widest px-16 h-20 shadow-2xl shadow-accent/20"
                     >
-                      Sign In
+                      Sign-in
                     </Button>
                   ) : (
                     <Button 
                       onClick={() => (window.location.href = '/setup')}
                       className="rounded-full btn-premium text-[10px] font-black uppercase tracking-widest px-16 h-20 shadow-2xl shadow-accent/20"
                     >
-                      Initialize Node
+                      Sign-in
                     </Button>
                   )}
                   
