@@ -70,14 +70,14 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         try {
-          const dbUser = await withTimeout(
+          const dbUser = (await withTimeout(
             (prisma.user as any).findUnique({
               where: { email: user.email! },
               select: { id: true, role: true, school: true },
             }),
             1500, // 1.5 second timeout
             null
-          );
+          )) as any;
           if (dbUser) {
             token.id = dbUser.id;
             token.role = dbUser.role || "USER";
