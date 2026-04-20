@@ -8,11 +8,10 @@ if (typeof window === 'undefined') {
   neonConfig.webSocketConstructor = ws
 }
 
-const connectionString = process.env.DATABASE_URL;
-
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
 export const prisma = (() => {
+  const connectionString = process.env.DATABASE_URL;
   if (globalForPrisma.prisma) {
     return globalForPrisma.prisma;
   }
