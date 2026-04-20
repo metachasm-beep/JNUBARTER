@@ -5,8 +5,9 @@ import { prisma } from "@/lib/prisma";
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const session = await getServerSession(authOptions);
 
   if (!session || session.user.role !== "ADMIN") {
@@ -17,7 +18,7 @@ export async function PATCH(
     const { isSuspended } = await req.json();
 
     const user = await (prisma.user as any).update({
-      where: { id: params.id },
+      where: { id },
       data: { isSuspended },
     });
 
@@ -25,7 +26,7 @@ export async function PATCH(
     await (prisma.auditLog as any).create({
       data: {
         action: isSuspended ? "USER_SUSPENDED" : "USER_ACTIVATED",
-        entity: `USER:${params.id}`,
+        entity: `USER:${id}`,
         userId: (session.user as any).id,
         metadata: { targetUser: user.email }
       }
