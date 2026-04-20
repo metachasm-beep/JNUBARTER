@@ -87,7 +87,7 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
                         {feature.icon}
                       </div>
                       <h4 className="text-sm font-black uppercase tracking-tight text-primary">{feature.title}</h4>
-                      <p className="text-xs text-secondary leading-relaxed font-medium">
+                      <p className="text-xs text-stone-600 leading-relaxed font-medium">
                         {feature.description}
                       </p>
                     </motion.div>
@@ -101,7 +101,7 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
                         </div>
                         <div className="space-y-1 text-center md:text-left">
                             <h5 className="text-xs font-black uppercase tracking-widest text-primary">Ready to contribute?</h5>
-                            <p className="text-[11px] text-secondary font-medium leading-tight">
+                            <p className="text-[11px] text-stone-600 font-medium leading-tight">
                                 Join thousands of peers already swapping knowledge. Your first offer builds your reputation in the network.
                             </p>
                         </div>
