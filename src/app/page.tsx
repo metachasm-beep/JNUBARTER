@@ -81,7 +81,7 @@ export default function DiscoveryPage() {
   const [isSetupModalOpen, setIsSetupModalOpen] = useState(false);
 
   useEffect(() => {
-    if (status === "authenticated" && !(session?.user as any)?.hasProfile) {
+    if (status === "authenticated" && session?.user && !(session?.user as any)?.hasProfile) {
       setIsSetupModalOpen(true);
     }
   }, [status, session]);
@@ -122,21 +122,19 @@ export default function DiscoveryPage() {
                </p>
                
                <div className="flex flex-col md:flex-row items-center justify-center gap-6 pt-8">
-                  {status !== "authenticated" ? (
-                    <Button 
-                      onClick={() => signIn("google")}
-                      className="rounded-full btn-premium text-[10px] font-black uppercase tracking-widest px-16 h-20 shadow-2xl shadow-accent/20"
-                    >
-                      Sign-in
-                    </Button>
-                  ) : (
-                    <Button 
-                      onClick={() => setIsSetupModalOpen(true)}
-                      className="rounded-full btn-premium text-[10px] font-black uppercase tracking-widest px-16 h-20 shadow-2xl shadow-accent/20"
-                    >
-                      Sign-in
-                    </Button>
-                  )}
+                  <Button 
+                    onClick={() => {
+                      console.log("Sign-in clicked, status:", status);
+                      if (status === "authenticated") {
+                        setIsSetupModalOpen(true);
+                      } else {
+                        signIn("google");
+                      }
+                    }}
+                    className="rounded-full btn-premium text-[10px] font-black uppercase tracking-widest px-16 h-20 shadow-2xl shadow-accent/20"
+                  >
+                    Sign-in
+                  </Button>
                   
                   <Button 
                     variant="outline"
