@@ -2,6 +2,13 @@ import NextAuth, { NextAuthOptions, type DefaultSession } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { prisma } from "@/lib/prisma";
 
+const withTimeout = <T>(promise: Promise<T>, timeoutMs: number, fallback: T): Promise<T> => {
+  return Promise.race([
+    promise,
+    new Promise<T>((resolve) => setTimeout(() => resolve(fallback), timeoutMs))
+  ]);
+};
+
 declare module "next-auth" {
   interface Session {
     user: {
@@ -35,30 +42,26 @@ export const authOptions: NextAuthOptions = {
       }
 
       try {
-        // We use a very permissive upsert. If the 'role' or 'isSuspended' columns 
-        // don't exist yet (migration pending), we catch the error to prevent 
-        // blocking sign-in entirely.
-        await (prisma.user as any).upsert({
-          where: { email },
-          update: { 
-            isVerified: true,
-            // Only attempt to set role if it's an admin email. 
-            // Using spread to avoid setting undefined if column doesn't exist.
-            ...(isAdminEmail ? { role: "ADMIN" } : {})
-          },
-          create: {
-            email,
-            name: user.name ?? email.split("@")[0],
-            image: user.image ?? null,
-            isVerified: true,
-            role: isAdminEmail ? "ADMIN" : "USER",
-          },
-        });
+        await withTimeout(
+          (prisma.user as any).upsert({
+            where: { email },
+            update: { 
+              isVerified: true,
+              ...(isAdminEmail ? { role: "ADMIN" } : {})
+            },
+            create: {
+              email,
+              name: user.name ?? email.split("@")[0],
+              image: user.image ?? null,
+              isVerified: true,
+              role: isAdminEmail ? "ADMIN" : "USER",
+            },
+          }),
+          2000, // 2 second timeout
+          null
+        );
       } catch (err) {
-        console.error("[auth] signIn database sync error (likely missing columns):", err);
-        // CRITICAL: Do NOT return false here. We want to allow sign-in 
-        // even if the user record couldn't be created/updated in the DB
-        // for this session.
+        console.error("[auth] signIn database sync error:", err);
       }
 
       return true;
@@ -67,10 +70,14 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         try {
-          const dbUser = await (prisma.user as any).findUnique({
-            where: { email: user.email! },
-            select: { id: true, role: true, school: true },
-          });
+          const dbUser = await withTimeout(
+            (prisma.user as any).findUnique({
+              where: { email: user.email! },
+              select: { id: true, role: true, school: true },
+            }),
+            1500, // 1.5 second timeout
+            null
+          );
           if (dbUser) {
             token.id = dbUser.id;
             token.role = dbUser.role || "USER";
