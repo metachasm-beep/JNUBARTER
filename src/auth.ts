@@ -87,19 +87,7 @@ export const authOptions: NextAuthOptions = {
       if (session.user && token.id) {
         session.user.id = token.id as string;
         session.user.role = (token.role as "USER" | "ADMIN") || "USER";
-        try {
-          const dbUser = await (prisma.user as any).findUnique({
-            where: { id: session.user.id },
-            select: { isVerified: true, role: true, school: true },
-          });
-          if (dbUser) {
-            session.user.isVerified = !!dbUser.isVerified;
-            session.user.role = dbUser.role || "USER";
-            (session.user as any).hasProfile = !!dbUser.school;
-          }
-        } catch (err) {
-          console.error("[auth] session callback error:", err);
-        }
+        (session.user as any).hasProfile = !!token.hasProfile;
       }
       return session;
     },
