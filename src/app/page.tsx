@@ -80,11 +80,14 @@ export default function DiscoveryPage() {
   const [isHowItWorksOpen, setIsHowItWorksOpen] = useState(false);
   const [isSetupModalOpen, setIsSetupModalOpen] = useState(false);
 
+  const [hasAttemptedAutoOpen, setHasAttemptedAutoOpen] = useState(false);
+
   useEffect(() => {
-    if (status === "authenticated" && session?.user && !(session?.user as any)?.hasProfile) {
+    if (status === "authenticated" && session?.user && !(session?.user as any)?.hasProfile && !hasAttemptedAutoOpen) {
       setIsSetupModalOpen(true);
+      setHasAttemptedAutoOpen(true);
     }
-  }, [status, session]);
+  }, [status, session, hasAttemptedAutoOpen]);
 
   const scrollToFold = (id: string) => {
     const el = document.getElementById(id);

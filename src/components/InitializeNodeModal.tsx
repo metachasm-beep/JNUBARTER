@@ -208,8 +208,8 @@ export function InitializeNodeModal({ isOpen, onClose }: InitializeNodeModalProp
                 <GraduationCap className="h-6 w-6 text-accent" />
               </div>
               <div>
-                <h2 className="text-xl font-black tracking-tighter uppercase text-primary italic">Initialize Node</h2>
-                <p className="text-[10px] font-mono font-bold text-stone-400 uppercase tracking-widest">Protocol Setup Phase</p>
+                <h2 className="text-3xl font-black uppercase tracking-tighter text-primary italic">Setup Your Scholarly Identity</h2>
+                <p className="text-[10px] font-mono font-bold text-stone-400 uppercase tracking-[0.2em] mt-1">Network Presence Protocol v2.4</p>
               </div>
             </div>
             <button onClick={onClose} className="h-10 w-10 rounded-full hover:bg-stone-100 flex items-center justify-center text-stone-400 transition-colors">
@@ -218,7 +218,7 @@ export function InitializeNodeModal({ isOpen, onClose }: InitializeNodeModalProp
           </div>
 
           <div className="flex-1 overflow-y-auto p-8 pt-6">
-            <StepCard num={1} title="Identity" description="Your scholarly metadata" isCompleted={step > 1} activeStep={step} onStepClick={setStep}>
+            <StepCard num={1} title="Identity" label="Who are you in the network?" activeStep={step} onStepClick={setStep}>
               <div className="space-y-6 pt-4">
                 <div className="space-y-2">
                   <Label className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-400">Public Name</Label>
@@ -242,7 +242,7 @@ export function InitializeNodeModal({ isOpen, onClose }: InitializeNodeModalProp
               </div>
             </StepCard>
 
-            <StepCard num={2} title="Assets" description="Your intellectual labor" isCompleted={step > 2} activeStep={step} onStepClick={setStep}>
+            <StepCard num={2} title="Knowledge & Resources" label="What can you provide to others?" activeStep={step} onStepClick={setStep}>
               <div className="space-y-8 pt-4">
                  <div className="space-y-4">
                     <Label className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-400">New Offering</Label>
@@ -320,7 +320,7 @@ export function InitializeNodeModal({ isOpen, onClose }: InitializeNodeModalProp
               </div>
             </StepCard>
 
-            <StepCard num={3} title="Wants" description="Your intellectual needs" isCompleted={step > 3} activeStep={step} onStepClick={setStep}>
+            <StepCard num={3} title="Academic Needs" label="What are you currently seeking?" activeStep={step} onStepClick={setStep}>
               <div className="space-y-8 pt-4">
                  <div className="space-y-2">
                     <Label className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-400">What do you need?</Label>
@@ -348,7 +348,7 @@ export function InitializeNodeModal({ isOpen, onClose }: InitializeNodeModalProp
                    disabled={isLoading} 
                    className="w-full h-16 rounded-2xl btn-premium text-white font-black uppercase text-xs tracking-[0.2em] shadow-2xl shadow-accent/20"
                  >
-                    {isLoading ? "Synchronizing Node..." : "Launch Presence"}
+                    {isLoading ? "Synchronizing Node..." : "Activate Exchange Node"}
                  </Button>
               </div>
             </StepCard>
