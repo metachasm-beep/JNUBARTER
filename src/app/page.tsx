@@ -12,6 +12,7 @@ import { InstallPWA } from "@/components/InstallPWA";
 import { useListingsFlat } from "@/hooks/useListings";
 import { ChainCard, ChainSkeleton } from "@/components/ChainCard";
 import { VouchModal } from "@/components/VouchModal";
+import { HowItWorksModal } from "@/components/HowItWorksModal";
 import { useChains } from "@/hooks/useChains";
 import { useSemanticSearch } from "@/hooks/useSemanticSearch";
 import { signIn, signOut, useSession } from "next-auth/react";
@@ -75,6 +76,8 @@ export default function DiscoveryPage() {
   const searchResults = searchData?.results ?? [];
   const searchMode = searchData?.mode;
 
+  const [isHowItWorksOpen, setIsHowItWorksOpen] = useState(false);
+
   const scrollToFold = (id: string) => {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: "smooth" });
@@ -100,9 +103,6 @@ export default function DiscoveryPage() {
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
               className="space-y-12"
             >
-               <Badge className="bg-stone-100 text-stone-500 rounded-full px-6 py-2 text-[10px] font-mono font-bold uppercase tracking-widest border border-stone-200">
-                  <Globe className="h-3 w-3 mr-2 inline" /> Node Identity Protocol v2.4
-               </Badge>
                
                <h1 className="text-7xl md:text-[140px] font-extrabold tracking-[-0.06em] leading-[0.8] text-primary">
                  BEYOND <br/> 
@@ -114,12 +114,30 @@ export default function DiscoveryPage() {
                </p>
                
                <div className="flex flex-col md:flex-row items-center justify-center gap-6 pt-8">
+                  {status !== "authenticated" ? (
+                    <Button 
+                      onClick={() => signIn("google")}
+                      className="rounded-full btn-premium text-[10px] font-black uppercase tracking-widest px-16 h-20 shadow-2xl shadow-accent/20"
+                    >
+                      Sign In
+                    </Button>
+                  ) : (
+                    <Button 
+                      onClick={() => (window.location.href = '/setup')}
+                      className="rounded-full btn-premium text-[10px] font-black uppercase tracking-widest px-16 h-20 shadow-2xl shadow-accent/20"
+                    >
+                      Initialize Node
+                    </Button>
+                  )}
+                  
                   <Button 
-                    onClick={() => session ? (window.location.href = '/setup') : signIn("google")}
-                    className="rounded-full btn-premium text-[10px] font-black uppercase tracking-widest px-16 h-20 shadow-2xl shadow-accent/20"
+                    variant="outline"
+                    onClick={() => setIsHowItWorksOpen(true)}
+                    className="rounded-full border-stone-200 text-[10px] font-black uppercase tracking-widest px-10 h-20 hover:bg-stone-50/50 transition-colors"
                   >
-                    Initialize Node
+                    How It Works
                   </Button>
+
                   <Button 
                     variant="ghost" 
                     onClick={() => scrollToFold('market')}
@@ -202,6 +220,7 @@ export default function DiscoveryPage() {
       <FAQSection />
       <InstallPWA />
       <VouchModal />
+      <HowItWorksModal isOpen={isHowItWorksOpen} onClose={() => setIsHowItWorksOpen(false)} />
     </div>
   );
 }
