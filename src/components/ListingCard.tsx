@@ -2,7 +2,10 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Badge } from "@/components/ui/badge";
 import { ProfileViewDrawer } from "./ProfileViewDrawer";
 import SpotlightCard from "./SpotlightCard";
-import { Package, Briefcase, ChevronRight, Star } from "lucide-react";
+import { Package, Briefcase, ChevronRight, Star, Trash2 } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { toast } from "sonner";
+import { useState } from "react";
 
 interface ListingCardProps {
   listing: any;
@@ -10,17 +13,41 @@ interface ListingCardProps {
 }
 
 export function ListingCard({ listing, className }: ListingCardProps) {
+  const { data: session } = useSession();
+  const isAdmin = (session?.user as any)?.role === "ADMIN";
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const isOffer = listing.type === "OFFER";
   const isService = listing.category === "SERVICE";
+
+  const deleteDummy = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!confirm("Delete this dummy entry?")) return;
+    
+    setIsDeleting(true);
+    const res = await fetch(`/api/admin/dummy?id=${listing.id}`, { method: "DELETE" });
+    if (res.ok) {
+      toast.success("Entry removed.");
+      window.location.reload();
+    } else {
+      toast.error("Failed to delete.");
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <SpotlightCard className={`h-full glass-card border-iridescent iridescent-hover cursor-pointer group ${className}`}>
       <Card className="h-full bg-transparent border-none rounded-none shadow-none flex flex-col">
         <CardHeader className="p-6 pb-2 space-y-4">
           <div className="flex justify-between items-start">
-            <Badge className={`font-mono text-[9px] font-bold uppercase tracking-wider rounded-full px-3 py-1 ${isOffer ? "bg-accent/10 text-accent" : "bg-stone-200 text-stone-600"}`}>
-              {listing.type}
-            </Badge>
+            <div className="flex items-center gap-2">
+              <Badge className={`font-mono text-[9px] font-bold uppercase tracking-wider rounded-full px-3 py-1 ${isOffer ? "bg-accent/10 text-accent" : "bg-stone-200 text-stone-600"}`}>
+                {listing.type}
+              </Badge>
+              {listing.isSystem && (
+                <Badge className="bg-primary/10 text-primary border-primary/20 text-[9px] px-2 py-0.5 rounded-full font-mono font-bold">SYSTEM</Badge>
+              )}
+            </div>
             <div className="h-8 w-8 rounded-xl bg-stone-100/50 backdrop-blur-md flex items-center justify-center border border-white/20">
                {isService ? <Briefcase className="h-4 w-4 text-stone-500" /> : <Package className="h-4 w-4 text-stone-500" />}
             </div>
@@ -47,7 +74,18 @@ export function ListingCard({ listing, className }: ListingCardProps) {
           </div>
         </CardContent>
         <CardFooter className="p-6 pt-0 mt-auto flex items-center justify-between border-t border-stone-100/30 mt-4 pt-4">
-          <ProfileViewDrawer user={listing.user} />
+          <div className="flex items-center gap-4">
+            <ProfileViewDrawer user={listing.user} />
+            {isAdmin && listing.isSystem && (
+              <button 
+                onClick={deleteDummy} 
+                disabled={isDeleting}
+                className="text-stone-300 hover:text-destructive transition-colors disabled:opacity-50"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            )}
+          </div>
           <div className="flex items-center gap-2 text-accent">
              <span className="text-[10px] font-bold uppercase tracking-tighter opacity-0 group-hover:opacity-100 transition-opacity duration-300">Details</span>
              <ChevronRight className="h-4 w-4 transform group-hover:translateX-1 transition-transform duration-300" />
