@@ -1,37 +1,31 @@
-import { PrismaClient } from '@prisma/client'
-import { Pool, neonConfig } from '@neondatabase/serverless'
-import { PrismaNeon } from '@prisma/adapter-neon'
-import ws from 'ws'
-
-// Required for Neon serverless to work in Node.js environments (like Vercel builds)
-if (typeof window === 'undefined') {
-  neonConfig.webSocketConstructor = ws
-}
+import { PrismaClient } from '@prisma/client';
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
 export const prisma = (() => {
-  const connectionString = process.env.DATABASE_URL;
   if (globalForPrisma.prisma) {
     return globalForPrisma.prisma;
   }
 
-  if (!connectionString) {
-    // If we're on the server and no DB URL is found, we throw a descriptive error
-    // instead of letting the Pool fail silently with localhost
+  const rawUrl = process.env.DATABASE_URL;
+
+  if (!rawUrl || rawUrl.length < 10) {
     if (typeof window === 'undefined') {
-      console.error("CRITICAL: DATABASE_URL is not set in environment variables.");
+      console.error("CRITICAL: DATABASE_URL is invalid or missing.");
     }
-    // Fallback to a plain client (will likely fail later, but avoids crash on module load)
     return new PrismaClient();
   }
 
-  const pool = new Pool({ connectionString });
-  const adapter = new PrismaNeon(pool as any);
-  
+  // Sanitize the URL to remove any hidden whitespace or control characters
+  const sanitizedUrl = rawUrl.trim().replace(/[\r\n]/g, '');
+
   const client = new PrismaClient({
-    adapter,
-    log: ['query'],
+    datasources: {
+      db: {
+        url: sanitizedUrl,
+      },
+    },
+    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
   });
 
   if (process.env.NODE_ENV !== 'production') {
