@@ -18,14 +18,14 @@ import { useSession } from "next-auth/react";
 interface StepCardProps {
   num: number;
   title: string;
-  description: string;
+  label: string;
   children: React.ReactNode;
-  isCompleted: boolean;
   activeStep: number;
   onStepClick: (num: number) => void;
+  isCompleted?: boolean;
 }
 
-const StepCard = ({ num, title, description, children, isCompleted, activeStep, onStepClick }: StepCardProps) => (
+const StepCard = ({ num, title, label, children, activeStep, onStepClick, isCompleted }: StepCardProps) => (
   <motion.div 
     initial={false}
     animate={{ 
@@ -43,7 +43,7 @@ const StepCard = ({ num, title, description, children, isCompleted, activeStep, 
         </div>
         <div>
           <h3 className="text-sm font-sans font-extrabold uppercase tracking-tight text-primary">{title}</h3>
-          {activeStep !== num && <p className="text-[9px] font-mono text-stone-400 uppercase font-bold">{description}</p>}
+          {activeStep !== num && <p className="text-[9px] font-mono text-stone-400 uppercase font-bold">{label}</p>}
         </div>
       </div>
       {activeStep !== num && activeStep > num && <Button variant="ghost" size="sm" className="text-[9px] uppercase font-bold text-accent">Modify</Button>}
