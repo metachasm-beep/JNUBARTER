@@ -139,12 +139,31 @@ export function InitializeNodeModal({ isOpen, onClose }: InitializeNodeModalProp
       return;
     }
 
-    if (wants.length === 0 && wantInput.trim()) {
-      addWant(); // Auto-add if they have text but didn't press Enter
+    let finalWants = [...wants];
+    if (finalWants.length === 0 && wantInput.trim()) {
+      const trimmed = wantInput.trim().toUpperCase();
+      if (!finalWants.includes(trimmed)) {
+        finalWants.push(trimmed);
+        setWants(finalWants);
+        setWantInput("");
+      }
+    }
+
+    if (finalWants.length === 0) {
+      toast.error("Please add at least one want.");
+      return;
     }
 
     setIsLoading(true);
-    const result = ProfileSchema.safeParse({ userId: session.user.id, name, bio, school, hostel, offers, wants });
+    const result = ProfileSchema.safeParse({ 
+      userId: session.user.id, 
+      name, 
+      bio, 
+      school, 
+      hostel, 
+      offers, 
+      wants: finalWants 
+    });
     if (!result.success) {
       toast.error(`Validation failed: ${result.error.issues[0].message}`);
       setIsLoading(false);
