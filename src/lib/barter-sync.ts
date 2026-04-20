@@ -39,6 +39,8 @@ export async function atomicSyncUser(data: z.infer<typeof ProfileSchema>) {
         id: data.userId,
         name: sanitizedName,
         bio: sanitizedBio,
+        school: data.school,
+        hostel: data.hostel,
       });
 
     if (pgError) throw new Error(`PG_SYNC_FAILURE: ${pgError.message}`);

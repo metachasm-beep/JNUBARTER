@@ -134,11 +134,19 @@ export function InitializeNodeModal({ isOpen, onClose }: InitializeNodeModalProp
   };
 
   const handleLaunch = async () => {
-    if (!session?.user?.id) return;
+    if (!session?.user?.id) {
+      toast.error("Session missing. Please try signing in again.");
+      return;
+    }
+
+    if (wants.length === 0 && wantInput.trim()) {
+      addWant(); // Auto-add if they have text but didn't press Enter
+    }
+
     setIsLoading(true);
     const result = ProfileSchema.safeParse({ userId: session.user.id, name, bio, school, hostel, offers, wants });
     if (!result.success) {
-      toast.error("Profile validation failed. Ensure all fields are valid.");
+      toast.error(`Validation failed: ${result.error.errors[0].message}`);
       setIsLoading(false);
       return;
     }
@@ -316,7 +324,11 @@ export function InitializeNodeModal({ isOpen, onClose }: InitializeNodeModalProp
                     </AnimatePresence>
                  </div>
 
-                 <Button onClick={handleLaunch} disabled={wants.length === 0 || isLoading} className="w-full h-16 rounded-2xl btn-premium text-white font-black uppercase text-xs tracking-[0.2em] shadow-2xl shadow-accent/20">
+                 <Button 
+                   onClick={handleLaunch} 
+                   disabled={isLoading} 
+                   className="w-full h-16 rounded-2xl btn-premium text-white font-black uppercase text-xs tracking-[0.2em] shadow-2xl shadow-accent/20"
+                 >
                     {isLoading ? "Synchronizing Node..." : "Launch Presence"}
                  </Button>
               </div>
