@@ -146,7 +146,7 @@ export function InitializeNodeModal({ isOpen, onClose }: InitializeNodeModalProp
     setIsLoading(true);
     const result = ProfileSchema.safeParse({ userId: session.user.id, name, bio, school, hostel, offers, wants });
     if (!result.success) {
-      toast.error(`Validation failed: ${result.error.errors[0].message}`);
+      toast.error(`Validation failed: ${result.error.issues[0].message}`);
       setIsLoading(false);
       return;
     }
