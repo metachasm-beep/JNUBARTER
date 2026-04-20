@@ -20,11 +20,6 @@ export const prisma = (() => {
   const sanitizedUrl = rawUrl.trim().replace(/[\r\n]/g, '');
 
   const client = new PrismaClient({
-    datasources: {
-      db: {
-        url: sanitizedUrl,
-      },
-    },
     log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
   });
 
