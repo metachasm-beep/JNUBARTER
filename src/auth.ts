@@ -69,11 +69,12 @@ export const authOptions: NextAuthOptions = {
         try {
           const dbUser = await (prisma.user as any).findUnique({
             where: { email: user.email! },
-            select: { id: true, role: true },
+            select: { id: true, role: true, school: true },
           });
           if (dbUser) {
             token.id = dbUser.id;
             token.role = dbUser.role || "USER";
+            token.hasProfile = !!dbUser.school;
           }
         } catch (err) {
           console.error("[auth] jwt callback error:", err);
@@ -89,11 +90,12 @@ export const authOptions: NextAuthOptions = {
         try {
           const dbUser = await (prisma.user as any).findUnique({
             where: { id: session.user.id },
-            select: { isVerified: true, role: true },
+            select: { isVerified: true, role: true, school: true },
           });
           if (dbUser) {
             session.user.isVerified = !!dbUser.isVerified;
             session.user.role = dbUser.role || "USER";
+            (session.user as any).hasProfile = !!dbUser.school;
           }
         } catch (err) {
           console.error("[auth] session callback error:", err);

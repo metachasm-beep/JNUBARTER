@@ -13,6 +13,7 @@ import { useListingsFlat } from "@/hooks/useListings";
 import { ChainCard, ChainSkeleton } from "@/components/ChainCard";
 import { VouchModal } from "@/components/VouchModal";
 import { HowItWorksModal } from "@/components/HowItWorksModal";
+import { InitializeNodeModal } from "@/components/InitializeNodeModal";
 import { useChains } from "@/hooks/useChains";
 import { useSemanticSearch } from "@/hooks/useSemanticSearch";
 import { signIn, signOut, useSession } from "next-auth/react";
@@ -77,6 +78,13 @@ export default function DiscoveryPage() {
   const searchMode = searchData?.mode;
 
   const [isHowItWorksOpen, setIsHowItWorksOpen] = useState(false);
+  const [isSetupModalOpen, setIsSetupModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (status === "authenticated" && !(session?.user as any)?.hasProfile) {
+      setIsSetupModalOpen(true);
+    }
+  }, [status, session]);
 
   const scrollToFold = (id: string) => {
     const el = document.getElementById(id);
@@ -123,7 +131,7 @@ export default function DiscoveryPage() {
                     </Button>
                   ) : (
                     <Button 
-                      onClick={() => (window.location.href = '/setup')}
+                      onClick={() => setIsSetupModalOpen(true)}
                       className="rounded-full btn-premium text-[10px] font-black uppercase tracking-widest px-16 h-20 shadow-2xl shadow-accent/20"
                     >
                       Sign-in
@@ -221,6 +229,7 @@ export default function DiscoveryPage() {
       <InstallPWA />
       <VouchModal />
       <HowItWorksModal isOpen={isHowItWorksOpen} onClose={() => setIsHowItWorksOpen(false)} />
+      <InitializeNodeModal isOpen={isSetupModalOpen} onClose={() => setIsSetupModalOpen(false)} />
     </div>
   );
 }
