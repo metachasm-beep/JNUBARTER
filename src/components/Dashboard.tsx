@@ -1,0 +1,175 @@
+"use client";
+
+import { useSession } from "next-auth/react";
+import { motion } from "framer-motion";
+import { 
+  Zap, 
+  Target, 
+  ShieldCheck, 
+  Users, 
+  ArrowUpRight, 
+  Sparkles, 
+  Clock,
+  Briefcase,
+  Package
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { ReputationDial } from "@/components/ReputationDial";
+import { ListingCard } from "@/components/ListingCard";
+import { ListingSkeleton } from "@/components/ListingSkeleton";
+import { useListingsFlat } from "@/hooks/useListings";
+
+export function Dashboard() {
+  const { data: session } = useSession();
+  const { data: listingsData, isLoading } = useListingsFlat();
+  const listings = listingsData?.listings ?? [];
+
+  // Mock stats for a comprehensive feel
+  const stats = [
+    { label: "Active Swaps", value: "3", icon: Zap, color: "text-accent" },
+    { label: "Merit Points", value: "450", icon: ShieldCheck, color: "text-blue-500" },
+    { label: "Network Reach", value: "Top 5%", icon: Users, color: "text-purple-500" },
+    { label: "Efficiency", value: "98%", icon: Target, color: "text-emerald-500" },
+  ];
+
+  return (
+    <div className="min-h-screen bg-stone-50/50 pt-12 pb-32">
+      <div className="max-w-7xl mx-auto px-8 space-y-12">
+        
+        {/* HEADER: ACADEMIC WELCOME */}
+        <section className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+               <Badge className="bg-accent/10 text-accent border-accent/20 text-[9px] px-2 py-0.5 rounded-full font-mono font-bold uppercase tracking-widest">Node Active</Badge>
+               <span className="text-[10px] font-mono text-stone-400 font-bold uppercase tracking-[0.2em]">Registry ID: {(session?.user as any)?.id?.slice(0, 8) ?? "..."}</span>
+            </div>
+            <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter italic text-primary">
+              Welcome back, <span className="text-accent">{session?.user?.name?.split(" ")[0]}</span>
+            </h1>
+            <p className="text-sm text-secondary font-medium mt-2 max-w-xl">
+              Your exchange node is currently broadcasting in the <span className="text-primary font-bold">{(session?.user as any)?.school ?? "General Registry"}</span>. Network density is high today.
+            </p>
+          </div>
+          <div className="flex items-center gap-6">
+             <div className="h-24 w-24">
+                <ReputationDial score={75} />
+             </div>
+          </div>
+        </section>
+
+        {/* STATS GRID: VITALITY METRICS */}
+        <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {stats.map((stat, i) => (
+            <motion.div 
+              key={stat.label}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              className="glass-card p-6 rounded-[2rem] border-stone-100 flex flex-col justify-between h-40 group hover:border-accent/20 transition-all cursor-default shadow-sm"
+            >
+              <div className={`p-2 rounded-xl bg-stone-50 w-fit ${stat.color} group-hover:scale-110 transition-transform`}>
+                <stat.icon className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-[10px] font-mono font-bold text-stone-400 uppercase tracking-widest">{stat.label}</p>
+                <h4 className="text-2xl font-black text-primary">{stat.value}</h4>
+              </div>
+            </motion.div>
+          ))}
+        </section>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          
+          {/* LEFT: RECENT ACTIVITY & OPPORTUNITIES */}
+          <div className="lg:col-span-2 space-y-12">
+            
+            <section>
+              <div className="flex items-center justify-between mb-8">
+                <h3 className="text-xl font-black uppercase tracking-tighter italic text-primary">High-Probability Matches</h3>
+                <Button variant="ghost" className="text-[10px] font-black uppercase tracking-widest text-accent hover:bg-accent/5">View All <ArrowUpRight className="ml-2 h-3 w-3" /></Button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {isLoading ? (
+                  Array(2).fill(0).map((_, i) => <ListingSkeleton key={i} />)
+                ) : (
+                  listings.slice(0, 4).map((listing, i) => (
+                    <motion.div 
+                      key={listing.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.4 + i * 0.1 }}
+                    >
+                      <ListingCard listing={listing} />
+                    </motion.div>
+                  ))
+                )}
+              </div>
+            </section>
+
+            <section>
+              <div className="flex items-center justify-between mb-8">
+                <h3 className="text-xl font-black uppercase tracking-tighter italic text-primary">System Signals</h3>
+              </div>
+              <div className="space-y-4">
+                 {[
+                   { title: "Incoming Merit Vouch", desc: "A peer from SIS just vouched for your Python skills.", icon: Sparkles, time: "2h ago" },
+                   { title: "Reciprocity Match", desc: "User 'Aspirant_99' needs your Video Editing and offers the Headphones you seek.", icon: Zap, time: "5h ago" },
+                   { title: "Protocol Update", desc: "Barter Protocol v2.5 initialized. Improved semantic matching online.", icon: Clock, time: "1d ago" }
+                 ].map((signal, i) => (
+                   <div key={i} className="flex items-center gap-4 p-5 glass-card rounded-[1.5rem] border-stone-100 hover:border-accent/10 transition-colors group cursor-pointer">
+                      <div className="h-10 w-10 rounded-xl bg-stone-50 flex items-center justify-center text-accent group-hover:scale-110 transition-transform">
+                        <signal.icon className="h-5 w-5" />
+                      </div>
+                      <div className="flex-1">
+                        <h5 className="text-[12px] font-black uppercase tracking-tight text-primary">{signal.title}</h5>
+                        <p className="text-[11px] text-secondary line-clamp-1">{signal.desc}</p>
+                      </div>
+                      <span className="text-[9px] font-mono font-bold text-stone-300 uppercase">{signal.time}</span>
+                   </div>
+                 ))}
+              </div>
+            </section>
+          </div>
+
+          {/* RIGHT: PERSONAL ASSETS & STATS */}
+          <div className="space-y-12">
+            <section className="glass-card p-8 rounded-[2.5rem] border-stone-100 bg-white/40">
+              <h3 className="text-lg font-black uppercase tracking-tighter italic text-primary mb-6">Your Exchange Assets</h3>
+              <div className="space-y-6">
+                <div className="space-y-3">
+                  <p className="text-[9px] font-mono font-bold text-stone-400 uppercase tracking-[0.2em]">Currently Offering</p>
+                  <div className="flex flex-wrap gap-2">
+                    <Badge className="bg-stone-100 text-stone-600 border-stone-200 text-[10px] px-3 py-1 rounded-lg">React Dev</Badge>
+                    <Badge className="bg-stone-100 text-stone-600 border-stone-200 text-[10px] px-3 py-1 rounded-lg">Photography</Badge>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <p className="text-[9px] font-mono font-bold text-stone-400 uppercase tracking-[0.2em]">Actively Seeking</p>
+                  <div className="flex flex-wrap gap-2">
+                    <Badge className="bg-accent/5 text-accent border-accent/10 text-[10px] px-3 py-1 rounded-lg italic font-bold">Research Help</Badge>
+                    <Badge className="bg-accent/5 text-accent border-accent/10 text-[10px] px-3 py-1 rounded-lg italic font-bold">Scientific Calc</Badge>
+                  </div>
+                </div>
+                <Button className="w-full mt-4 h-12 rounded-xl border border-stone-100 bg-stone-50 text-primary text-[10px] font-black uppercase tracking-widest hover:bg-stone-100 transition-colors">
+                  Edit Portfolio
+                </Button>
+              </div>
+            </section>
+
+            <section className="glass-card p-8 rounded-[2.5rem] border-stone-100 bg-accent text-white shadow-2xl shadow-accent/20">
+              <Sparkles className="h-8 w-8 mb-4 opacity-50" />
+              <h3 className="text-xl font-black uppercase tracking-tighter italic leading-tight mb-2">Network Expansion</h3>
+              <p className="text-[11px] opacity-80 leading-relaxed mb-6">
+                You've only listed 2 items. Nodes with 5+ assets see a 400% increase in triangular match probability.
+              </p>
+              <Button className="w-full h-12 rounded-xl bg-white text-accent text-[10px] font-black uppercase tracking-widest hover:scale-[1.02] transition-transform">
+                List New Asset
+              </Button>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

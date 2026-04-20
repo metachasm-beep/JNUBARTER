@@ -3,9 +3,9 @@
 import { Home, Search, PlusSquare, MessageSquare, User } from "lucide-react";
 import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
-import { Shield } from "lucide-react";
+import { Shield, LogOut } from "lucide-react";
 
 const NAV_ITEMS = [
   { icon: Home, label: "Feed", href: "/" },
@@ -67,6 +67,15 @@ export function BottomNav() {
                   className="absolute -bottom-2 h-1.5 w-1.5 rounded-full bg-primary"
                 />
               )}
+            </button>
+          )}
+
+          {session && (
+            <button 
+              onClick={() => signOut()}
+              className="relative group flex flex-col items-center justify-center p-2 rounded-2xl transition-all duration-300 focus:outline-none text-zinc-400 hover:text-destructive"
+            >
+              <LogOut className="h-7 w-7" strokeWidth={2} />
             </button>
           )}
 

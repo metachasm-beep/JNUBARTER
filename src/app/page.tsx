@@ -17,6 +17,7 @@ import { InitializeNodeModal } from "@/components/InitializeNodeModal";
 import { useChains } from "@/hooks/useChains";
 import { useSemanticSearch } from "@/hooks/useSemanticSearch";
 import { signIn, signOut, useSession } from "next-auth/react";
+import { Dashboard } from "@/components/Dashboard";
 
 // --- Suggestion #8: AI Swap-Mate FAB ---
 const SwapMateFAB = () => {
@@ -94,6 +95,17 @@ export default function DiscoveryPage() {
     if (el) el.scrollIntoView({ behavior: "smooth" });
   };
 
+  if (status === "authenticated") {
+    return (
+      <div className="min-h-screen bg-background pb-20 overflow-x-hidden font-sans scroll-smooth">
+        <Dashboard />
+        <SwapMateFAB />
+        <VouchModal />
+        <InitializeNodeModal isOpen={isSetupModalOpen} onClose={() => setIsSetupModalOpen(false)} />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background pb-20 overflow-x-hidden font-sans scroll-smooth">
       
@@ -104,8 +116,6 @@ export default function DiscoveryPage() {
            <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-accent/10 blur-[150px] rounded-full" />
            <div className="absolute bottom-[-20%] left-[-10%] w-[60%] h-[60%] bg-stone-200/40 blur-[150px] rounded-full" />
         </div>
-
-        {/* Suggestion #9: Desktop-to-Mobile QR Integration Concept would be here */}
 
         <div className="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-8">
             <motion.div 
@@ -159,7 +169,6 @@ export default function DiscoveryPage() {
             <div className="h-1 w-20 bg-accent mx-auto rounded-full" />
         </div>
 
-        {/* Suggestion #4: Glass Search Bar with Shimmer */}
         <div className="relative max-w-3xl mx-auto mb-20 group">
           <div className="relative glass-card border-iridescent rounded-full overflow-hidden p-1 transition-all group-focus-within:shadow-2xl">
             <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-stone-400" />
@@ -216,9 +225,7 @@ export default function DiscoveryPage() {
         </div>
       </section>
 
-      {/* Suggestion #8: AI FAB */}
       <SwapMateFAB />
-
       <FAQSection />
       <InstallPWA />
       <VouchModal />
@@ -226,4 +233,5 @@ export default function DiscoveryPage() {
       <InitializeNodeModal isOpen={isSetupModalOpen} onClose={() => setIsSetupModalOpen(false)} />
     </div>
   );
+}
 }
