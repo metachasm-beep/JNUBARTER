@@ -133,6 +133,12 @@ export default async function AdminDashboard() {
               <p className="text-[10px] font-mono text-red-600 leading-relaxed">
                 ERROR: {error.message || 'Unknown Server Error'}
               </p>
+              <div className="mt-4 pt-4 border-t border-red-100">
+                <p className="text-[8px] font-mono text-red-400 uppercase font-bold mb-1">Available Keys:</p>
+                <p className="text-[8px] font-mono text-red-300 break-all">
+                  {Object.keys(process.env).filter(k => !k.includes('SECRET') && !k.includes('PASSWORD') && !k.includes('KEY')).join(', ')}
+                </p>
+              </div>
            </div>
            <a href="/admin" className="mt-8 inline-flex items-center justify-center h-12 px-8 rounded-2xl bg-primary text-white text-[10px] font-mono font-black uppercase tracking-widest">Retry Connection</a>
         </div>
