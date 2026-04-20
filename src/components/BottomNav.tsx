@@ -5,13 +5,20 @@ import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
-import { Shield, LogOut } from "lucide-react";
+import { Shield, LogOut, LayoutDashboard, Users, Package, Activity, Database } from "lucide-react";
 
 const NAV_ITEMS = [
-  { icon: Home, label: "Feed", href: "/" },
+  { icon: Home, label: "Registry", href: "/" },
   { icon: Search, label: "Explore", href: "/" },
-  { icon: PlusSquare, label: "Post", href: "/" },
-  { icon: MessageSquare, label: "Inbox", href: "/" },
+  { icon: PlusSquare, label: "Exchange", href: "/" },
+  { icon: MessageSquare, label: "Flux", href: "/" },
+];
+
+const ADMIN_NAV_ITEMS = [
+  { icon: LayoutDashboard, label: "Overview", href: "/admin" },
+  { icon: Users, label: "Peers", href: "/admin/users" },
+  { icon: Package, label: "Mod", href: "/admin/listings" },
+  { icon: Database, label: "Dummies", href: "/admin/dummy" },
 ];
 
 export function BottomNav() {
@@ -24,11 +31,14 @@ export function BottomNav() {
   const { data: session } = useSession();
   const isAdmin = (session?.user as any)?.role === "ADMIN";
 
+  const isAdminRoute = pathname.startsWith("/admin");
+  const items = isAdminRoute ? ADMIN_NAV_ITEMS : NAV_ITEMS;
+
   return (
     <div className="fixed bottom-12 left-0 right-0 z-[99999] px-6 pointer-events-none">
-      <div className="max-w-md mx-auto pointer-events-auto">
+      <div className={`${isAdminRoute ? "max-w-xl" : "max-w-md"} mx-auto pointer-events-auto`}>
         <nav className="flex items-center justify-between p-4 px-10 bg-white/90 backdrop-blur-xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] rounded-full border-2 border-primary/20">
-          {NAV_ITEMS.map((item) => {
+          {items.map((item) => {
             const isActive = pathname === item.href;
             const Icon = item.icon;
             
@@ -55,18 +65,21 @@ export function BottomNav() {
             );
           })}
 
-          {isAdmin && (
+          {isAdmin && !isAdminRoute && (
             <button 
-              onClick={() => handleNavigation("/admin/dummy")}
-              className={`relative group flex flex-col items-center justify-center p-2 rounded-2xl transition-all duration-300 focus:outline-none ${pathname.startsWith("/admin") ? "text-primary" : "text-zinc-400"}`}
+              onClick={() => handleNavigation("/admin")}
+              className="relative group flex flex-col items-center justify-center p-2 rounded-2xl transition-all duration-300 focus:outline-none text-zinc-400"
             >
-              <Shield className="h-7 w-7" strokeWidth={pathname.startsWith("/admin") ? 3 : 2} />
-              {pathname.startsWith("/admin") && (
-                <motion.div 
-                  layoutId="nav-dot-active"
-                  className="absolute -bottom-2 h-1.5 w-1.5 rounded-full bg-primary"
-                />
-              )}
+              <Shield className="h-7 w-7" strokeWidth={2} />
+            </button>
+          )}
+
+          {isAdminRoute && (
+            <button 
+              onClick={() => handleNavigation("/")}
+              className="relative group flex flex-col items-center justify-center p-2 rounded-2xl transition-all duration-300 focus:outline-none text-accent"
+            >
+              <Home className="h-7 w-7" strokeWidth={2} />
             </button>
           )}
 
