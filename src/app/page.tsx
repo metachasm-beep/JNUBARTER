@@ -123,14 +123,7 @@ export default function DiscoveryPage() {
                
                <div className="flex flex-col md:flex-row items-center justify-center gap-6 pt-8">
                   <Button 
-                    onClick={() => {
-                      console.log("Sign-in clicked, status:", status);
-                      if (status === "authenticated") {
-                        setIsSetupModalOpen(true);
-                      } else {
-                        signIn("google");
-                      }
-                    }}
+                    onClick={() => signIn("google")}
                     className="rounded-full btn-premium text-[10px] font-black uppercase tracking-widest px-16 h-20 shadow-2xl shadow-accent/20"
                   >
                     Sign-in
