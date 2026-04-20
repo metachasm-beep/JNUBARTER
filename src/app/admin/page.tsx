@@ -136,6 +136,9 @@ export default async function AdminDashboard() {
               <div className="mt-4 pt-4 border-t border-red-100">
                 <p className="text-[8px] font-mono text-red-400 uppercase font-bold mb-1">Diagnostics:</p>
                 <p className="text-[8px] font-mono text-red-300">
+                  Heartbeat: {new Date().toISOString()}
+                </p>
+                <p className="text-[8px] font-mono text-red-300">
                   URL Length: {process.env.DATABASE_URL?.length || 0} characters
                 </p>
                 <p className="text-[8px] font-mono text-red-400 uppercase font-bold mt-2 mb-1">Available Keys:</p>

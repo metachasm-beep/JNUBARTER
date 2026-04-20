@@ -21,4 +21,8 @@ export default withPWA({
   extendDefaultRuntimeCaching: true,
   customWorkerSrc: "app",
   customWorkerPrefix: "worker",
+  fallbacks: {
+    document: "/", // Fallback to home on disconnect
+  },
+  publicExcludes: ["!admin/**/*"], // Do not cache admin assets
 })(nextConfig);
