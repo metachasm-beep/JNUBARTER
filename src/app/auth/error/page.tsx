@@ -8,9 +8,9 @@ import { Suspense } from "react";
 
 const ERRORS: Record<string, { title: string; body: string; detail?: string }> = {
   AccessDenied: {
-    title: "Access Denied",
-    body: "The security protocol blocked this sign-in attempt. This usually happens if your browser is blocking authentication cookies or if the OAuth configuration is mismatched.",
-    detail: "Check: AdBlocker settings, Browser Cookies, or Google Cloud Console 'Authorized Redirect URIs'."
+    title: "Access Restricted",
+    body: "The security protocol blocked this sign-in attempt. BARTER is currently restricted to verified @jnu.ac.in academic identities.",
+    detail: "Error: Domain mismatch. Please ensure you are using your official JNU email account."
   },
   Verification: {
     title: "Verification Failed",
