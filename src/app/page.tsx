@@ -18,6 +18,7 @@ import { useChains } from "@/hooks/useChains";
 import { useSemanticSearch } from "@/hooks/useSemanticSearch";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { Dashboard } from "@/components/Dashboard";
+import { usePathname } from "next/navigation";
 
 // --- Suggestion #8: AI Swap-Mate FAB ---
 const SwapMateFAB = () => {
@@ -67,6 +68,8 @@ const SwapMateFAB = () => {
 
 export default function DiscoveryPage() {
   const { data: session, status } = useSession();
+  const pathname = usePathname();
+  const isAdmin = (session?.user as any)?.role === "ADMIN";
   const { data: listingsData, isLoading: listingsLoading } = useListingsFlat();
   const listings = listingsData?.listings ?? [];
   const { data: chainsData, isLoading: chainsLoading } = useChains();
@@ -91,6 +94,11 @@ export default function DiscoveryPage() {
     }
   }, [status, session, hasAttemptedAutoOpen]);
 
+  useEffect(() => {
+    if (status === "authenticated" && isAdmin && pathname === "/") {
+      window.location.href = "/admin";
+    }
+  }, [status, isAdmin, pathname]);
   const scrollToFold = (id: string) => {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: "smooth" });
