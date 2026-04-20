@@ -134,7 +134,7 @@ export default async function AdminDashboard() {
                 ERROR: {error.message || 'Unknown Server Error'}
               </p>
            </div>
-           <button onClick={() => window.location.reload()} className="mt-8 h-12 px-8 rounded-2xl bg-primary text-white text-[10px] font-mono font-black uppercase tracking-widest">Retry Connection</button>
+           <a href="/admin" className="mt-8 inline-flex items-center justify-center h-12 px-8 rounded-2xl bg-primary text-white text-[10px] font-mono font-black uppercase tracking-widest">Retry Connection</a>
         </div>
       </div>
     );
