@@ -114,17 +114,19 @@ export function ListingDetailDrawer({ listing, isOpen, onOpenChange }: ListingDe
 
              <div className="space-y-6">
                 <SpotlightCard className="p-6 glass-card border-accent/20 bg-accent/5 rounded-[2rem]">
-                   <div className="flex items-center gap-4 mb-4">
-                      <Avatar className="h-12 w-12 border-2 border-white shadow-md">
-                         <AvatarFallback className="bg-accent text-white font-black">
-                            {listing.user?.name?.substring(0, 1)}
-                         </AvatarFallback>
-                      </Avatar>
-                      <div>
-                         <p className="text-[10px] font-mono font-bold uppercase text-accent tracking-widest">Protocol Verified Lister</p>
-                         <h5 className="text-lg font-black uppercase text-primary">{listing.user?.name}</h5>
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="cursor-pointer">
+                        <ProfileViewDrawer user={listing.user} />
                       </div>
-                   </div>
+                      <div className="flex-1">
+                         <p className="text-[10px] font-mono font-bold uppercase text-accent tracking-widest">Protocol Verified Lister</p>
+                         <div className="cursor-pointer">
+                            <ProfileViewDrawer user={listing.user}>
+                               <h5 className="text-lg font-black uppercase text-primary hover:text-accent transition-colors">{listing.user?.name}</h5>
+                            </ProfileViewDrawer>
+                         </div>
+                      </div>
+                    </div>
                    <div className="grid grid-cols-2 gap-3">
                       <div className="p-3 bg-white/50 rounded-2xl border border-white/50">
                          <p className="text-[9px] font-mono font-bold text-stone-400 uppercase">Trust Score</p>

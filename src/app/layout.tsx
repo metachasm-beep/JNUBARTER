@@ -21,7 +21,6 @@ export const metadata: Metadata = {
 
 import AppContainer from "@/components/AppContainer";
 import CommandMenu from "@/components/CommandMenu";
-import { BottomNav } from "@/components/BottomNav";
 
 import AuthProvider from "@/components/AuthProvider";
 import QueryProvider from "@/components/QueryProvider";
@@ -41,7 +40,6 @@ export default function RootLayout({
           <body className="min-h-full flex flex-col bg-background text-foreground selection:bg-primary/30">
             <CommandMenu />
             <AppContainer>{children}</AppContainer>
-            <BottomNav />
           </body>
         </html>
       </QueryProvider>
