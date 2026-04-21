@@ -223,8 +223,8 @@ export function InitializeNodeModal({ isOpen, onClose, initialStep }: Initialize
                 <GraduationCap className="h-6 w-6 text-accent" />
               </div>
               <div>
-                <h2 className="text-3xl font-black uppercase tracking-tighter text-primary italic">Setup Your Scholarly Identity</h2>
-                <p className="text-[10px] font-mono font-bold text-stone-400 uppercase tracking-[0.2em] mt-1">Network Presence Protocol v2.4</p>
+                <h2 className="text-3xl font-black uppercase tracking-tighter text-primary italic">Create Your Profile</h2>
+                <p className="text-[10px] font-mono font-bold text-stone-400 uppercase tracking-[0.2em] mt-1">JNU Barter Onboarding</p>
               </div>
             </div>
             <button onClick={onClose} className="h-10 w-10 rounded-full hover:bg-stone-100 flex items-center justify-center text-stone-400 transition-colors">
@@ -233,23 +233,23 @@ export function InitializeNodeModal({ isOpen, onClose, initialStep }: Initialize
           </div>
 
           <div className="flex-1 overflow-y-auto p-8 pt-6">
-            <StepCard num={1} title="Identity" label="Who are you in the network?" activeStep={step} onStepClick={setStep}>
+            <StepCard num={1} title="About You" label="Introduce yourself to the community" activeStep={step} onStepClick={setStep}>
               <div className="space-y-6 pt-4">
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-400">Public Name</Label>
+                  <Label className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-400">Full Name</Label>
                   <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="E.g. ARYA SHARMA" className="h-14 rounded-2xl bg-white border-stone-200" />
                 </div>
                 <div className="space-y-2">
-                   <Label className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-400">Research Manifesto (Bio)</Label>
-                   <Textarea value={bio} onChange={(e) => setBio(e.target.value)} placeholder="What are you currently exploring?" className="rounded-2xl bg-white border-stone-200 min-h-[100px]" />
+                   <Label className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-400">About You</Label>
+                   <Textarea value={bio} onChange={(e) => setBio(e.target.value)} placeholder="What are you currently studying or interested in?" className="rounded-2xl bg-white border-stone-200 min-h-[100px]" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                    <div className="space-y-2">
-                      <Label className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-400">Field / Dept</Label>
+                      <Label className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-400">Course / Subject</Label>
                       <Input value={school} onChange={(e) => setSchool(e.target.value)} placeholder="E.g. COMPUTER SCIENCE" className="h-14 rounded-2xl bg-white border-stone-200" />
                    </div>
                    <div className="space-y-2">
-                      <Label className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-400">Institutional ID / Key</Label>
+                      <Label className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-400">Registration Number</Label>
                       <Input value={hostel} onChange={(e) => setHostel(e.target.value)} placeholder="E.g. REG-001" className="h-14 rounded-2xl bg-white border-stone-200" />
                    </div>
                 </div>
@@ -257,7 +257,7 @@ export function InitializeNodeModal({ isOpen, onClose, initialStep }: Initialize
               </div>
             </StepCard>
 
-            <StepCard num={2} title="Knowledge & Resources" label="What can you provide to others?" activeStep={step} onStepClick={setStep}>
+            <StepCard num={2} title="What You Offer" label="What can you help others with?" activeStep={step} onStepClick={setStep}>
               <div className="space-y-8 pt-4">
                  <div className="space-y-4">
                     <Label className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-400">New Offering</Label>
@@ -335,7 +335,7 @@ export function InitializeNodeModal({ isOpen, onClose, initialStep }: Initialize
               </div>
             </StepCard>
 
-            <StepCard num={3} title="Academic Needs" label="What are you currently seeking?" activeStep={step} onStepClick={setStep}>
+            <StepCard num={3} title="What You Need" label="What are you looking for?" activeStep={step} onStepClick={setStep}>
               <div className="space-y-8 pt-4">
                  <div className="space-y-2">
                     <Label className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-400">What do you need?</Label>
@@ -363,7 +363,7 @@ export function InitializeNodeModal({ isOpen, onClose, initialStep }: Initialize
                    disabled={isLoading} 
                    className="w-full h-16 rounded-2xl btn-premium text-white font-black uppercase text-xs tracking-[0.2em] shadow-2xl shadow-accent/20"
                  >
-                    {isLoading ? "Synchronizing Node..." : "Activate Exchange Node"}
+                    {isLoading ? "Saving Profile..." : "Create My Profile"}
                  </Button>
               </div>
             </StepCard>

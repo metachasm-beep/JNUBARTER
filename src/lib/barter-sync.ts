@@ -61,7 +61,7 @@ export async function atomicSyncUser(data: z.infer<typeof ProfileSchema>) {
 
     // 2. Neo4j Sync (Graph Engine) — Tolerate failures to avoid blocking activation
     try {
-      console.log(`[Sync] Synchronizing user ${data.userId} with Neo4j...`);
+      console.log(`[Sync] Matching user ${data.userId} with the community graph...`);
       const driver = getNeo4jDriver();
       const session = driver.session();
       
@@ -89,13 +89,13 @@ export async function atomicSyncUser(data: z.infer<typeof ProfileSchema>) {
         await session.close();
       }
     } catch (neoError) {
-      console.warn("NEO4J_SYNC_DEGRADED: Graph synchronization failed, but Postgres source of truth is active.", neoError);
+      console.warn("SYNC_DEGRADED: Search graph is temporarily unavailable, but profile is saved.", neoError);
       // We don't re-throw here so the user can still proceed
     }
 
     return { success: true };
   } catch (error: any) {
-    console.error("GODMODE_SYNC_CRITICAL_FAILURE:", error);
-    throw new Error(`SYNC_FAILED: ${error.message}`);
+    console.error("SYNC_FAILURE:", error);
+    throw new Error(`PROFILE_SAVE_FAILED: ${error.message}`);
   }
 }

@@ -38,30 +38,30 @@ export default async function AdminDashboard() {
           <div className="space-y-2">
              <div className="flex items-center gap-2 mb-2">
                 <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-[10px] font-mono font-bold text-emerald-600 uppercase tracking-widest italic">Live Telemetry Active</span>
+                <span className="text-[10px] font-mono font-bold text-emerald-600 uppercase tracking-widest italic">System Status: Online</span>
              </div>
-             <h2 className="text-6xl font-extrabold tracking-tighter text-primary uppercase italic leading-[0.8]">Command<br />Center</h2>
-             <p className="text-stone-400 font-medium max-w-sm pt-4 italic">Aggregated network intelligence and protocol health telemetry.</p>
+             <h2 className="text-6xl font-extrabold tracking-tighter text-primary uppercase italic leading-[0.8]">Admin<br />Dashboard</h2>
+             <p className="text-stone-400 font-medium max-w-sm pt-4 italic">Monitor campus listings and community activity in real-time.</p>
           </div>
           
           {/* Enhancement #3 — Cost Summary */}
           <div className="text-right glass-card p-6 rounded-3xl border-stone-200">
-             <p className="text-[10px] font-mono font-bold text-stone-400 uppercase tracking-widest">Compute Overhead</p>
+             <p className="text-[10px] font-mono font-bold text-stone-400 uppercase tracking-widest">Platform Costs</p>
              <h4 className="text-3xl font-black text-primary tracking-tighter">${Number(usageCost).toFixed(4)}</h4>
-             <p className="text-[9px] font-mono text-stone-300 uppercase italic">{(usageTokens || 0).toLocaleString()} Tokens used</p>
+             <p className="text-[9px] font-mono text-stone-300 uppercase italic">{(usageTokens || 0).toLocaleString()} Resources used</p>
           </div>
         </header>
 
         {/* Primary Metrics Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-          <MetricCard icon={<Users className="h-5 w-5" />} label="Nodes" value={userCount} detail="Peers on network" />
-          <MetricCard icon={<Package className="h-5 w-5" />} label="Assets" value={listingCount} detail="Service/Commodity" />
-          <MetricCard icon={<RefreshCw className="h-5 w-5" />} label="Chains" value={swapCount} detail="Discovery loops" />
-          <MetricCard icon={<ShieldAlert className="h-5 w-5 text-red-500" />} label="Threats" value={flaggedCount} detail="Policy violations" />
+          <MetricCard icon={<Users className="h-5 w-5" />} label="Users" value={userCount} detail="Community members" />
+          <MetricCard icon={<Package className="h-5 w-5" />} label="Listings" value={listingCount} detail="Items & Services" />
+          <MetricCard icon={<RefreshCw className="h-5 w-5" />} label="Swaps" value={swapCount} detail="Successful exchanges" />
+          <MetricCard icon={<ShieldAlert className="h-5 w-5 text-red-500" />} label="Flagged" value={flaggedCount} detail="Reported items" />
           <div className="glass-card border-stone-200 rounded-[2rem] p-8 space-y-4 shadow-lg flex flex-col justify-center items-center text-center">
              <TrendingUp className={`h-6 w-6 ${sentimentData.label === 'VIBRANT' ? 'text-emerald-500' : 'text-stone-400'}`} />
-             <p className="text-[10px] font-mono font-bold text-stone-400 uppercase tracking-widest">Sentiment</p>
-             <h4 className="text-2xl font-black text-primary uppercase italic">{sentimentData.label}</h4>
+             <p className="text-[10px] font-mono font-bold text-stone-400 uppercase tracking-widest">Community Vibe</p>
+             <h4 className="text-2xl font-black text-primary uppercase italic">{sentimentData.label === 'STABLE' ? 'Steady' : sentimentData.label}</h4>
              <div className="w-full bg-stone-100 h-1 rounded-full overflow-hidden mt-2">
                 <div className="bg-primary h-full transition-all" style={{ width: `${sentimentData.score}%` }} />
              </div>
@@ -74,9 +74,9 @@ export default async function AdminDashboard() {
              <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                    <ShieldAlert className="h-6 w-6 text-primary" />
-                   <h3 className="text-2xl font-black uppercase tracking-tight text-primary italic">Security Pulse</h3>
+                   <h3 className="text-2xl font-black uppercase tracking-tight text-primary italic">Recent Activity</h3>
                 </div>
-                <Badge className="bg-stone-100 text-stone-500 text-[10px] uppercase tracking-widest">Real-time Feed</Badge>
+                <Badge className="bg-stone-100 text-stone-500 text-[10px] uppercase tracking-widest">Live Updates</Badge>
              </div>
              
              <div className="space-y-4">
@@ -105,18 +105,18 @@ export default async function AdminDashboard() {
              <div className="glass-card border-stone-200 rounded-[3rem] p-10 space-y-6 bg-primary text-white shadow-2xl shadow-primary/20 relative overflow-hidden group">
                 <div className="relative z-10 space-y-4">
                    <Cpu className="h-8 w-8 text-white/50 group-hover:scale-125 transition-transform" />
-                   <h3 className="text-3xl font-black uppercase italic leading-none tracking-tighter">Simulation<br />Lab</h3>
-                   <p className="text-white/60 text-xs font-medium leading-relaxed">Benchmark the Godmode Graph Discovery logic against synthetic network states.</p>
-                   <button className="w-full h-12 rounded-2xl bg-white text-primary text-[10px] font-mono font-black uppercase tracking-widest mt-4">Initialize Benchmark</button>
+                   <h3 className="text-3xl font-black uppercase italic leading-none tracking-tighter">Test<br />Lab</h3>
+                   <p className="text-white/60 text-xs font-medium leading-relaxed">Test the community matching logic with sample data to ensure fairness.</p>
+                   <button className="w-full h-12 rounded-2xl bg-white text-primary text-[10px] font-mono font-black uppercase tracking-widest mt-4">Run Test</button>
                 </div>
                 <div className="absolute -right-8 -bottom-8 h-40 w-40 bg-white/10 rounded-full blur-3xl" />
              </div>
 
              <div className="glass-card border-stone-200 rounded-[3rem] p-10 space-y-6 bg-white shadow-xl shadow-stone-200/20 border-t-white">
                 <Search className="h-6 w-6 text-stone-300" />
-                <h3 className="text-xl font-black uppercase italic text-primary">Authority Intel</h3>
-                <p className="text-stone-400 text-xs font-medium">Research and verify scholarly claims using autonomous deep-search agents.</p>
-                <button className="w-full h-12 rounded-2xl border border-stone-200 text-stone-400 text-[10px] font-mono font-bold uppercase tracking-widest">Verify Claims</button>
+                <h3 className="text-xl font-black uppercase italic text-primary">Verify Users</h3>
+                <p className="text-stone-400 text-xs font-medium">Verify student credentials and research claims manually or with AI help.</p>
+                <button className="w-full h-12 rounded-2xl border border-stone-200 text-stone-400 text-[10px] font-mono font-bold uppercase tracking-widest">Verify Now</button>
              </div>
           </div>
         </div>
