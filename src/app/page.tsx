@@ -19,6 +19,7 @@ import { useSemanticSearch } from "@/hooks/useSemanticSearch";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { Dashboard } from "@/components/Dashboard";
 import { usePathname } from "next/navigation";
+import { ParallaxHero } from "@/components/ParallaxHero";
 
 
 
@@ -83,58 +84,8 @@ export default function DiscoveryPage() {
   return (
     <div className="min-h-screen bg-background pb-20 overflow-x-hidden font-sans scroll-smooth">
       
-      {/* FOLD 1: LIQUID GLASS HERO */}
-      <section className="relative w-full h-screen flex flex-col bg-background overflow-hidden">
-        {/* Iridescent Ambient Glow */}
-        <div className="absolute inset-0 z-0">
-           <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-accent/10 blur-[150px] rounded-full" />
-           <div className="absolute bottom-[-20%] left-[-10%] w-[60%] h-[60%] bg-stone-200/40 blur-[150px] rounded-full" />
-        </div>
-
-        <div className="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-8">
-            <motion.div 
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-              className="space-y-12"
-            >
-               
-               <h1 className="text-5xl md:text-[140px] font-extrabold tracking-[-0.06em] leading-[0.8] text-primary">
-                 BEYOND <br/> 
-                 <span className="text-accent italic">CURRENCY.</span>
-               </h1>
-               
-               <p className="text-secondary font-medium text-lg md:text-2xl max-w-3xl mx-auto leading-tight">
-                 Premium peer-to-peer reciprocity within the global academic ecosystem. No cash. No credit. Pure merit.
-               </p>
-               
-               <div className="flex flex-col md:flex-row items-center justify-center gap-6 pt-8">
-                  <Button 
-                    onClick={() => signIn("google")}
-                    className="rounded-full btn-premium text-[10px] font-black uppercase tracking-widest px-16 h-20 shadow-2xl shadow-accent/20"
-                  >
-                    Sign-in
-                  </Button>
-                  
-                  <Button 
-                    variant="outline"
-                    onClick={() => setIsHowItWorksOpen(true)}
-                    className="rounded-full border-stone-200 text-[10px] font-black uppercase tracking-widest px-10 h-20 hover:bg-stone-50/50 transition-colors"
-                  >
-                    How It Works
-                  </Button>
-
-                  <Button 
-                    variant="ghost" 
-                    onClick={() => scrollToFold('market')}
-                    className="text-[10px] font-bold uppercase tracking-widest text-stone-400 hover:text-accent px-10 h-20 group"
-                  >
-                    View Registry <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-2 transition-transform" />
-                  </Button>
-               </div>
-            </motion.div>
-        </div>
-      </section>
+      {/* FOLD 1: CINEMATIC PARALLAX HERO */}
+      <ParallaxHero scrollToMarket={() => scrollToFold('market')} />
 
       {/* FOLD 2: SEMANTIC REGISTRY */}
       <section id="market" className="max-w-7xl mx-auto px-4 md:px-8 py-20 md:py-32 relative z-20">
