@@ -211,7 +211,7 @@ export default function NegotiationChat({
     <div className="flex h-[600px] rounded-3xl overflow-hidden border border-white/10 bg-black/60 backdrop-blur-2xl shadow-2xl font-sans">
       {/* Left Side: Chat */}
       <div className="flex-1 flex flex-col border-r border-white/10">
-        <div className="p-4 border-b border-white/10 bg-white/5 backdrop-blur-md flex justify-between items-center">
+        <div className="p-4 border-b border-white/10 bg-white/10 backdrop-blur-md flex justify-between items-center">
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="icon" onClick={() => router.back()} className="h-8 w-8 text-zinc-400 hover:text-white hover:bg-white/10 rounded-full">
               <ChevronLeft className="h-4 w-4" />
