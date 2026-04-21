@@ -37,7 +37,6 @@ export default async function AdminLayout({
         <AdminNavLink href="/admin/users" icon={<Users className="h-4 w-4" />} label="Users" tooltip="Manage Community Members" />
         <AdminNavLink href="/admin/listings" icon={<Package className="h-4 w-4" />} label="Listings" tooltip="Moderate Marketplace" />
         <AdminNavLink href="/admin/logs" icon={<Activity className="h-4 w-4" />} label="Activity Logs" tooltip="View System History" />
-        <AdminNavLink href="/admin/dummy" icon={<RefreshCw className="h-4 w-4" />} label="Sample Data" tooltip="Manage Test Entries" />
       </nav>
 
       <div className="p-4 border-t border-stone-100">

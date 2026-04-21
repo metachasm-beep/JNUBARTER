@@ -102,16 +102,6 @@ export default async function AdminDashboard() {
           </div>
 
           <div className="space-y-8">
-             <div className="glass-card border-stone-200 rounded-[3rem] p-10 space-y-6 bg-primary text-white shadow-2xl shadow-primary/20 relative overflow-hidden group">
-                <div className="relative z-10 space-y-4">
-                   <Cpu className="h-8 w-8 text-white/50 group-hover:scale-125 transition-transform" />
-                   <h3 className="text-3xl font-black uppercase italic leading-none tracking-tighter">Test<br />Lab</h3>
-                   <p className="text-white/60 text-xs font-medium leading-relaxed">Test the community matching logic with sample data to ensure fairness.</p>
-                   <button className="w-full h-12 rounded-2xl bg-white text-primary text-[10px] font-mono font-black uppercase tracking-widest mt-4">Run Test</button>
-                </div>
-                <div className="absolute -right-8 -bottom-8 h-40 w-40 bg-white/10 rounded-full blur-3xl" />
-             </div>
-
              <div className="glass-card border-stone-200 rounded-[3rem] p-10 space-y-6 bg-white shadow-xl shadow-stone-200/20 border-t-white">
                 <Search className="h-6 w-6 text-stone-300" />
                 <h3 className="text-xl font-black uppercase italic text-primary">Verify Users</h3>
