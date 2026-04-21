@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
@@ -12,7 +12,7 @@ export async function PATCH(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const multiSwapId = params.id;
+    const { id: multiSwapId } = await params;
 
     // Find the participant record for this user
     const participant = await prisma.multiSwapParticipant.findFirst({
