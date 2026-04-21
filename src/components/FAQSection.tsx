@@ -33,7 +33,7 @@ const FAQ_DATA = [
 
 export function FAQSection() {
   return (
-    <section id="faq" className="w-full py-40 bg-white px-8 relative overflow-hidden">
+    <section id="faq" className="w-full py-40 bg-transparent px-8 relative overflow-hidden">
       <div className="max-w-4xl mx-auto space-y-16">
         <div className="space-y-6 text-center">
           <motion.div
@@ -41,8 +41,8 @@ export function FAQSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-zinc-900 uppercase font-serif italic">Institutional FAQ</h2>
-            <p className="text-zinc-400 font-medium tracking-tight mt-4 text-lg">layman's guide to the JNU scholarly reciprocity protocol.</p>
+            <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-white uppercase font-serif italic drop-shadow-[0_10px_20px_rgba(0,0,0,1)]">Institutional FAQ</h2>
+            <p className="text-stone-400 font-medium tracking-tight mt-4 text-lg">layman's guide to the JNU scholarly reciprocity protocol.</p>
           </motion.div>
         </div>
         
@@ -52,13 +52,13 @@ export function FAQSection() {
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
         >
-          <Accordion className="w-full space-y-4">
+          <Accordion type="single" collapsible className="w-full space-y-4">
             {FAQ_DATA.map((item, i) => (
-              <AccordionItem key={i} value={`item-${i}`} className="border-zinc-100 bg-zinc-50/50 rounded-3xl px-8 overflow-hidden">
-                <AccordionTrigger className="text-left text-sm md:text-base font-bold uppercase tracking-tight text-zinc-800 hover:no-underline hover:text-primary transition-all py-6 font-sans">
+              <AccordionItem key={i} value={`item-${i}`} className="border-white/5 bg-white/5 backdrop-blur-2xl rounded-3xl px-8 overflow-hidden transition-all hover:bg-white/10">
+                <AccordionTrigger className="text-left text-sm md:text-base font-bold uppercase tracking-tight text-white hover:no-underline hover:text-accent transition-all py-6 font-sans">
                   {item.q}
                 </AccordionTrigger>
-                <AccordionContent className="text-zinc-500 leading-relaxed font-medium pt-2 pb-8 text-base md:text-lg">
+                <AccordionContent className="text-stone-400 leading-relaxed font-medium pt-2 pb-8 text-base md:text-lg">
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
