@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Search } from "lucide-react";
-import { motion, useScroll, useSpring } from "framer-motion";
+import { motion } from "framer-motion";
 import { ListingSkeleton } from "@/components/ListingSkeleton";
 import { ListingCard } from "@/components/ListingCard";
 import { FAQSection } from "@/components/FAQSection";
@@ -16,7 +16,6 @@ import { useSession } from "next-auth/react";
 import { Dashboard } from "@/components/Dashboard";
 import { usePathname } from "next/navigation";
 import { ParallaxHero } from "@/components/ParallaxHero";
-import { DepthFlowExperience } from "@/components/DepthFlowExperience";
 
 export default function DiscoveryPage() {
   const { data: session, status } = useSession();
@@ -48,15 +47,6 @@ export default function DiscoveryPage() {
     }
   }, [status, isAdmin, pathname]);
 
-  // FIX: Use global window scroll instead of element-targeted scroll
-  const { scrollYProgress } = useScroll();
-
-  const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 40,
-    damping: 30,
-    restDelta: 0.001
-  });
-
   const scrollToFold = (id: string) => {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: "smooth" });
@@ -82,48 +72,55 @@ export default function DiscoveryPage() {
   }
 
   return (
-    <main 
-      className="relative min-h-[400vh] bg-black overflow-x-hidden font-sans selection:bg-accent selection:text-white scroll-smooth"
-    >
-      {/* INTEGRATED DEPTHFLOW WORLD (WEBGL SHADER) */}
-      <DepthFlowExperience scrollProgress={smoothProgress} />
+    <main className="relative min-h-screen bg-background text-foreground selection:bg-primary selection:text-primary-foreground font-sans scroll-smooth">
+      
+      {/* CLEAN BACKGROUND GRADIENT (SHADCN STYLE) */}
+      <div className="fixed inset-0 z-0 pointer-events-none opacity-40">
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-accent/20 blur-[120px] rounded-full" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary/10 blur-[120px] rounded-full" />
+      </div>
 
-      {/* CONTENT LAYERS */}
-      <div className="relative z-50 w-full">
+      <div className="relative z-10 w-full">
         
-        {/* SCENE 1: THE REVEAL */}
-        <section className="relative min-h-screen flex items-center justify-center">
+        {/* HERO SECTION */}
+        <section className="relative min-h-screen flex items-center justify-center pt-20">
           <ParallaxHero scrollToMarket={() => scrollToFold('market')} />
         </section>
 
-        {/* SCENE 2: THE REGISTRY */}
-        <section id="market" className="relative min-h-screen py-32 flex flex-col items-center">
+        {/* MARKETPLACE SECTION */}
+        <section id="market" className="relative py-32 flex flex-col items-center border-t bg-muted/30">
           <div className="max-w-7xl w-full px-8">
-            <div className="mb-24 space-y-6 text-center">
-                <h3 className="text-6xl font-black tracking-tighter text-white uppercase drop-shadow-[0_20px_40px_rgba(0,0,0,1)]">Peer Registry</h3>
-                <div className="h-1 w-20 bg-accent mx-auto rounded-full" />
+            <div className="mb-20 space-y-4 text-center">
+                <motion.h3 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  className="text-4xl md:text-5xl font-bold tracking-tight text-primary uppercase"
+                >
+                  Peer Registry
+                </motion.h3>
+                <div className="h-1 w-12 bg-accent mx-auto rounded-full" />
             </div>
 
-            <div className="relative max-w-3xl mx-auto mb-20 group">
-              <div className="relative bg-white/5 border border-white/10 backdrop-blur-3xl rounded-full overflow-hidden p-1 transition-all group-focus-within:shadow-[0_0_50px_rgba(255,5,5,0.2)]">
-                <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-stone-400" />
+            <div className="relative max-w-2xl mx-auto mb-16 group">
+              <div className="relative flex items-center bg-background border rounded-full overflow-hidden p-1 shadow-sm transition-all focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+                <Search className="ml-5 size-5 text-muted-foreground" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Query scholarly nodes..."
-                  className="w-full h-16 pl-14 pr-6 bg-transparent text-sm font-medium text-white placeholder:text-stone-500 focus:outline-none"
+                  placeholder="Search skills, books, or tutoring..."
+                  className="w-full h-14 pl-4 pr-6 bg-transparent text-sm font-medium focus:outline-none"
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                {isSearchActive ? (
                  searchFetching ? (
                    Array(3).fill(0).map((_, i) => <ListingSkeleton key={i} />)
                  ) : (
                    searchResults.map((listing, idx) => (
-                     <motion.div key={listing.id} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: idx * 0.05 }}>
+                     <motion.div key={listing.id} initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: idx * 0.05 }}>
                        <ListingCard listing={listing} />
                      </motion.div>
                    ))
@@ -143,8 +140,8 @@ export default function DiscoveryPage() {
           </div>
         </section>
 
-        {/* SCENE 3: GROUNDING */}
-        <section className="bg-black/95 backdrop-blur-3xl border-t border-white/5 py-40 relative z-50">
+        {/* FAQ SECTION */}
+        <section className="relative z-10">
           <FAQSection />
         </section>
         
@@ -158,11 +155,11 @@ export default function DiscoveryPage() {
         />
       </div>
 
-      {/* Global Progress */}
-      <motion.div 
-        style={{ scaleX: smoothProgress }}
-        className="fixed top-0 left-0 right-0 h-1 bg-accent z-[100] origin-left shadow-[0_0_20px_rgba(255,5,5,0.5)]"
-      />
+      <footer className="py-12 border-t bg-muted/20 text-center">
+        <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest">
+          Jawaharlal Nehru University • 2026
+        </p>
+      </footer>
     </main>
   );
 }

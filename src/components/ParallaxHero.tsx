@@ -1,109 +1,95 @@
 "use client";
 
-import { motion, useScroll, useTransform, useSpring, useMotionValue } from "framer-motion";
-import { useRef, useEffect, useState } from "react";
+import React from "react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { GraduationCap, ArrowRight, Sparkles, Globe, Zap } from "lucide-react";
 import { signIn } from "next-auth/react";
-import { Sparkles, Library, GraduationCap, ChevronDown, MousePointer2 } from "lucide-react";
 
-export function ParallaxHero({ scrollToMarket }: { scrollToMarket: () => void }) {
-  const containerRef = useRef(null);
-  
-  // Design Spell: Mouse Particles
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const [isHovering, setIsHovering] = useState(false);
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      mouseX.set(e.clientX);
-      mouseY.set(e.clientY);
-    };
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, [mouseX, mouseY]);
-
+export const ParallaxHero = ({ scrollToMarket }: { scrollToMarket: () => void }) => {
   return (
-    <div 
-      ref={containerRef} 
-      className="relative w-full min-h-screen flex items-center justify-center pointer-events-none"
-    >
-      {/* Design Spell: Interactive Knowledge Aura */}
-      <motion.div 
-        style={{ 
-          x: mouseX, 
-          y: mouseY,
-          translateX: "-50%",
-          translateY: "-50%"
-        }}
-        className="fixed inset-0 w-[600px] h-[600px] bg-accent/5 rounded-full blur-[120px] pointer-events-none z-10 mix-blend-screen"
-      />
+    <div className="relative w-full max-w-7xl mx-auto px-8 flex flex-col items-center text-center">
+      
+      {/* INSTITUTIONAL BADGE */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="mb-8"
+      >
+        <Badge variant="secondary" className="px-4 py-1.5 rounded-full flex items-center gap-2 bg-accent/10 border-accent/20 text-accent font-semibold tracking-wide uppercase text-[10px]">
+          <GraduationCap className="size-3" />
+          Institutional Reciprocity Protocol
+        </Badge>
+      </motion.div>
 
-      {/* Hero Typography Scene */}
-      <div className="relative z-50 text-center px-8 flex flex-col items-center gap-16 pointer-events-auto">
-        
-        <div className="flex flex-col items-center gap-8">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-            className="flex items-center gap-4 bg-white/5 border border-white/10 backdrop-blur-3xl px-10 py-4 rounded-full text-[12px] font-black uppercase tracking-[0.5em] text-accent italic shadow-[0_30px_60px_rgba(0,0,0,0.8)]"
-          >
-            <Library className="h-4 w-4" /> Scholarly Node Initialization
-          </motion.div>
-          
-          <h1 className="text-8xl md:text-[240px] font-black tracking-[-0.1em] leading-[0.65] text-white mix-blend-difference drop-shadow-[0_80px_80px_rgba(0,0,0,1)]">
-            MERIT <br/> 
-            <span className="text-accent italic font-serif font-light opacity-80">REGISTRY.</span>
-          </h1>
-        </div>
-        
-        <div className="space-y-6 max-w-5xl mx-auto">
-          <p className="text-stone-400 font-medium text-xl md:text-4xl leading-tight drop-shadow-2xl">
-            The world's first <span className="text-white font-black underline decoration-accent decoration-4 underline-offset-8">Zero-Currency</span> <br/> 
-            standard for Academic Exchange.
-          </p>
-          <div className="h-px w-32 bg-accent/40 mx-auto" />
-          <p className="text-stone-500 text-sm md:text-lg tracking-[0.2em] uppercase font-black">
-            Powered by Multi-Party Barter Chains
-          </p>
-        </div>
+      {/* CORE NARRATIVE: BEYOND CURRENCY */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+        className="space-y-4 mb-12"
+      >
+        <h1 className="text-7xl md:text-[160px] font-black leading-[0.85] tracking-tighter text-primary uppercase">
+          Beyond <br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent via-accent/80 to-accent/40 italic">Currency.</span>
+        </h1>
+        <p className="max-w-2xl mx-auto text-lg md:text-xl font-medium text-muted-foreground leading-relaxed">
+          The premier scholarly exchange network for the JNU ecosystem. <br className="hidden md:block" /> 
+          Swap skills, resources, and knowledge with zero monetary friction.
+        </p>
+      </motion.div>
 
-        {/* Magnetic Button Interaction */}
-        <div className="flex flex-col md:flex-row items-center justify-center gap-12 pt-12">
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="relative group"
-          >
-            <Button 
-              onClick={() => signIn("google")}
-              className="rounded-full bg-white text-black text-[13px] font-black uppercase tracking-[0.2em] px-28 h-28 shadow-[0_0_120px_rgba(255,255,255,0.3)] hover:bg-accent hover:text-white transition-all duration-700 relative overflow-hidden"
-            >
-              <span className="relative z-10 flex items-center gap-4">
-                Initialize Connection <Sparkles className="h-5 w-5 group-hover:rotate-45 transition-transform" />
-              </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-accent to-accent-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-            </Button>
-            <div className="absolute -inset-4 bg-accent/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-          </motion.div>
-          
-          <Button 
-            variant="ghost"
-            onClick={scrollToMarket}
-            className="rounded-full text-white/30 text-[11px] font-black uppercase tracking-[0.3em] px-12 h-28 hover:text-white hover:bg-white/5 transition-all flex flex-col gap-3 group"
-          >
-            <span>Descend to Market</span>
-            <ChevronDown className="h-5 w-5 animate-bounce group-hover:text-accent" />
-          </Button>
-        </div>
-      </div>
+      {/* CALL TO ACTIONS */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+        className="flex flex-col md:flex-row items-center gap-6"
+      >
+        <Button 
+          size="lg" 
+          onClick={() => signIn("google")}
+          className="rounded-full px-12 h-16 text-[11px] font-black uppercase tracking-widest bg-accent hover:bg-accent/90 text-white shadow-2xl shadow-accent/20"
+        >
+          Initialize Node
+          <Zap className="ml-2 size-4 fill-white" />
+        </Button>
 
-      {/* Global Scroll Hint (Editorial) */}
-      <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 opacity-30">
-        <div className="w-px h-24 bg-gradient-to-b from-transparent via-white to-transparent" />
-        <span className="text-[10px] font-black uppercase tracking-[0.5em] text-white [writing-mode:vertical-lr]">Scroll to Reveal World</span>
-      </div>
+        <Button 
+          variant="outline" 
+          size="lg"
+          onClick={scrollToMarket}
+          className="rounded-full px-10 h-16 text-[11px] font-black uppercase tracking-widest border-border hover:bg-muted transition-all group"
+        >
+          Enter Registry
+          <ArrowRight className="ml-2 size-4 group-hover:translate-x-1 transition-transform" />
+        </Button>
+      </motion.div>
+
+      {/* SOCIAL PROOF / METRICS */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1, delay: 0.8 }}
+        className="mt-24 grid grid-cols-2 md:grid-cols-4 gap-12 border-t pt-12 w-full max-w-4xl border-border/50"
+      >
+        {[
+          { label: "Verified Nodes", value: "2,400+", icon: Globe },
+          { label: "Active Swaps", value: "12.8k", icon: Sparkles },
+          { label: "Knowledge Yield", value: "∞", icon: Zap },
+          { label: "Currency Deficit", value: "0.00", icon: GraduationCap },
+        ].map((stat, i) => (
+          <div key={i} className="flex flex-col items-center gap-1 group">
+            <div className="flex items-center gap-2 text-muted-foreground mb-1">
+              <stat.icon className="size-3 group-hover:text-accent transition-colors" />
+              <span className="text-[9px] font-bold uppercase tracking-[0.2em]">{stat.label}</span>
+            </div>
+            <span className="text-2xl font-black text-primary">{stat.value}</span>
+          </div>
+        ))}
+      </motion.div>
     </div>
   );
-}
+};
