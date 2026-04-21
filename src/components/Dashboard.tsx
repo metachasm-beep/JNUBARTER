@@ -101,10 +101,6 @@ export function Dashboard({ openSetup }: DashboardProps) {
         {/* HEADER: ACADEMIC WELCOME */}
         <section className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
           <div>
-            <div className="flex items-center gap-3 mb-2">
-               <Badge className="bg-accent/10 text-accent border-accent/20 text-[9px] px-2 py-0.5 rounded-full font-mono font-bold uppercase tracking-widest">Node Active</Badge>
-               <span className="text-[10px] font-mono text-stone-400 font-bold uppercase tracking-[0.2em]">Registry ID: {(session?.user as any)?.id?.slice(0, 8) ?? "..."}</span>
-            </div>
             <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter italic text-primary">
               Greetings, Scholar <span className="text-accent">{session?.user?.name?.split(" ")[0]}</span>
             </h1>
