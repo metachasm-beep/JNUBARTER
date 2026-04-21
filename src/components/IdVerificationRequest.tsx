@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Upload, FileText, CheckCircle2, Loader2, Image as ImageIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 export function IdVerificationRequest({ 
