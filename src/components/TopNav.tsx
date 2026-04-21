@@ -21,7 +21,7 @@ import {
   MotionValue
 } from "framer-motion";
 import { usePathname, useRouter } from "next/navigation";
-import { useSession, signOut } from "next-auth/react";
+import { useSession, signOut, signIn } from "next-auth/react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
