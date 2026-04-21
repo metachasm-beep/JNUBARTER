@@ -16,6 +16,7 @@ export function ListingCard({ listing, className }: ListingCardProps) {
   const { data: session } = useSession();
   const isAdmin = (session?.user as any)?.role === "ADMIN";
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const isOffer = listing.type === "OFFER";
   const isService = listing.category === "SERVICE";
