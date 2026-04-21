@@ -13,8 +13,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Package, Briefcase, Zap, MessageSquare, ShieldCheck, Clock } from "lucide-react";
-import SpotlightCard from "./SpotlightCard";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { Package, Briefcase, Zap, MessageSquare, ShieldCheck, Clock, Share2, Star, Loader2 } from "lucide-react";
 
 interface ListingDetailDrawerProps {
   listing: any;
@@ -23,8 +25,34 @@ interface ListingDetailDrawerProps {
 }
 
 export function ListingDetailDrawer({ listing, isOpen, onOpenChange }: ListingDetailDrawerProps) {
+  const router = useRouter();
+  const [isActionPending, setIsActionPending] = useState(false);
+  
   const isService = listing.category === "SERVICE";
   const isOffer = listing.type === "OFFER";
+
+  const handleAction = async () => {
+    setIsActionPending(true);
+    try {
+      const res = await fetch("/api/swaps", {
+        method: "POST",
+        body: JSON.stringify({
+          listingId: listing.id,
+          receiverId: listing.userId || listing.user?.id
+        })
+      });
+
+      if (!res.ok) throw new Error("Failed to initiate exchange");
+      
+      const swap = await res.json();
+      toast.success("Protocol synchronization established.");
+      router.push(`/swap/${swap.id}`);
+    } catch (error) {
+      toast.error("Failed to connect with peer node.");
+    } finally {
+      setIsActionPending(false);
+    }
+  };
 
   return (
     <Drawer open={isOpen} onOpenChange={onOpenChange}>
@@ -35,11 +63,24 @@ export function ListingDetailDrawer({ listing, isOpen, onOpenChange }: ListingDe
           <DrawerHeader className="p-0">
              <div className="space-y-6">
                 <div className="flex items-center justify-between">
-                   <Badge className={`font-mono text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full border-none ${isOffer ? "bg-accent/10 text-accent" : "bg-stone-100 text-stone-500"}`}>
+                   <Badge className={`font-mono text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full border-none ${isOffer ? "bg-accent/10 text-accent" : "bg-stone-200 text-stone-600"}`}>
                       {listing.type} • {listing.category}
                    </Badge>
-                   <div className="h-12 w-12 rounded-2xl bg-stone-50 border border-stone-100 flex items-center justify-center shadow-sm">
-                      {isService ? <Briefcase className="h-6 w-6 text-accent" /> : <Package className="h-6 w-6 text-accent" />}
+                   <div className="flex items-center gap-2">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-10 w-10 rounded-full text-stone-300 hover:text-accent hover:bg-accent/5"
+                        onClick={() => {
+                          navigator.clipboard.writeText(window.location.href);
+                          toast.success("Protocol Link copied.");
+                        }}
+                      >
+                         <Share2 className="h-4 w-4" />
+                      </Button>
+                      <div className="h-12 w-12 rounded-2xl bg-stone-50 border border-stone-100 flex items-center justify-center shadow-sm">
+                         {isService ? <Briefcase className="h-6 w-6 text-accent" /> : <Package className="h-6 w-6 text-accent" />}
+                      </div>
                    </div>
                 </div>
                 
@@ -110,10 +151,20 @@ export function ListingDetailDrawer({ listing, isOpen, onOpenChange }: ListingDe
 
         <DrawerFooter className="px-0 pt-6 border-t border-stone-100">
            <div className="grid grid-cols-2 gap-4">
-              <Button className="h-16 rounded-3xl btn-premium text-white font-black uppercase tracking-widest text-xs shadow-xl shadow-accent/20 flex items-center gap-2">
-                 <Zap className="h-4 w-4" /> Propose Swap
+              <Button 
+                onClick={handleAction}
+                disabled={isActionPending}
+                className="h-16 rounded-3xl btn-premium text-white font-black uppercase tracking-widest text-xs shadow-xl shadow-accent/20 flex items-center gap-2"
+              >
+                 {isActionPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4" />}
+                 Propose Swap
               </Button>
-              <Button variant="outline" className="h-16 rounded-3xl border-stone-200 text-stone-500 font-black uppercase tracking-widest text-xs flex items-center gap-2">
+              <Button 
+                variant="outline" 
+                onClick={handleAction}
+                disabled={isActionPending}
+                className="h-16 rounded-3xl border-stone-200 text-stone-500 font-black uppercase tracking-widest text-xs flex items-center gap-2"
+              >
                  <MessageSquare className="h-4 w-4" /> Message Peer
               </Button>
            </div>
