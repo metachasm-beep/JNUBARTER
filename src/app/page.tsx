@@ -35,8 +35,6 @@ export default function DiscoveryPage() {
   const [setupStep, setSetupStep] = useState(1);
   const [hasAttemptedAutoOpen, setHasAttemptedAutoOpen] = useState(false);
 
-  const containerRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     if (status === "authenticated" && !isAdmin && session?.user && !(session?.user as any)?.hasProfile && !hasAttemptedAutoOpen) {
       setIsSetupModalOpen(true);
@@ -50,10 +48,8 @@ export default function DiscoveryPage() {
     }
   }, [status, isAdmin, pathname]);
 
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"]
-  });
+  // FIX: Use global window scroll instead of element-targeted scroll
+  const { scrollYProgress } = useScroll();
 
   const smoothProgress = useSpring(scrollYProgress, {
     stiffness: 40,
@@ -87,7 +83,6 @@ export default function DiscoveryPage() {
 
   return (
     <main 
-      ref={containerRef}
       className="relative min-h-[400vh] bg-black overflow-x-hidden font-sans selection:bg-accent selection:text-white scroll-smooth"
     >
       {/* INTEGRATED DEPTHFLOW WORLD (WEBGL SHADER) */}
