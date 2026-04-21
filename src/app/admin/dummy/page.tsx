@@ -29,11 +29,16 @@ export default function AdminDummyPage() {
     setIsSeeding(true);
     // We'll create a special endpoint for seeding if the script approach is hard
     const res = await fetch("/api/admin/dummy/seed", { method: "POST" });
+    const data = await res.json();
+    
     if (res.ok) {
       toast.success("50 dummy entries seeded successfully.");
       fetchEntries();
     } else {
-      toast.error("Seeding failed.");
+      toast.error(data.error || "Seeding failed.", {
+        description: data.details || "Check server logs.",
+        duration: 5000,
+      });
     }
     setIsSeeding(false);
   };

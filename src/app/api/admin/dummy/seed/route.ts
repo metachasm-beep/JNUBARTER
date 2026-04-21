@@ -28,10 +28,12 @@ export async function POST(req: Request) {
 
   try {
     // 1. Ensure a System User exists
+    console.log("[Seed] Ensuring system user exists...");
     const systemUser = await prisma.user.upsert({
       where: { email: "system@barter.io" },
-      update: {},
+      update: { role: "ADMIN" },
       create: {
+        id: "cl_system_node", // Fixed ID for stability
         email: "system@barter.io",
         name: "BARTER SYSTEM",
         bio: "Automated reciprocity node for network density.",
@@ -42,6 +44,7 @@ export async function POST(req: Request) {
     });
 
     const userId = systemUser.id;
+    console.log(`[Seed] Using User ID: ${userId}. Creating 50 entries...`);
 
     // 2. Create 25 Services
     const servicePromises = Array.from({ length: 25 }).map((_, i) => {
@@ -77,11 +80,24 @@ export async function POST(req: Request) {
       });
     });
 
-    await Promise.all([...servicePromises, ...commodityPromises]);
+    const results = await Promise.all([...servicePromises, ...commodityPromises]);
+    console.log(`[Seed] Success. Created ${results.length} entries.`);
 
     return NextResponse.json({ message: "50 entries seeded." });
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: "Seeding failed" }, { status: 500 });
+  } catch (error: any) {
+    console.error("[Seed] CRITICAL FAILURE:", error);
+    
+    // Check if it's a Prisma schema sync error
+    if (error.message.includes("isSystem") || error.message.includes("does not exist")) {
+      return NextResponse.json({ 
+        error: "Database schema is out of sync. Please run 'npx prisma db push' or apply sync_schema.sql.",
+        details: error.message
+      }, { status: 500 });
+    }
+
+    return NextResponse.json({ 
+      error: "Seeding failed. See server logs for details.",
+      details: error.message 
+    }, { status: 500 });
   }
 }
