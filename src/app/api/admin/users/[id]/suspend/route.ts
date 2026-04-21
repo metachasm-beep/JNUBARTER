@@ -1,40 +1,35 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { NextResponse } from "next/server";
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+export async function POST(
+  req: Request,
+  { params }: { params: { id: string } }
 ) {
-  const { id } = await params;
-  const session = await getServerSession(authOptions);
-
-  if (!session || session.user.role !== "ADMIN") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   try {
-    const { isSuspended } = await req.json();
+    const userId = params.id;
 
-    const user = await (prisma.user as any).update({
-      where: { id },
-      data: { isSuspended },
+    console.log(`Suspending user ${userId}...`);
+
+    // Update the user to be suspended
+    await prisma.user.update({
+      where: { id: userId },
+      data: { isSuspended: true, role: "USER" } // Ensure they aren't admin if they were
     });
 
-    // Log the action
-    await (prisma.auditLog as any).create({
+    // Log the suspension
+    await prisma.auditLog.create({
       data: {
-        action: isSuspended ? "USER_SUSPENDED" : "USER_ACTIVATED",
-        entity: `USER:${id}`,
-        userId: (session.user as any).id,
-        metadata: { targetUser: user.email }
+        userId,
+        action: "SUSPENSION",
+        entity: "USER",
+        entityId: userId,
+        metadata: { reason: "Admin revocation" }
       }
     });
 
-    return NextResponse.json({ user });
-  } catch (error) {
-    console.error("Failed to toggle suspension:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ success: true });
+  } catch (err: any) {
+    console.error("Revocation failed:", err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

@@ -13,10 +13,13 @@ export function UserActions({ userId, userName }: { userId: string, userName: st
     
     setIsRevoking(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1200));
+      const res = await fetch(`/api/admin/users/${userId}/suspend`, { method: "POST" });
+      if (!res.ok) throw new Error(await res.text());
+      
       toast.error("Access Revoked", {
         description: `${userName}'s node privileges have been suspended.`
       });
+      window.location.reload();
     } catch (err) {
       toast.error("Revocation Failed");
     } finally {
@@ -24,13 +27,19 @@ export function UserActions({ userId, userName }: { userId: string, userName: st
     }
   };
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
     toast.promise(
-      new Promise((resolve) => setTimeout(resolve, 2000)),
+      (async () => {
+        const res = await fetch(`/api/admin/users/${userId}/verify`, { method: "POST" });
+        if (!res.ok) throw new Error(await res.text());
+        // Reload to show the new "Authority Intel"
+        window.location.reload();
+        return await res.json();
+      })(),
       {
         loading: `Initiating deep verify for ${userName}...`,
         success: "Verification Complete: Identity Authenticated",
-        error: "Verification Failed",
+        error: "Verification Failed: Link Timeout",
       }
     );
   };
