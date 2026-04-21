@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { Search } from "lucide-react";
-import { UserRow } from "@/components/admin/UserRow";
+import { UserTable } from "@/components/admin/UserTable";
 
 export default async function UserManagement() {
   const users = await prisma.user.findMany({
@@ -32,24 +32,7 @@ export default async function UserManagement() {
         </div>
       </header>
 
-      <div className="glass-card border-stone-200 rounded-[3rem] overflow-hidden shadow-2xl shadow-stone-200/20 bg-white">
-        <table className="w-full">
-          <thead>
-            <tr className="bg-stone-50/50">
-              <th className="px-10 py-8 text-left text-[11px] font-mono font-black uppercase tracking-widest text-stone-400">Node Identity</th>
-              <th className="px-10 py-8 text-left text-[11px] font-mono font-black uppercase tracking-widest text-stone-400">Privileges</th>
-              <th className="px-10 py-8 text-left text-[11px] font-mono font-black uppercase tracking-widest text-stone-400">Authority Intel</th>
-              <th className="px-10 py-8 text-left text-[11px] font-mono font-black uppercase tracking-widest text-stone-400">Activity</th>
-              <th className="px-10 py-8 text-right text-[11px] font-mono font-black uppercase tracking-widest text-stone-400">Command</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-stone-100">
-            {users.map((user) => (
-              <UserRow key={user.id} user={user} />
-            ))}
-          </tbody>
-        </table>
-      </div>
+        <UserTable initialUsers={users} />
     </div>
   );
 }

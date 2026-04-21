@@ -4,16 +4,13 @@ import { useState } from "react";
 import { Mail } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { UserActions } from "./UserActions";
-import { AdminUserDrawer } from "./AdminUserDrawer";
 
-export function UserRow({ user }: { user: any }) {
-  const [drawerOpen, setDrawerOpen] = useState(false);
-
+export function UserRow({ user, onInspect }: { user: any, onInspect: () => void }) {
   return (
     <>
       <tr 
         className="hover:bg-stone-50/30 transition-all group cursor-pointer"
-        onClick={() => setDrawerOpen(true)}
+        onClick={onInspect}
       >
         <td className="px-10 py-8">
           <div className="flex items-center gap-6">
@@ -59,12 +56,6 @@ export function UserRow({ user }: { user: any }) {
            <UserActions userId={user.id} userName={user.name || 'Unknown'} />
         </td>
       </tr>
-
-      <AdminUserDrawer 
-        user={user} 
-        isOpen={drawerOpen} 
-        onClose={() => setDrawerOpen(false)} 
-      />
     </>
   );
 }
