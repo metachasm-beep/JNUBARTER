@@ -50,6 +50,18 @@ export function AdminUserDrawer({
                 <ReputationDial score={user.reputation || 0} size={80} />
              </div>
 
+             {user.verificationReports?.[0]?.status === 'CHALLENGED' && (
+               <div className="bg-amber-50 border border-amber-100 p-6 rounded-3xl flex items-center justify-between">
+                  <div>
+                     <p className="text-[10px] font-mono font-bold text-amber-600 uppercase tracking-widest mb-1">Active Email Challenge</p>
+                     <p className="text-xs text-amber-700 font-medium italic">Student must provide the code sent to {user.email}</p>
+                  </div>
+                  <div className="text-2xl font-mono font-black text-amber-900 tracking-[0.2em] bg-white px-6 py-2 rounded-xl shadow-sm">
+                     {user.verificationReports[0].evidence?.challengeCode || '------'}
+                  </div>
+               </div>
+             )}
+
              <div>
                 <SheetTitle className="text-5xl font-black tracking-tighter text-primary uppercase italic leading-[0.8]">
                    {user.name}

@@ -36,8 +36,14 @@ export function UserRow({ user }: { user: any }) {
         <td className="px-10 py-8">
            {user.verificationReports[0] ? (
              <div className="flex items-center gap-2">
-                <div className={`h-2 w-2 rounded-full ${user.verificationReports[0].status === 'VERIFIED' ? 'bg-emerald-500' : 'bg-amber-500'}`} />
-                <span className="text-[10px] font-mono font-bold text-stone-500 uppercase tracking-tighter">{user.verificationReports[0].status}</span>
+                <div className={`h-2 w-2 rounded-full ${
+                  user.verificationReports[0].status === 'VERIFIED' ? 'bg-emerald-500' : 
+                  user.verificationReports[0].status === 'CHALLENGED' ? 'bg-amber-500 animate-pulse' : 
+                  'bg-stone-300'
+                }`} />
+                <span className="text-[10px] font-mono font-bold text-stone-500 uppercase tracking-tighter">
+                  {user.verificationReports[0].status}
+                </span>
              </div>
            ) : (
              <span className="text-[10px] font-mono text-stone-300 uppercase italic">Pending Intel</span>
