@@ -26,12 +26,10 @@ export async function POST() {
 
   try {
     console.log("Seeding 50 dummy users via API...");
-    const userIds: string[] = [];
-    
-    for (let i = 0; i < 50; i++) {
-      const user = await prisma.user.upsert({
+    const userPromises = Array.from({ length: 50 }).map((_, i) => {
+      return prisma.user.upsert({
         where: { email: `student_activity_${i}@jnu.ac.in` },
-        update: {},
+        update: { isVerified: true },
         create: {
           email: `student_activity_${i}@jnu.ac.in`,
           name: `Active Student ${i + 1}`,
@@ -42,34 +40,44 @@ export async function POST() {
           reputation: Math.floor(Math.random() * 100),
         }
       });
-      userIds.push(user.id);
-    }
+    });
+
+    const createdUsers = await Promise.all(userPromises);
+    const userIds = createdUsers.map(u => u.id);
+    console.log(`[Seed] Created/Found ${userIds.length} users.`);
 
     console.log("Seeding 50 dummy listings via API...");
-    for (let i = 0; i < 50; i++) {
+    const listingPromises = Array.from({ length: 50 }).map((_, i) => {
       const userId = userIds[i % userIds.length];
       const isService = i % 2 === 0;
       const title = isService 
         ? serviceTitles[i % serviceTitles.length] 
         : commodityTitles[i % commodityTitles.length];
 
-      await prisma.listing.create({
+      return prisma.listing.create({
         data: {
           userId,
           type: 'OFFER',
           category: isService ? 'SERVICE' : 'COMMODITY',
           title: `${title} #${i+1}`,
           description: `Quality ${title.toLowerCase()} offered for campus exchange. Verified by community standards.`,
-          effortEstimate: isService ? (i % 3 === 0 ? 'LOW' : i % 3 === 1 ? 'MEDIUM' : 'HIGH' as any) : null,
-          condition: !isService ? (i % 2 === 0 ? 'Good' : 'New') : null,
+          effortEstimate: isService ? (i % 3 === 0 ? 'LOW' : i % 3 === 1 ? 'MEDIUM' : 'HIGH' as any) : undefined,
+          condition: !isService ? (i % 2 === 0 ? 'Good' : 'New') : undefined,
           isSystem: true
         }
       });
-    }
+    });
+
+    await Promise.all(listingPromises);
+    console.log("[Seed] Success. 50 users and 50 listings created.");
 
     return NextResponse.json({ message: "Seeding successful. 50 users and 50 listings created." });
   } catch (error: any) {
-    console.error("Seeding failed:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("[Seed] CRITICAL FAILURE:", error);
+    return NextResponse.json({ 
+      error: "Seeding failed.", 
+      details: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined 
+    }, { status: 500 });
   }
 }
