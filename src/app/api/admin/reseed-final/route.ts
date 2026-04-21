@@ -3,18 +3,31 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const { users, realisticServices, realisticCommodities } = await req.json();
+    const { users, realisticServices, realisticCommodities, forceClean } = await req.json();
 
     console.log("Cleaning up all previous dummy data...");
-    // Delete all system listings
-    await prisma.listing.deleteMany({ where: { isSystem: true } });
-    // Delete all dummy users
-    await prisma.user.deleteMany({ where: { email: { contains: "student_activity" } } });
-    await prisma.user.deleteMany({ where: { email: { contains: "@jnu.ac.in" }, isVerified: true, NOT: { email: "metachasm@gmail.com" } } });
+    
+    // 1. Delete all listings first (foreign key dependency)
+    if (forceClean) {
+      await prisma.listing.deleteMany({});
+      console.log("Forced purge of all listings complete.");
+    } else {
+      await prisma.listing.deleteMany({ where: { isSystem: true } });
+    }
+
+    // 2. Delete all users except the admin whitelist
+    const adminEmails = ["metachasm@gmail.com"];
+    await prisma.user.deleteMany({
+      where: {
+        NOT: { email: { in: adminEmails } }
+      }
+    });
+    console.log("User cleanup complete.");
 
     console.log("Injecting fresh users...");
     const createdUsers = [];
     for (const userData of users) {
+      // Use upsert to be safe, though deleteMany should have cleared it
       const u = await prisma.user.create({ data: userData });
       createdUsers.push(u);
     }

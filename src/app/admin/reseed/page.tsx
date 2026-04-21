@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Zap, Loader2, CheckCircle, AlertCircle } from "lucide-react";
 
-// Diverse and representative dataset for JNU community
+// v2.1 — Diverse Community Dataset (SC/OBC/ST)
 const firstNames = ["Ramesh", "Sunita", "Manoj", "Laxmi", "Rajesh", "Savita", "Ashok", "Geeta", "Sanjay", "Kavita", "Anil", "Rekha", "Sunil", "Anita", "Vijay", "Priyanka", "Ajay", "Aarti", "Suresh", "Rupa", "Dinesh", "Suman", "Vinod", "Pooja", "Santosh"];
 const lastNames = ["Meena", "Paswan", "Jatav", "Maurya", "Kushwaha", "Sahani", "Mandal", "Kerketta", "Oraon", "Bhagat", "Rajbhar", "Nishad", "Valmiki", "Soren", "Hembram", "Kisku", "Marandi", "Gond", "Munda", "Baitha", "Soreng", "Dungdung", "Pal", "Baghel", "Prajapati"];
 
@@ -45,7 +45,7 @@ export default function ReseedPage() {
   const handleReseed = async () => {
     setStatus("loading");
     setLog([]);
-    addLog("Initializing diverse identity sync...");
+    addLog("Initializing diverse identity sync v2.1...");
 
     try {
       const users = Array.from({ length: 50 }).map((_, i) => {
@@ -53,7 +53,7 @@ export default function ReseedPage() {
         const lName = lastNames[Math.floor(Math.random() * lastNames.length)];
         const school = schools[i % schools.length];
         return {
-          email: `${fName.toLowerCase()}.${lName.toLowerCase()}${i+700}@jnu.ac.in`,
+          email: `${fName.toLowerCase()}.${lName.toLowerCase()}${i+900}@jnu.ac.in`, // Changed increment to avoid collision
           name: `${fName} ${lName}`,
           bio: `Research scholar at ${school}. Interested in grassroots activism and academic reciprocity.`,
           school: school,
@@ -68,7 +68,7 @@ export default function ReseedPage() {
       const res = await fetch("/api/admin/reseed-final", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ users, realisticServices, realisticCommodities })
+        body: JSON.stringify({ users, realisticServices, realisticCommodities, forceClean: true })
       });
 
       if (!res.ok) throw new Error(await res.text());
@@ -83,7 +83,11 @@ export default function ReseedPage() {
 
   return (
     <div className="min-h-screen bg-stone-50 flex items-center justify-center p-6 font-sans">
-      <div className="max-w-md w-full bg-white rounded-[40px] shadow-2xl border border-stone-200 p-12 space-y-8 text-center">
+      <div className="max-w-md w-full bg-white rounded-[40px] shadow-2xl border border-stone-200 p-12 space-y-8 text-center relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-4">
+           <span className="text-[8px] font-mono font-bold text-stone-300 uppercase tracking-widest bg-stone-50 px-3 py-1 rounded-full">v2.1 Sync</span>
+        </div>
+
         <div className="h-20 w-20 rounded-full bg-accent/10 flex items-center justify-center text-accent mx-auto">
           {status === "loading" ? <Loader2 className="h-10 w-10 animate-spin" /> : 
            status === "success" ? <CheckCircle className="h-10 w-10 text-emerald-500" /> :
