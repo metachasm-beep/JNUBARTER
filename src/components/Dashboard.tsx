@@ -178,7 +178,7 @@ export function Dashboard({ openSetup }: DashboardProps) {
               </div>
             </section>
 
-            <section>
+            <section id="flux-notifications">
               <div className="flex items-center justify-between mb-8">
                 <h3 className="text-xl font-black uppercase tracking-tighter italic text-primary">Network Flux Notifications</h3>
               </div>
