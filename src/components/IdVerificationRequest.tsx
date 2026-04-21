@@ -30,10 +30,12 @@ export function IdVerificationRequest({
   };
 
   const handleUpload = async () => {
+    console.log("[IdVerificationRequest] Starting upload. Preview exists:", !!preview);
     if (!preview) return;
 
     setIsUploading(true);
     try {
+      console.log("[IdVerificationRequest] Sending POST to /api/user/upload-id");
       // We send the Base64 string to the server
       // In a real app, you'd upload to S3/Cloudinary first
       const res = await fetch("/api/user/upload-id", {
@@ -42,11 +44,18 @@ export function IdVerificationRequest({
         body: JSON.stringify({ idCardBase64: preview })
       });
 
-      if (!res.ok) throw new Error(await res.text());
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error("[IdVerificationRequest] Upload failed:", res.status, errorText);
+        throw new Error(errorText);
+      }
+      
+      console.log("[IdVerificationRequest] Upload successful");
       toast.success("ID Uploaded", { description: "Your JNU ID is now awaiting admin review." });
       onSuccess?.();
       onClose?.();
     } catch (err: any) {
+      console.error("[IdVerificationRequest] Error in handleUpload:", err);
       toast.error("Upload Failed", { description: err.message });
     } finally {
       setIsUploading(false);

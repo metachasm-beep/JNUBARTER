@@ -5,18 +5,26 @@ import { prisma } from "@/lib/prisma";
 export async function POST(req: Request) {
   try {
     const session = await auth();
-    if (!session?.user?.email) {
+    console.log("[SWAPS_POST] Session:", !!session, "User ID:", session?.user?.id);
+    
+    if (!session?.user?.id) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
     const { listingId, receiverId } = await req.json();
+    console.log("[SWAPS_POST] Data:", { listingId, receiverId });
 
     if (!listingId || !receiverId) {
       return new NextResponse("Missing data", { status: 400 });
     }
 
+    const userId = session.user.id;
+    if (userId === receiverId) {
+      return new NextResponse("Cannot swap with yourself", { status: 400 });
+    }
+
     const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
+      where: { id: userId },
     });
 
     if (!user) {

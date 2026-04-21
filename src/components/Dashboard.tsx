@@ -273,6 +273,7 @@ export function Dashboard({ openSetup }: DashboardProps) {
       <IdVerificationRequest 
         isOpen={isIdModalOpen} 
         onClose={() => setIsIdModalOpen(false)} 
+        onSuccess={() => window.location.reload()}
       />
     </div>
   );
