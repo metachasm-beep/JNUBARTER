@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/badge";
-import { Package, Trash2, ShieldAlert, Eye, User, AlertTriangle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { User, AlertTriangle, ShieldAlert } from "lucide-react";
+import { ListingActions } from "@/components/admin/ListingActions";
 
 export default async function ListingModeration() {
   const listings = await prisma.listing.findMany({
@@ -68,14 +68,7 @@ export default async function ListingModeration() {
                          <p className="text-[9px] font-mono text-stone-300 uppercase truncate max-w-[100px]">{listing.user.email}</p>
                       </div>
                    </div>
-                   <div className="flex items-center gap-2">
-                      <Button variant="ghost" size="icon" className="h-12 w-12 rounded-2xl hover:bg-stone-100 border border-stone-50 shadow-sm">
-                         <Eye className="h-5 w-5" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-12 w-12 rounded-2xl hover:bg-red-50 hover:text-red-500 border border-stone-50 shadow-sm">
-                         <Trash2 className="h-5 w-5" />
-                      </Button>
-                   </div>
+                   <ListingActions listingId={listing.id} title={listing.title} />
                 </div>
              </div>
           </div>
