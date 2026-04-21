@@ -1,23 +1,26 @@
 import neo4j, { Driver } from 'neo4j-driver';
 
-const uri = process.env.NEO4J_URI || 'bolt://localhost:7687';
-const user = process.env.NEO4J_USER || 'neo4j';
-const password = process.env.NEO4J_PASSWORD || 'password';
-
 let driver: Driver;
 
 export const getNeo4jDriver = () => {
   if (!driver) {
-    if (!process.env.NEO4J_URI) {
-      console.warn('NEO4J_URI not set, defaulting to localhost');
+    const uri = process.env.NEO4J_URI || 'bolt://localhost:7687';
+    const user = process.env.NEO4J_USER || 'neo4j';
+    const password = process.env.NEO4J_PASSWORD || 'password';
+
+    if (typeof window === 'undefined') {
+      console.log(`[Neo4j] Connecting to ${uri.split('@').pop()} as ${user}`);
     }
-    driver = neo4j.driver(
-      process.env.NEO4J_URI || 'bolt://localhost:7687',
-      neo4j.auth.basic(
-        process.env.NEO4J_USER || 'neo4j',
-        process.env.NEO4J_PASSWORD || 'password'
-      )
-    );
+
+    try {
+      driver = neo4j.driver(uri, neo4j.auth.basic(user, password), {
+        maxConnectionPoolSize: 10,
+        connectionTimeout: 10000, // 10s
+      });
+    } catch (err) {
+      console.error("[Neo4j] Initialization failed:", err);
+      throw err;
+    }
   }
   return driver;
 };
