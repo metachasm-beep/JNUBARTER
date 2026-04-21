@@ -20,7 +20,7 @@ import { ListingCard } from "@/components/ListingCard";
 import { ListingSkeleton } from "@/components/ListingSkeleton";
 import { useListingsFlat } from "@/hooks/useListings";
 import { useVerification } from "@/hooks/useVerification";
-import { VerificationBanner } from "@/components/VerificationBanner";
+import { IdVerificationRequest } from "@/components/IdVerificationRequest";
 
 interface DashboardProps {
   openSetup: (step?: number) => void;
@@ -44,8 +44,20 @@ export function Dashboard({ openSetup }: DashboardProps) {
     <div className="min-h-screen bg-stone-50/50 pt-12 pb-32">
       <div className="max-w-7xl mx-auto px-8 space-y-12">
         
-        {verifyData?.status === 'CHALLENGED' && (
-          <VerificationBanner user={session?.user} />
+        {!verifyData?.isVerified && verifyData?.status !== 'PENDING_REVIEW' && (
+          <IdVerificationRequest />
+        )}
+
+        {verifyData?.status === 'PENDING_REVIEW' && (
+           <div className="bg-primary text-white p-8 rounded-[2.5rem] flex items-center gap-6 shadow-2xl shadow-primary/20">
+              <div className="h-12 w-12 rounded-full bg-accent flex items-center justify-center text-primary shrink-0 animate-pulse">
+                <ShieldCheck className="h-6 w-6" />
+              </div>
+              <div>
+                <h3 className="text-xl font-black uppercase italic tracking-tighter leading-tight">Identity Under Review</h3>
+                <p className="text-xs opacity-70 font-medium">The protocol authority is currently verifying your JNU ID credentials.</p>
+              </div>
+           </div>
         )}
         {/* HEADER: ACADEMIC WELCOME */}
         <section className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">

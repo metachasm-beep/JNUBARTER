@@ -8,38 +8,37 @@ export async function POST(
   try {
     const userId = params.id;
 
-    // 1. Update the user to VERIFIED and create a Success Report
+    // 1. Clear the ID Card URL and set report to REJECTED
     await prisma.$transaction([
       prisma.user.update({
         where: { id: userId },
-        data: { isVerified: true }
+        data: { idCardUrl: null }
       }),
       prisma.verificationReport.create({
         data: {
           userId,
-          status: "VERIFIED",
-          findings: "Student identity successfully authenticated via Manual ID Review. JNU ID card verified by admin.",
+          status: "REJECTED",
+          findings: "Student ID Card rejected by admin. Image may be unclear, expired, or fraudulent.",
           evidence: {
             timestamp: new Date().toISOString(),
-            method: "MANUAL_ID_REVIEW",
-            approvedBy: "ADMIN"
+            reason: "Admin Rejection"
           }
         }
       }),
       prisma.auditLog.create({
         data: {
           userId,
-          action: "ID_APPROVED",
+          action: "ID_REJECTED",
           entity: "USER",
           entityId: userId,
-          metadata: { method: "MANUAL_ID_REVIEW" }
+          metadata: { note: "Administrative rejection of ID card submission." }
         }
       })
     ]);
 
     return NextResponse.json({ success: true });
   } catch (err: any) {
-    console.error("Verification approval failed:", err);
+    console.error("Rejection failed:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

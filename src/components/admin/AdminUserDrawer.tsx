@@ -50,14 +50,41 @@ export function AdminUserDrawer({
                 <ReputationDial score={user.reputation || 0} size={80} />
              </div>
 
-             {user.verificationReports?.[0]?.status === 'CHALLENGED' && (
-               <div className="bg-amber-50 border border-amber-100 p-6 rounded-3xl flex items-center justify-between">
-                  <div>
-                     <p className="text-[10px] font-mono font-bold text-amber-600 uppercase tracking-widest mb-1">Active Email Challenge</p>
-                     <p className="text-xs text-amber-700 font-medium italic">Student must provide the code sent to {user.email}</p>
+             {user.idCardUrl && (
+               <div className="space-y-6">
+                  <div className="flex items-center justify-between border-b border-stone-100 pb-4">
+                     <div className="flex items-center gap-3">
+                        <ShieldCheck className="h-5 w-5 text-accent" />
+                        <h4 className="text-[11px] font-mono font-black uppercase tracking-[0.3em] text-stone-400">Credential Review</h4>
+                     </div>
+                     <Badge className="bg-amber-100 text-amber-700 border-none px-4 py-1 uppercase text-[9px] font-bold">Pending Review</Badge>
                   </div>
-                  <div className="text-2xl font-mono font-black text-amber-900 tracking-[0.2em] bg-white px-6 py-2 rounded-xl shadow-sm">
-                     {user.verificationReports[0].evidence?.challengeCode || '------'}
+                  
+                  <div className="relative aspect-[1.58/1] w-full rounded-[2.5rem] overflow-hidden border-4 border-stone-100 shadow-2xl group">
+                     <img src={user.idCardUrl} alt="ID Card" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
+                        <Button 
+                          onClick={async () => {
+                            if (!confirm("Approve this identity?")) return;
+                            await fetch(`/api/admin/users/${user.id}/verify`, { method: "POST" });
+                            window.location.reload();
+                          }}
+                          className="bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl px-8 h-12 font-black uppercase tracking-widest text-xs"
+                        >
+                          Approve Node
+                        </Button>
+                        <Button 
+                          onClick={async () => {
+                            if (!confirm("Reject this credential?")) return;
+                            await fetch(`/api/admin/users/${user.id}/reject-id`, { method: "POST" });
+                            window.location.reload();
+                          }}
+                          variant="destructive" 
+                          className="rounded-2xl px-8 h-12 font-black uppercase tracking-widest text-xs"
+                        >
+                          Reject
+                        </Button>
+                     </div>
                   </div>
                </div>
              )}

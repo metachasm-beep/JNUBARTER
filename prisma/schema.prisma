@@ -27,6 +27,7 @@ model User {
   isVerified    Boolean   @default(false)
   role          UserRole  @default(USER)
   isSuspended   Boolean   @default(false)
+  idCardUrl     String?   // URL for JNU ID card photo
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
