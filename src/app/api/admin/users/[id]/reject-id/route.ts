@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { deleteIdPhoto } from "@/lib/storage";
 
 export async function POST(
   req: Request,
@@ -7,6 +8,16 @@ export async function POST(
 ) {
   try {
     const { id: userId } = await params;
+
+    // 0. Get current ID to delete it
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { idCardUrl: true }
+    });
+
+    if (user?.idCardUrl && !user.idCardUrl.startsWith('http')) {
+      await deleteIdPhoto(user.idCardUrl);
+    }
 
     // 1. Clear the ID Card URL and set report to REJECTED
     await prisma.$transaction([

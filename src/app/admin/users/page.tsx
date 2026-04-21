@@ -1,9 +1,10 @@
 import { prisma } from "@/lib/prisma";
 import { Search } from "lucide-react";
 import { UserTable } from "@/components/admin/UserTable";
+import { getSignedUrl } from "@/lib/storage";
 
 export default async function UserManagement() {
-  const users = await prisma.user.findMany({
+  const usersRaw = await prisma.user.findMany({
     orderBy: { createdAt: "desc" },
     include: { 
       _count: { select: { listings: true, swapsInitiated: true, swapsReceived: true } },
@@ -14,6 +15,15 @@ export default async function UserManagement() {
       swapsReceived: { take: 5, orderBy: { createdAt: "desc" } }
     }
   });
+
+  // Generate signed URLs for users with ID photos
+  const users = await Promise.all(usersRaw.map(async (u) => {
+    if (u.idCardUrl && !u.idCardUrl.startsWith('http')) {
+      const signedUrl = await getSignedUrl(u.idCardUrl);
+      return { ...u, idCardUrl: signedUrl };
+    }
+    return u;
+  }));
 
   return (
     <div className="space-y-12 pb-24">
