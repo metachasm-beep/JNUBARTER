@@ -28,6 +28,19 @@ export async function POST(req: Request) {
   }
 
   try {
+    // Attempt to create the enum type if it doesn't exist (fixes sync issues)
+    try {
+      await (prisma as any).$executeRawUnsafe(`
+        DO $$ BEGIN
+          CREATE TYPE "UserRole" AS ENUM ('USER', 'ADMIN');
+        EXCEPTION
+          WHEN duplicate_object THEN null;
+        END $$;
+      `);
+    } catch (e) {
+      console.log("Enum creation skipped or failed:", e);
+    }
+
     console.log("Seeding 50 dummy users via API...");
     const userPromises = Array.from({ length: 50 }).map((_, i) => {
       return prisma.user.upsert({
@@ -41,6 +54,7 @@ export async function POST(req: Request) {
           hostel: hostels[i % hostels.length],
           isVerified: true,
           reputation: Math.floor(Math.random() * 100),
+          // role: "USER", // Temporarily removed to test enum issue
         }
       });
     });
