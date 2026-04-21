@@ -19,6 +19,8 @@ import { ReputationDial } from "@/components/ReputationDial";
 import { ListingCard } from "@/components/ListingCard";
 import { ListingSkeleton } from "@/components/ListingSkeleton";
 import { useListingsFlat } from "@/hooks/useListings";
+import { useVerification } from "@/hooks/useVerification";
+import { VerificationBanner } from "@/components/VerificationBanner";
 
 interface DashboardProps {
   openSetup: (step?: number) => void;
@@ -27,6 +29,7 @@ interface DashboardProps {
 export function Dashboard({ openSetup }: DashboardProps) {
   const { data: session } = useSession();
   const { data: listingsData, isLoading } = useListingsFlat();
+  const { data: verifyData } = useVerification();
   const listings = listingsData?.listings ?? [];
 
   // Mock stats for a comprehensive feel
@@ -41,6 +44,9 @@ export function Dashboard({ openSetup }: DashboardProps) {
     <div className="min-h-screen bg-stone-50/50 pt-12 pb-32">
       <div className="max-w-7xl mx-auto px-8 space-y-12">
         
+        {verifyData?.status === 'CHALLENGED' && (
+          <VerificationBanner user={session?.user} />
+        )}
         {/* HEADER: ACADEMIC WELCOME */}
         <section className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
           <div>

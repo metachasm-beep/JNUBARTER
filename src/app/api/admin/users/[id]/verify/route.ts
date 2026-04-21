@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { sendOtpEmail } from "@/lib/mail";
 
 export async function POST(
   req: Request,
@@ -14,7 +15,10 @@ export async function POST(
     // 1. Generate a 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // 2. Create/Update a Verification Report with CHALLENGED status
+    // 2. Dispatch REAL email
+    await sendOtpEmail(user.email, otp);
+
+    // 3. Create/Update a Verification Report with CHALLENGED status
     const report = await prisma.verificationReport.create({
       data: {
         userId,
