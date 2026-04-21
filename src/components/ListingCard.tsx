@@ -7,6 +7,8 @@ import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { useState } from "react";
 
+import { ListingDetailDrawer } from "./ListingDetailDrawer";
+
 interface ListingCardProps {
   listing: any;
   className?: string;
@@ -15,8 +17,8 @@ interface ListingCardProps {
 export function ListingCard({ listing, className }: ListingCardProps) {
   const { data: session } = useSession();
   const isAdmin = (session?.user as any)?.role === "ADMIN";
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
 
   const isOffer = listing.type === "OFFER";
   const isService = listing.category === "SERVICE";
@@ -39,7 +41,7 @@ export function ListingCard({ listing, className }: ListingCardProps) {
   return (
     <>
       <SpotlightCard 
-        onClick={() => setIsDrawerOpen(true)}
+        onClick={() => setIsDetailOpen(true)}
         className={`h-full glass-card border-iridescent iridescent-hover cursor-pointer group ${className}`}
       >
         <Card className="h-full bg-transparent border-none rounded-none shadow-none flex flex-col">
@@ -79,7 +81,10 @@ export function ListingCard({ listing, className }: ListingCardProps) {
           </CardContent>
           <CardFooter className="p-6 pt-0 mt-auto flex items-center justify-between border-t border-stone-100/30 mt-4 pt-4">
             <div className="flex items-center gap-4">
-              <ProfileViewDrawer user={listing.user} />
+              {/* Profile click is isolated */}
+              <div onClick={(e) => e.stopPropagation()}>
+                <ProfileViewDrawer user={listing.user} />
+              </div>
               {isAdmin && listing.isSystem && (
                 <button 
                   onClick={deleteDummy} 
@@ -91,21 +96,18 @@ export function ListingCard({ listing, className }: ListingCardProps) {
               )}
             </div>
             <div className="flex items-center gap-2 text-accent">
-               <span className="text-[10px] font-bold uppercase tracking-tighter opacity-0 group-hover:opacity-100 transition-opacity duration-300">Details</span>
                <ChevronRight className="h-4 w-4 transform group-hover:translateX-1 transition-transform duration-300" />
             </div>
           </CardFooter>
         </Card>
       </SpotlightCard>
       
-      {/* Hidden drawer that can be triggered by the whole card or details button */}
-      <ProfileViewDrawer 
-        user={listing.user} 
-        isOpen={isDrawerOpen} 
-        onOpenChange={setIsDrawerOpen}
-      >
-        <span className="hidden" /> 
-      </ProfileViewDrawer>
+      {/* Listing Detail View triggered by the whole card */}
+      <ListingDetailDrawer 
+        listing={listing} 
+        isOpen={isDetailOpen} 
+        onOpenChange={setIsDetailOpen}
+      />
     </>
   );
 }
