@@ -42,7 +42,7 @@ const NavItem = ({ icon: Icon, label, href, isActive, onClick }: NavItemProps) =
       )}
     >
       <Icon className={cn("h-4 w-4 transition-transform group-hover:scale-110", isActive ? "stroke-[2.5]" : "stroke-2")} />
-      <span className="text-[10px] font-black uppercase tracking-[0.1em] whitespace-nowrap">
+      <span className="text-[10px] font-black uppercase tracking-[0.1em] whitespace-nowrap hidden md:inline-block">
         {label}
       </span>
       {isActive && (
@@ -103,7 +103,7 @@ export default function MainNavigation() {
       <motion.nav 
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="flex items-center gap-1 p-1.5 px-4 glass-card border-iridescent rounded-full shadow-2xl h-14 pointer-events-auto bg-white/80"
+        className="flex items-center gap-1 p-1 px-2 md:p-1.5 md:px-4 glass-card border-iridescent rounded-full shadow-2xl h-12 md:h-14 pointer-events-auto bg-white/80"
       >
         {/* BRAND */}
         <div className="pr-3 mr-2 border-r border-stone-200/50 flex items-center">

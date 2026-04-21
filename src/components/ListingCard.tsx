@@ -45,7 +45,7 @@ export function ListingCard({ listing, className }: ListingCardProps) {
         className={`h-full glass-card border-iridescent iridescent-hover cursor-pointer group ${className}`}
       >
         <Card className="h-full bg-transparent border-none rounded-none shadow-none flex flex-col">
-          <CardHeader className="p-6 pb-2 space-y-4">
+          <CardHeader className="p-4 md:p-6 pb-2 space-y-3 md:space-y-4">
             <div className="flex justify-between items-start">
               <div className="flex items-center gap-2">
                 <Badge className={`font-mono text-[9px] font-bold uppercase tracking-wider rounded-full px-3 py-1 ${isOffer ? "bg-accent/10 text-accent" : "bg-stone-200 text-stone-600"}`}>
@@ -59,7 +59,7 @@ export function ListingCard({ listing, className }: ListingCardProps) {
                  {isService ? <Briefcase className="h-4 w-4 text-stone-500" /> : <Package className="h-4 w-4 text-stone-500" />}
               </div>
             </div>
-            <CardTitle className="text-xl font-sans font-extrabold leading-tight tracking-tight text-primary uppercase group-hover:text-accent transition-colors duration-300">
+            <CardTitle className="text-lg md:text-xl font-sans font-extrabold leading-tight tracking-tight text-primary uppercase group-hover:text-accent transition-colors duration-300">
               {listing.title}
             </CardTitle>
             <div className="flex items-center gap-1">
@@ -67,7 +67,7 @@ export function ListingCard({ listing, className }: ListingCardProps) {
                <span className="text-[10px] font-mono font-bold text-accent">{listing.user?.reputation ?? 0}</span>
             </div>
           </CardHeader>
-          <CardContent className="p-6 pt-2">
+          <CardContent className="p-4 md:p-6 pt-2">
             <p className="text-[13px] text-stone-600 mb-6 leading-relaxed line-clamp-2 font-medium italic">
               {listing.description}
             </p>

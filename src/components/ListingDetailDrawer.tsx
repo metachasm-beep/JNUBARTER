@@ -33,11 +33,12 @@ export function ListingDetailDrawer({ listing, isOpen, onOpenChange }: ListingDe
   const isService = listing.category === "SERVICE";
   const isOffer = listing.type === "OFFER";
 
-  const handleAction = async () => {
+  const handlePropose = async () => {
     setIsActionPending(true);
     try {
       const res = await fetch("/api/swaps", {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           listingId: listing.id,
           receiverId: listing.userId || listing.user?.id
@@ -51,6 +52,30 @@ export function ListingDetailDrawer({ listing, isOpen, onOpenChange }: ListingDe
       router.push(`/swap/${swap.id}`);
     } catch (error) {
       toast.error("Failed to connect with peer node.");
+    } finally {
+      setIsActionPending(false);
+    }
+  };
+
+  const handleMessage = async () => {
+    setIsActionPending(true);
+    try {
+      const res = await fetch("/api/swaps", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          listingId: listing.id,
+          receiverId: listing.userId || listing.user?.id
+        })
+      });
+
+      if (!res.ok) throw new Error("Failed to open channel");
+      
+      const swap = await res.json();
+      toast.success("Secure channel initialized.");
+      router.push(`/swap/${swap.id}`);
+    } catch (error) {
+      toast.error("Failed to establish secure link.");
     } finally {
       setIsActionPending(false);
     }
@@ -86,7 +111,7 @@ export function ListingDetailDrawer({ listing, isOpen, onOpenChange }: ListingDe
                    </div>
                 </div>
                 
-                <DrawerTitle className="text-4xl font-sans font-black tracking-tighter uppercase text-primary leading-[0.9]">
+                <DrawerTitle className="text-3xl md:text-4xl font-sans font-black tracking-tighter uppercase text-primary leading-[0.9]">
                    {listing.title}
                 </DrawerTitle>
              </div>
@@ -156,7 +181,7 @@ export function ListingDetailDrawer({ listing, isOpen, onOpenChange }: ListingDe
         <DrawerFooter className="px-0 pt-6 border-t border-stone-100">
            <div className="grid grid-cols-2 gap-4">
               <Button 
-                onClick={handleAction}
+                onClick={handlePropose}
                 disabled={isActionPending}
                 className="h-16 rounded-3xl btn-premium text-white font-black uppercase tracking-widest text-xs shadow-xl shadow-accent/20 flex items-center gap-2"
               >
@@ -165,11 +190,12 @@ export function ListingDetailDrawer({ listing, isOpen, onOpenChange }: ListingDe
               </Button>
               <Button 
                 variant="outline" 
-                onClick={handleAction}
+                onClick={handleMessage}
                 disabled={isActionPending}
                 className="h-16 rounded-3xl border-stone-200 text-stone-500 font-black uppercase tracking-widest text-xs flex items-center gap-2"
               >
-                 <MessageSquare className="h-4 w-4" /> Message Peer
+                 {isActionPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <MessageSquare className="h-4 w-4" />}
+                 Message Peer
               </Button>
            </div>
         </DrawerFooter>

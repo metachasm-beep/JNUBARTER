@@ -19,9 +19,24 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="min-h-screen bg-stone-50 flex">
+    <div className="min-h-screen bg-stone-50 flex flex-col lg:flex-row">
+      {/* Mobile Header */}
+      <header className="lg:hidden h-16 bg-white border-b border-stone-200 flex items-center justify-between px-6 sticky top-0 z-[60]">
+        <div className="flex items-center gap-3">
+          <div className="h-8 w-8 bg-primary rounded-xl flex items-center justify-center">
+             <Shield className="h-4 w-4 text-white" />
+          </div>
+          <h1 className="font-sans font-black tracking-tighter text-primary text-lg uppercase italic leading-none">Barter Admin</h1>
+        </div>
+        <div className="flex items-center gap-4">
+           <Link href="/" className="text-stone-400">
+              <LogOut className="h-5 w-5" />
+           </Link>
+        </div>
+      </header>
+
       {/* Admin Sidebar */}
-      <aside className="w-64 bg-white border-r border-stone-200 flex flex-col fixed h-full z-50">
+      <aside className="hidden lg:flex w-64 bg-white border-r border-stone-200 flex-col fixed h-full z-50">
         <div className="p-8 flex items-center gap-3">
           <div className="h-10 w-10 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20">
              <Shield className="h-5 w-5 text-white" />
@@ -49,7 +64,7 @@ export default async function AdminLayout({
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 ml-64 p-12">
+      <main className="flex-1 lg:ml-64 p-6 md:p-12">
         {children}
       </main>
     </div>

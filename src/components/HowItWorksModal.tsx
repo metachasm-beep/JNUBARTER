@@ -56,7 +56,7 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
               className="w-full max-w-2xl bg-white rounded-[3rem] shadow-2xl overflow-hidden pointer-events-auto border border-white/20"
             >
               {/* Header */}
-              <div className="relative h-48 bg-stone-900 flex flex-col items-center justify-center text-center p-8 overflow-hidden">
+              <div className="relative h-32 md:h-48 bg-stone-900 flex flex-col items-center justify-center text-center p-6 md:p-8 overflow-hidden">
                 <div className="absolute inset-0 opacity-20">
                     <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-accent/40 via-transparent to-transparent" />
                 </div>
@@ -66,14 +66,14 @@ export function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
                 >
                   <X className="h-5 w-5" />
                 </button>
-                <div className="relative z-10 space-y-2">
-                    <h2 className="text-4xl font-black tracking-tighter text-white uppercase italic">How BARTER Works</h2>
-                    <p className="text-stone-400 font-mono text-[10px] uppercase tracking-[0.3em]">The Scholarly Reciprocity Protocol</p>
+                <div className="relative z-10 space-y-1 md:space-y-2">
+                    <h2 className="text-2xl md:text-4xl font-black tracking-tighter text-white uppercase italic">How BARTER Works</h2>
+                    <p className="text-stone-400 font-mono text-[8px] md:text-[10px] uppercase tracking-[0.3em]">The Scholarly Reciprocity Protocol</p>
                 </div>
               </div>
 
               {/* Content */}
-              <div className="p-10 md:p-12 space-y-10 bg-white">
+              <div className="p-6 md:p-10 space-y-8 md:space-y-10 bg-white">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   {features.map((feature, idx) => (
                     <motion.div 

@@ -217,14 +217,14 @@ export function InitializeNodeModal({ isOpen, onClose, initialStep }: Initialize
           className="relative w-full max-w-2xl bg-stone-50 rounded-[3rem] shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
         >
           {/* Header */}
-          <div className="p-8 flex items-center justify-between border-b border-stone-200 bg-white">
-            <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-2xl bg-accent/10 flex items-center justify-center">
-                <GraduationCap className="h-6 w-6 text-accent" />
+          <div className="p-5 md:p-8 flex items-center justify-between border-b border-stone-200 bg-white">
+            <div className="flex items-center gap-3 md:gap-4">
+              <div className="h-10 w-10 md:h-12 md:w-12 rounded-2xl bg-accent/10 flex items-center justify-center">
+                <GraduationCap className="h-5 w-5 md:h-6 md:w-6 text-accent" />
               </div>
               <div>
-                <h2 className="text-3xl font-black uppercase tracking-tighter text-primary italic">Create Your Profile</h2>
-                <p className="text-[10px] font-mono font-bold text-stone-400 uppercase tracking-[0.2em] mt-1">JNU Barter Onboarding</p>
+                <h2 className="text-xl md:text-3xl font-black uppercase tracking-tighter text-primary italic">Create Profile</h2>
+                <p className="text-[8px] md:text-[10px] font-mono font-bold text-stone-400 uppercase tracking-[0.2em] mt-1">JNU Onboarding</p>
               </div>
             </div>
             <button onClick={onClose} className="h-10 w-10 rounded-full hover:bg-stone-100 flex items-center justify-center text-stone-400 transition-colors">
@@ -232,7 +232,7 @@ export function InitializeNodeModal({ isOpen, onClose, initialStep }: Initialize
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-8 pt-6">
+          <div className="flex-1 overflow-y-auto p-5 md:p-8 pt-6">
             <StepCard num={1} title="About You" label="Introduce yourself to the community" activeStep={step} onStepClick={setStep}>
               <div className="space-y-6 pt-4">
                 <div className="space-y-2">
@@ -243,7 +243,7 @@ export function InitializeNodeModal({ isOpen, onClose, initialStep }: Initialize
                    <Label className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-400">About You</Label>
                    <Textarea value={bio} onChange={(e) => setBio(e.target.value)} placeholder="What are you currently studying or interested in?" className="rounded-2xl bg-white border-stone-200 min-h-[100px]" />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                    <div className="space-y-2">
                       <Label className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-400">Course / Subject</Label>
                       <Input value={school} onChange={(e) => setSchool(e.target.value)} placeholder="E.g. COMPUTER SCIENCE" className="h-14 rounded-2xl bg-white border-stone-200" />
@@ -290,7 +290,7 @@ export function InitializeNodeModal({ isOpen, onClose, initialStep }: Initialize
                     )}
                  </div>
 
-                 <div className="grid grid-cols-2 gap-4">
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                        <Label className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-400">Category</Label>
                        <Select value={category} onValueChange={(val: any) => setCategory(val)}>

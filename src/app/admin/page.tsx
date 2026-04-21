@@ -33,20 +33,20 @@ export default async function AdminDashboard() {
 
     return (
       <div className="space-y-12 pb-24">
-        <header className="flex items-end justify-between border-b border-stone-200 pb-12">
+        <header className="flex flex-col md:flex-row items-start md:items-end justify-between border-b border-stone-200 pb-8 md:pb-12 gap-8">
           <div className="space-y-2">
              <div className="flex items-center gap-2 mb-2">
                 <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
                 <span className="text-[10px] font-mono font-bold text-emerald-600 uppercase tracking-widest italic">System Status: Online</span>
              </div>
-             <h2 className="text-6xl font-extrabold tracking-tighter text-primary uppercase italic leading-[0.8]">Admin<br />Dashboard</h2>
-             <p className="text-stone-400 font-medium max-w-sm pt-4 italic">Monitor campus listings and community activity in real-time.</p>
+             <h2 className="text-4xl md:text-6xl font-extrabold tracking-tighter text-primary uppercase italic leading-[0.8]">Admin<br />Dashboard</h2>
+             <p className="text-stone-400 text-xs md:text-sm font-medium max-w-sm pt-4 italic">Monitor campus listings and community activity in real-time.</p>
           </div>
           
-          <div className="flex items-center gap-4">
-             <div className="text-right glass-card p-6 rounded-3xl border-stone-200 group relative cursor-help">
+          <div className="flex items-center gap-4 w-full md:w-auto">
+             <div className="text-left md:text-right glass-card p-4 md:p-6 rounded-3xl border-stone-200 group relative cursor-help w-full">
                 <p className="text-[10px] font-mono font-bold text-stone-400 uppercase tracking-widest">Platform Costs</p>
-                <h4 className="text-3xl font-black text-primary tracking-tighter">${Number(usageCost).toFixed(4)}</h4>
+                <h4 className="text-2xl md:text-3xl font-black text-primary tracking-tighter">${Number(usageCost).toFixed(4)}</h4>
                 <p className="text-[9px] font-mono text-stone-300 uppercase italic">{(usageTokens || 0).toLocaleString()} Resources used</p>
                 <div className="tooltip-content absolute left-1/2 -bottom-10 -translate-x-1/2 bg-stone-900 text-white text-[8px] px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">LLM & Infrastructure Burn</div>
              </div>
@@ -61,10 +61,10 @@ export default async function AdminDashboard() {
           <MetricCard icon={<ShieldAlert className="h-5 w-5 text-red-500" />} label="Flagged" value={flaggedCount} detail="Reported items" tooltip="Policy Violations" />
           
           <div className="tooltip-container tooltip-bottom w-full">
-            <div className="glass-card border-stone-200 rounded-[2rem] p-8 space-y-4 shadow-lg flex flex-col justify-center items-center text-center w-full">
+            <div className="glass-card border-stone-200 rounded-[2rem] p-6 md:p-8 space-y-4 shadow-lg flex flex-col justify-center items-center text-center w-full h-full">
                <TrendingUp className={`h-6 w-6 ${sentimentData.label === 'VIBRANT' ? 'text-emerald-500' : 'text-stone-400'}`} />
                <p className="text-[10px] font-mono font-bold text-stone-400 uppercase tracking-widest">Community Vibe</p>
-               <h4 className="text-2xl font-black text-primary uppercase italic">{sentimentData.label === 'STABLE' ? 'Steady' : sentimentData.label}</h4>
+               <h4 className="text-xl md:text-2xl font-black text-primary uppercase italic">{sentimentData.label === 'STABLE' ? 'Steady' : sentimentData.label}</h4>
                <div className="w-full bg-stone-100 h-1 rounded-full overflow-hidden mt-2">
                   <div className="bg-primary h-full transition-all" style={{ width: `${sentimentData.score}%` }} />
                </div>
@@ -131,14 +131,14 @@ export default async function AdminDashboard() {
 
 function MetricCard({ icon, label, value, detail, tooltip }: any) {
   return (
-    <div className="tooltip-container tooltip-bottom w-full">
-      <div className="glass-card border-stone-200 rounded-[2.5rem] p-8 space-y-4 shadow-xl shadow-stone-200/20 hover:border-primary/20 transition-all group bg-white/80 w-full">
-        <div className="h-12 w-12 rounded-2xl bg-stone-50 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all shadow-inner">
+    <div className="tooltip-container tooltip-bottom w-full h-full">
+      <div className="glass-card border-stone-200 rounded-[2.5rem] p-6 md:p-8 space-y-4 shadow-xl shadow-stone-200/20 hover:border-primary/20 transition-all group bg-white/80 w-full h-full">
+        <div className="h-10 w-10 md:h-12 md:w-12 rounded-2xl bg-stone-50 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all shadow-inner">
           {icon}
         </div>
         <div>
           <p className="text-[10px] font-mono font-bold text-stone-400 uppercase tracking-widest mb-1">{label}</p>
-          <h4 className="text-5xl font-black tracking-tighter text-primary group-hover:scale-105 origin-left transition-transform">{value}</h4>
+          <h4 className="text-3xl md:text-5xl font-black tracking-tighter text-primary group-hover:scale-105 origin-left transition-transform">{value}</h4>
         </div>
         <p className="text-[9px] font-mono text-stone-300 uppercase italic tracking-tight">{detail}</p>
       </div>

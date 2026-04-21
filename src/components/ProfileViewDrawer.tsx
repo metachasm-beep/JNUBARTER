@@ -59,7 +59,7 @@ export function ProfileViewDrawer({
                     <Badge className="bg-accent/10 text-accent uppercase text-[10px] font-bold border-none">JNU Verified</Badge>
                  </div>
                  <div>
-                    <DrawerTitle className="text-4xl font-sans font-extrabold tracking-tighter uppercase text-primary">
+                    <DrawerTitle className="text-3xl md:text-4xl font-sans font-extrabold tracking-tighter uppercase text-primary">
                        {user.name}
                     </DrawerTitle>
                     <div className="flex items-center gap-3 mt-2">

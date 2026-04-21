@@ -99,7 +99,7 @@ export default function DiscoveryPage() {
               className="space-y-12"
             >
                
-               <h1 className="text-7xl md:text-[140px] font-extrabold tracking-[-0.06em] leading-[0.8] text-primary">
+               <h1 className="text-5xl md:text-[140px] font-extrabold tracking-[-0.06em] leading-[0.8] text-primary">
                  BEYOND <br/> 
                  <span className="text-accent italic">CURRENCY.</span>
                </h1>
@@ -137,7 +137,7 @@ export default function DiscoveryPage() {
       </section>
 
       {/* FOLD 2: SEMANTIC REGISTRY */}
-      <section id="market" className="max-w-7xl mx-auto px-8 py-32 relative z-20">
+      <section id="market" className="max-w-7xl mx-auto px-4 md:px-8 py-20 md:py-32 relative z-20">
         <div className="mb-24 space-y-6 text-center">
             <h3 className="text-5xl font-extrabold tracking-tighter text-primary uppercase">Peer Registry</h3>
             <div className="h-1 w-20 bg-accent mx-auto rounded-full" />

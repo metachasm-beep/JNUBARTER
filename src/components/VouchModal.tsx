@@ -126,7 +126,7 @@ export function VouchModal() {
             transition={{ type: "spring", stiffness: 300, damping: 28 }}
             className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[201] w-full max-w-md px-4"
           >
-            <div className="bg-white rounded-[2.5rem] border border-zinc-100 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.15)] p-8 space-y-8">
+            <div className="bg-white rounded-[2.5rem] border border-zinc-100 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.15)] p-6 md:p-8 space-y-6 md:space-y-8">
               {/* Header */}
               <div className="flex items-start justify-between">
                 <div className="space-y-2">

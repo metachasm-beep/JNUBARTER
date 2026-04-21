@@ -40,6 +40,7 @@ export function Dashboard({ openSetup }: DashboardProps) {
   const listings = listingsData?.listings ?? [];
 
   const [isFolderOpen, setIsFolderOpen] = useState(false);
+  const [isIdModalOpen, setIsIdModalOpen] = useState(false);
   const [selectedStat, setSelectedStat] = useState<string | undefined>();
 
   const handleStatClick = (label: string) => {
@@ -81,10 +82,26 @@ export function Dashboard({ openSetup }: DashboardProps) {
 
   return (
     <div className="min-h-screen bg-stone-50/50 pt-12 pb-32">
-      <div className="max-w-7xl mx-auto px-8 space-y-12">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 space-y-8 md:space-y-12">
         
         {!verifyData?.isVerified && verifyData?.status !== 'PENDING_REVIEW' && (
-          <IdVerificationRequest />
+          <div className="bg-amber-50 border border-amber-100 p-8 rounded-[2.5rem] flex flex-col md:flex-row items-start md:items-center justify-between gap-8 shadow-xl shadow-amber-200/20">
+            <div className="flex items-center gap-6">
+              <div className="h-16 w-16 rounded-full bg-amber-500 flex items-center justify-center text-white shrink-0 animate-pulse">
+                <ShieldCheck className="h-8 w-8" />
+              </div>
+              <div>
+                <h3 className="text-xl font-black uppercase italic tracking-tighter text-amber-900 leading-tight">Verification Challenge</h3>
+                <p className="text-sm text-amber-700 font-medium">Verify your identity to unlock premium scholarly exchange features.</p>
+              </div>
+            </div>
+            <Button 
+              onClick={() => setIsIdModalOpen(true)}
+              className="h-14 px-8 rounded-2xl bg-amber-900 text-white font-black uppercase tracking-widest hover:bg-black transition-all shadow-lg shadow-amber-900/20"
+            >
+              Start Verification
+            </Button>
+          </div>
         )}
 
         {verifyData?.status === 'PENDING_REVIEW' && (
@@ -101,7 +118,7 @@ export function Dashboard({ openSetup }: DashboardProps) {
         {/* HEADER: ACADEMIC WELCOME */}
         <section className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
           <div>
-            <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter italic text-primary">
+            <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tighter italic text-primary">
               Greetings, Scholar <span className="text-accent">{session?.user?.name?.split(" ")[0]}</span>
             </h1>
             <p className="text-sm text-secondary font-medium mt-2 max-w-xl">
@@ -126,7 +143,7 @@ export function Dashboard({ openSetup }: DashboardProps) {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.1 }}
                     onClick={() => handleStatClick(stat.label)}
-                    className="glass-card p-6 rounded-[2rem] border-stone-100 flex flex-col justify-between h-40 group hover:border-accent/20 transition-all cursor-pointer shadow-sm"
+                    className="glass-card p-4 md:p-6 rounded-[2rem] border-stone-100 flex flex-col justify-between h-36 md:h-40 group hover:border-accent/20 transition-all cursor-pointer shadow-sm"
                   />
                 }
               >
@@ -252,6 +269,11 @@ export function Dashboard({ openSetup }: DashboardProps) {
         isOpen={isFolderOpen} 
         onClose={() => setIsFolderOpen(false)} 
         initialTab={selectedStat}
+      />
+
+      <IdVerificationRequest 
+        isOpen={isIdModalOpen} 
+        onClose={() => setIsIdModalOpen(false)} 
       />
     </div>
   );
