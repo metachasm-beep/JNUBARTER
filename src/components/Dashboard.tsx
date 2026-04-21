@@ -145,7 +145,7 @@ export function Dashboard({ openSetup }: DashboardProps) {
                       </div>
                       <div className="flex-1">
                         <h5 className="text-[12px] font-black uppercase tracking-tight text-primary">{signal.title}</h5>
-                        <p className="text-[11px] text-secondary line-clamp-1">{signal.desc}</p>
+                        <p className="text-[11px] text-stone-500 line-clamp-1">{signal.desc}</p>
                       </div>
                       <span className="text-[9px] font-mono font-bold text-stone-300 uppercase">{signal.time}</span>
                    </div>

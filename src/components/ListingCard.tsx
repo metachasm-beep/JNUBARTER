@@ -62,7 +62,7 @@ export function ListingCard({ listing, className }: ListingCardProps) {
           </div>
         </CardHeader>
         <CardContent className="p-6 pt-2">
-          <p className="text-[13px] text-secondary mb-6 leading-relaxed line-clamp-2 font-medium">
+          <p className="text-[13px] text-stone-600 mb-6 leading-relaxed line-clamp-2 font-medium italic">
             {listing.description}
           </p>
           <div className="flex flex-wrap gap-2">
