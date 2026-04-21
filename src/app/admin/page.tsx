@@ -1,7 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { Users, Package, RefreshCw, Star, ShieldAlert, Cpu, Activity, TrendingUp, Search, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { SeedActivityButton } from "@/components/admin/SeedActivityButton";
 
 export default async function AdminDashboard() {
   try {
@@ -45,8 +44,6 @@ export default async function AdminDashboard() {
           </div>
           
           <div className="flex items-center gap-4">
-             <SeedActivityButton />
-
              <div className="text-right glass-card p-6 rounded-3xl border-stone-200">
                 <p className="text-[10px] font-mono font-bold text-stone-400 uppercase tracking-widest">Platform Costs</p>
                 <h4 className="text-3xl font-black text-primary tracking-tighter">${Number(usageCost).toFixed(4)}</h4>
