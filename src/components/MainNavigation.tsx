@@ -42,7 +42,7 @@ const NavItem = ({ icon: Icon, label, href, isActive, onClick }: NavItemProps) =
       )}
     >
       <Icon className={cn("h-4 w-4 transition-transform group-hover:scale-110", isActive ? "stroke-[2.5]" : "stroke-2")} />
-      <span className="text-[10px] font-black uppercase tracking-[0.1em] whitespace-nowrap hidden md:inline-block">
+      <span className="text-[10px] font-black uppercase tracking-[0.1em] whitespace-nowrap">
         {label}
       </span>
       {isActive && (
