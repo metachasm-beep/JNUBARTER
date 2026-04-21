@@ -20,51 +20,7 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { Dashboard } from "@/components/Dashboard";
 import { usePathname } from "next/navigation";
 
-// --- Suggestion #8: AI Swap-Mate FAB ---
-const SwapMateFAB = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  return (
-    <div className="fixed bottom-24 right-6 z-[100]">
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="absolute bottom-20 right-0 w-[320px] glass-card p-6 border-iridescent rounded-3xl shadow-2xl"
-          >
-            <div className="flex items-center justify-between mb-4">
-               <div className="flex items-center gap-2">
-                  <Bot className="h-5 w-5 text-accent" />
-                  <h4 className="font-sans font-bold text-sm text-primary uppercase tracking-tighter">SwapMate AI</h4>
-               </div>
-               <button onClick={() => setIsOpen(false)} className="text-stone-400 hover:text-primary">
-                  <X className="h-4 w-4" />
-               </button>
-            </div>
-            <div className="space-y-4">
-               <div className="bg-stone-50/50 p-3 rounded-2xl border border-stone-100">
-                  <p className="text-[12px] text-secondary leading-relaxed">
-                    "I've analyzed your skills. There's a high-probability trade chain available involving <strong>ML Tutoring</strong> and <strong>Photography</strong>."
-                  </p>
-               </div>
-               <Button className="w-full btn-premium h-10 text-[10px] uppercase font-black tracking-widest">
-                  View Suggested Chain
-               </Button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="h-16 w-16 rounded-full btn-premium flex items-center justify-center shadow-2xl shadow-accent/40 group relative overflow-hidden"
-      >
-        <div className="absolute inset-0 bg-gradient-to-br from-accent to-yellow-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-        {isOpen ? <X className="h-6 w-6 relative z-10" /> : <Sparkles className="h-6 w-6 relative z-10" />}
-      </button>
-    </div>
-  );
-};
+
 
 export default function DiscoveryPage() {
   const { data: session, status } = useSession();
@@ -114,7 +70,6 @@ export default function DiscoveryPage() {
             setIsSetupModalOpen(true);
           }} 
         />
-        <SwapMateFAB />
         <VouchModal />
         <InitializeNodeModal 
           isOpen={isSetupModalOpen} 
@@ -244,7 +199,6 @@ export default function DiscoveryPage() {
         </div>
       </section>
 
-      <SwapMateFAB />
       <FAQSection />
       <InstallPWA />
       <VouchModal />
