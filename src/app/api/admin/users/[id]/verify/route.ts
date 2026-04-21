@@ -12,7 +12,10 @@ export async function POST(
     await prisma.$transaction([
       prisma.user.update({
         where: { id: userId },
-        data: { isVerified: true }
+        data: { 
+          isVerified: true,
+          idCardUrl: null // Data minimization: delete sensitive ID after verification
+        }
       }),
       prisma.verificationReport.create({
         data: {
