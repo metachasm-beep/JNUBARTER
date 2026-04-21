@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/badge";
-import { Mail, Shield, UserX, UserCheck, Search, SearchCode, AlertCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Mail, Search } from "lucide-react";
+import { UserActions } from "@/components/admin/UserActions";
 
 export default async function UserManagement() {
   const users = await prisma.user.findMany({
@@ -78,20 +78,7 @@ export default async function UserManagement() {
                   </div>
                 </td>
                 <td className="px-10 py-8 text-right">
-                   <div className="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all scale-95 group-hover:scale-100">
-                      <div className="tooltip-container">
-                        <Button variant="ghost" size="icon" className="h-12 w-12 rounded-2xl hover:bg-primary hover:text-white border border-stone-100">
-                          <SearchCode className="h-5 w-5" />
-                        </Button>
-                        <div className="tooltip-content">Deep Verify</div>
-                      </div>
-                      <div className="tooltip-container">
-                        <Button variant="ghost" size="icon" className="h-12 w-12 rounded-2xl hover:bg-red-50 hover:text-red-500 border border-stone-100">
-                          <UserX className="h-5 w-5" />
-                        </Button>
-                        <div className="tooltip-content">Revoke Access</div>
-                      </div>
-                   </div>
+                   <UserActions userId={user.id} userName={user.name || 'Unknown'} />
                 </td>
               </tr>
             ))}

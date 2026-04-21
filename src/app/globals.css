@@ -210,3 +210,20 @@
   transform: translateX(-50%);
   border-color: transparent transparent rgba(28, 25, 23, 0.95) transparent;
 }
+
+.tooltip-left .tooltip-content {
+  left: auto;
+  right: 115%;
+  top: 50%;
+  transform: translateY(-50%) translateX(10px);
+}
+.tooltip-left:hover .tooltip-content {
+  transform: translateY(-50%) translateX(0);
+}
+.tooltip-left .tooltip-content::after {
+  right: auto;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border-color: transparent transparent transparent rgba(28, 25, 23, 0.95);
+}
