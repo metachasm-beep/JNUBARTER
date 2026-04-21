@@ -44,11 +44,30 @@ export default async function AdminDashboard() {
              <p className="text-stone-400 font-medium max-w-sm pt-4 italic">Monitor campus listings and community activity in real-time.</p>
           </div>
           
-          {/* Enhancement #3 — Cost Summary */}
-          <div className="text-right glass-card p-6 rounded-3xl border-stone-200">
-             <p className="text-[10px] font-mono font-bold text-stone-400 uppercase tracking-widest">Platform Costs</p>
-             <h4 className="text-3xl font-black text-primary tracking-tighter">${Number(usageCost).toFixed(4)}</h4>
-             <p className="text-[9px] font-mono text-stone-300 uppercase italic">{(usageTokens || 0).toLocaleString()} Resources used</p>
+          <div className="flex items-center gap-4">
+             {/* TEMPORARY SEEDING CTA */}
+             <button 
+               onClick={async () => {
+                 const res = await fetch("/api/admin/seed-activity", { method: "POST" });
+                 if (res.ok) alert("ACTIVITY SEEDED: 50 Users & 50 Listings Added.");
+                 else alert("Seeding Failed. Check Console.");
+               }}
+               className="glass-card px-6 py-4 rounded-3xl border-stone-200 bg-accent/10 hover:bg-accent/20 transition-all flex items-center gap-3 group"
+             >
+                <div className="h-8 w-8 rounded-full bg-accent flex items-center justify-center text-white">
+                   <Zap className="h-4 w-4 group-hover:animate-bounce" />
+                </div>
+                <div className="text-left">
+                   <p className="text-[10px] font-mono font-bold text-accent uppercase tracking-widest leading-none">Developer Tool</p>
+                   <h4 className="text-sm font-black text-primary uppercase italic">Seed Activity</h4>
+                </div>
+             </button>
+
+             <div className="text-right glass-card p-6 rounded-3xl border-stone-200">
+                <p className="text-[10px] font-mono font-bold text-stone-400 uppercase tracking-widest">Platform Costs</p>
+                <h4 className="text-3xl font-black text-primary tracking-tighter">${Number(usageCost).toFixed(4)}</h4>
+                <p className="text-[9px] font-mono text-stone-300 uppercase italic">{(usageTokens || 0).toLocaleString()} Resources used</p>
+             </div>
           </div>
         </header>
 
