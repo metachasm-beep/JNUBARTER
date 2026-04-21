@@ -91,8 +91,7 @@ export function Dashboard({ openSetup }: DashboardProps) {
                 <ShieldCheck className="h-8 w-8" />
               </div>
               <div>
-                <h3 className="text-xl font-black uppercase italic tracking-tighter text-amber-900 leading-tight">Verification Challenge</h3>
-                <p className="text-sm text-amber-700 font-medium">Verify your identity to unlock premium scholarly exchange features.</p>
+                <h3 className="text-xl font-black uppercase italic tracking-tighter text-amber-900 leading-tight">Verify your ID to engage in barter</h3>
               </div>
             </div>
             <Button 

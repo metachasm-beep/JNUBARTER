@@ -241,3 +241,11 @@ enum NotificationType {
   SWAP_MATCHED
   SWAP_EXPIRED
 }
+model ProfileVouch {
+  id          String   @id @default(cuid())
+  voterId     String
+  votedId     String
+  createdAt   DateTime @default(now())
+
+  @@unique([voterId, votedId])
+}

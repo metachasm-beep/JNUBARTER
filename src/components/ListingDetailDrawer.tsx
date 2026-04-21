@@ -16,9 +16,10 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Package, Briefcase, Zap, MessageSquare, ShieldCheck, Clock, Share2, Star, Loader2 } from "lucide-react";
+import { Package, Briefcase, Zap, MessageSquare, ShieldCheck, Clock, Share2, Star, Loader2, AlertCircle } from "lucide-react";
 import SpotlightCard from "./SpotlightCard";
 import { ProfileViewDrawer } from "./ProfileViewDrawer";
+import { useSession } from "next-auth/react";
 
 interface ListingDetailDrawerProps {
   listing: any;
@@ -27,13 +28,27 @@ interface ListingDetailDrawerProps {
 }
 
 export function ListingDetailDrawer({ listing, isOpen, onOpenChange }: ListingDetailDrawerProps) {
+  const { data: session } = useSession();
   const router = useRouter();
   const [isActionPending, setIsActionPending] = useState(false);
+  
+  const listerId = listing.userId || listing.user?.id;
+  const isOwnListing = session?.user?.id === listerId;
   
   const isService = listing.category === "SERVICE";
   const isOffer = listing.type === "OFFER";
 
   const handlePropose = async () => {
+    if (!session?.user?.id) {
+      toast.error("Protocol Access Denied: Please sign in to initiate exchange.");
+      return;
+    }
+
+    if (isOwnListing) {
+      toast.error("Self-Reciprocity Error: You cannot swap with yourself.");
+      return;
+    }
+
     setIsActionPending(true);
     try {
       const res = await fetch("/api/swaps", {
@@ -41,7 +56,7 @@ export function ListingDetailDrawer({ listing, isOpen, onOpenChange }: ListingDe
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           listingId: listing.id,
-          receiverId: listing.userId || listing.user?.id
+          receiverId: listerId
         })
       });
 
@@ -58,6 +73,16 @@ export function ListingDetailDrawer({ listing, isOpen, onOpenChange }: ListingDe
   };
 
   const handleMessage = async () => {
+    if (!session?.user?.id) {
+      toast.error("Protocol Access Denied: Please sign in to establish a channel.");
+      return;
+    }
+
+    if (isOwnListing) {
+      toast.error("Self-Communication Error: You cannot message your own node.");
+      return;
+    }
+
     setIsActionPending(true);
     try {
       const res = await fetch("/api/swaps", {
@@ -65,7 +90,7 @@ export function ListingDetailDrawer({ listing, isOpen, onOpenChange }: ListingDe
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           listingId: listing.id,
-          receiverId: listing.userId || listing.user?.id
+          receiverId: listerId
         })
       });
 

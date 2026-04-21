@@ -13,9 +13,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Package, Briefcase, Star, MapPin, Zap, GraduationCap } from "lucide-react";
+import { Package, Briefcase, Star, MapPin, Zap, GraduationCap, Heart, Loader2 } from "lucide-react";
 import SpotlightCard from "./SpotlightCard";
 import { ReputationDial } from "./ReputationDial";
+import { useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
+import { toast } from "sonner";
 
 export function ProfileViewDrawer({ 
   user, 
@@ -28,6 +31,44 @@ export function ProfileViewDrawer({
   isOpen?: boolean; 
   onOpenChange?: (open: boolean) => void;
 }) {
+  const { data: session } = useSession();
+  const [hasVouched, setHasVouched] = useState(false);
+  const [isVouching, setIsVouching] = useState(false);
+  const [localReputation, setLocalReputation] = useState(user.reputation || 0);
+
+  useEffect(() => {
+    if (isOpen && session?.user?.id && user.id) {
+      fetch(`/api/user/${user.id}/vouch`)
+        .then(res => res.json())
+        .then(data => setHasVouched(data.hasVouched))
+        .catch(console.error);
+    }
+  }, [isOpen, session?.user?.id, user.id]);
+
+  const handleVouchToggle = async () => {
+    if (!session?.user?.id) {
+      toast.error("Please sign in to vouch.");
+      return;
+    }
+    
+    setIsVouching(true);
+    try {
+      const method = hasVouched ? "DELETE" : "POST";
+      const res = await fetch(`/api/user/${user.id}/vouch`, { method });
+      
+      if (res.ok) {
+        setHasVouched(!hasVouched);
+        setLocalReputation(prev => hasVouched ? prev - 5 : prev + 5);
+        toast.success(hasVouched ? "Vouch removed." : "Vouch registered! Reputation ledger updated.");
+      } else {
+        throw new Error();
+      }
+    } catch {
+      toast.error("Vouch update failed.");
+    } finally {
+      setIsVouching(false);
+    }
+  };
   return (
     <Drawer open={isOpen} onOpenChange={onOpenChange}>
       {children ? (
@@ -69,8 +110,25 @@ export function ProfileViewDrawer({
                     </div>
                  </div>
               </div>
-              {/* Suggestion #7: Reputation Dial integration */}
-              <ReputationDial score={user.reputation || 0} size={100} />
+               {/* Suggestion #7: Reputation Dial integration */}
+               <div className="flex flex-col items-center gap-4">
+                  <ReputationDial score={localReputation} size={100} />
+                  {session?.user?.id !== user.id && (
+                    <Button 
+                      onClick={handleVouchToggle}
+                      disabled={isVouching}
+                      variant={hasVouched ? "outline" : "default"}
+                      className={`h-10 px-6 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                        hasVouched 
+                          ? "border-accent/20 text-accent hover:bg-accent/5" 
+                          : "bg-accent text-white hover:bg-black shadow-lg shadow-accent/20"
+                      }`}
+                    >
+                       {isVouching ? <Loader2 className="h-3 w-3 animate-spin mr-2" /> : <Heart className={`h-3 w-3 mr-2 ${hasVouched ? "fill-accent" : ""}`} />}
+                       {hasVouched ? "Remove Vouch" : "Vouch Peer"}
+                    </Button>
+                  )}
+               </div>
            </div>
         </DrawerHeader>
 
