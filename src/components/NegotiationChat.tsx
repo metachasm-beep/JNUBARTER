@@ -181,19 +181,19 @@ export default function NegotiationChat({
   };
 
   return (
-    <div className="flex h-[600px] border-4 border-neutral-800 bg-black font-mono">
+    <div className="flex h-[600px] rounded-3xl overflow-hidden border border-white/10 bg-black/60 backdrop-blur-2xl shadow-2xl font-sans">
       {/* Left Side: Chat */}
-      <div className="flex-1 flex flex-col border-r-4 border-neutral-800">
-        <div className="p-4 border-b-4 border-neutral-800 bg-neutral-900 flex justify-between items-center">
-          <h2 className="text-xs font-black uppercase tracking-widest">
-            Negotiation Logs
+      <div className="flex-1 flex flex-col border-r border-white/10">
+        <div className="p-4 border-b border-white/10 bg-white/5 backdrop-blur-md flex justify-between items-center">
+          <h2 className="text-sm font-semibold text-zinc-100">
+            Negotiation Thread
           </h2>
-          <Badge
-            variant="outline"
-            className="text-[8px] animate-pulse border-emerald-500 text-emerald-500"
-          >
-            LIVE
-          </Badge>
+          <div className="flex items-center gap-2">
+            <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+            <span className="text-[10px] font-medium text-emerald-500 uppercase tracking-widest">
+              Live Sync
+            </span>
+          </div>
         </div>
 
         <div
@@ -201,15 +201,15 @@ export default function NegotiationChat({
           className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide"
         >
           {isLoadingHistory ? (
-            <div className="flex items-center justify-center h-full gap-2 text-zinc-600">
+            <div className="flex items-center justify-center h-full gap-2 text-zinc-500">
               <Loader2 className="h-4 w-4 animate-spin" />
-              <span className="text-[9px] uppercase font-bold tracking-widest">
-                Loading Logs...
+              <span className="text-xs font-medium">
+                Loading history...
               </span>
             </div>
           ) : messages.length === 0 ? (
             <div className="flex items-center justify-center h-full">
-              <p className="text-[9px] text-zinc-600 uppercase font-bold tracking-widest">
+              <p className="text-xs text-zinc-500 font-medium">
                 No messages yet — initiate negotiation
               </p>
             </div>
@@ -222,37 +222,37 @@ export default function NegotiationChat({
                 }`}
               >
                 <div
-                  className={`max-w-[80%] p-3 text-xs leading-relaxed ${
+                  className={`max-w-[80%] px-4 py-2.5 text-sm leading-relaxed transition-all shadow-sm ${
                     m.sender === currentUser
-                      ? "bg-primary text-primary-foreground italic font-bold"
-                      : "bg-neutral-800 text-neutral-300"
+                      ? "bg-gradient-to-br from-emerald-600 to-teal-700 text-white rounded-2xl rounded-tr-sm shadow-emerald-900/20"
+                      : "bg-white/5 border border-white/5 text-zinc-200 rounded-2xl rounded-tl-sm backdrop-blur-sm"
                   }`}
                 >
                   {m.text}
                 </div>
-                <span className="text-[8px] opacity-40 mt-1 uppercase">
-                  {m.sender} // {new Date(m.timestamp).toLocaleTimeString()}
+                <span className="text-[10px] text-zinc-500 mt-1.5 font-medium">
+                  {m.sender === currentUser ? "You" : m.sender} • {new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </span>
               </div>
             ))
           )}
         </div>
 
-        <div className="p-4 bg-neutral-900 flex gap-2">
+        <div className="p-4 bg-black/40 border-t border-white/10 flex gap-3">
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) =>
               e.key === "Enter" && !e.shiftKey && sendMessage()
             }
-            placeholder="PROPOSE MODIFICATION..."
+            placeholder="Propose modification..."
             disabled={isSending}
-            className="rounded-none border-2 border-neutral-700 bg-black text-xs h-12"
+            className="rounded-xl border border-white/10 bg-white/5 text-sm h-12 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-1 focus-visible:ring-emerald-500/50 transition-all"
           />
           <Button
             onClick={sendMessage}
             disabled={!input.trim() || isSending}
-            className="rounded-none h-12 w-12 bg-primary"
+            className="rounded-xl h-12 w-12 bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-900/20 transition-all"
           >
             {isSending ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -264,53 +264,60 @@ export default function NegotiationChat({
       </div>
 
       {/* Right Side: Agreement Card */}
-      <div className="w-80 p-6 bg-neutral-900 flex flex-col gap-6">
-        <div className="space-y-1">
-          <h3 className="text-sm font-black uppercase">Live Agreement</h3>
-          <p className="text-[9px] opacity-50 uppercase tracking-tighter">
+      <div className="w-80 p-6 bg-gradient-to-b from-white/5 to-transparent flex flex-col gap-6 relative overflow-hidden">
+        {/* Subtle grid background for the contract area */}
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiLz48L3N2Zz4=')] opacity-50 pointer-events-none" />
+        
+        <div className="space-y-1 relative z-10">
+          <h3 className="text-base font-semibold text-white tracking-tight">Live Agreement</h3>
+          <p className="text-xs text-zinc-500 font-medium">
             Manifesto compliant swap
           </p>
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-3 relative z-10">
           {swapState.items.map((item, idx) => (
             <div
               key={idx}
-              className="p-3 bg-black border-2 border-neutral-800 flex justify-between items-center group"
+              className="p-3.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm flex justify-between items-center group hover:bg-white/10 transition-all"
             >
-              <span className="text-[10px] uppercase font-bold">{item}</span>
-              <AlertCircle className="h-3 w-3 opacity-0 group-hover:opacity-40 cursor-pointer" />
+              <span className="text-sm font-medium text-zinc-200">{item}</span>
+              <AlertCircle className="h-4 w-4 text-zinc-500 opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity" />
             </div>
           ))}
           <Button
             variant="ghost"
-            className="w-full border-2 border-dashed border-neutral-800 text-[10px] uppercase h-8 hover:bg-white/5"
+            className="w-full rounded-xl border border-dashed border-white/20 text-xs text-zinc-400 hover:text-zinc-200 hover:border-white/40 hover:bg-white/5 transition-all h-10"
           >
             + Add Item
           </Button>
         </div>
 
-        <div className="mt-auto space-y-4">
+        <div className="mt-auto space-y-4 relative z-10">
           <div className="flex gap-2">
-            <div
-              className={`flex-1 h-2 ${
-                swapState.userAConfirmed ? "bg-emerald-500" : "bg-neutral-800"
-              }`}
-            />
-            <div
-              className={`flex-1 h-2 ${
-                swapState.userBConfirmed ? "bg-emerald-500" : "bg-neutral-800"
-              }`}
-            />
+            <div className="flex-1 h-1.5 rounded-full overflow-hidden bg-white/5">
+              <div
+                className={`h-full transition-all duration-500 ${
+                  swapState.userAConfirmed ? "bg-emerald-500 w-full" : "w-0"
+                }`}
+              />
+            </div>
+            <div className="flex-1 h-1.5 rounded-full overflow-hidden bg-white/5">
+              <div
+                className={`h-full transition-all duration-500 ${
+                  swapState.userBConfirmed ? "bg-emerald-500 w-full" : "w-0"
+                }`}
+              />
+            </div>
           </div>
           <Button
             onClick={toggleConfirm}
-            className={`w-full rounded-none h-16 uppercase font-black tracking-widest border-2 ${
+            className={`w-full rounded-2xl h-14 font-semibold text-sm transition-all duration-300 shadow-lg ${
               currentUser === "A"
                 ? swapState.userAConfirmed
                 : swapState.userBConfirmed
-              ? "bg-emerald-500 text-white border-emerald-400"
-              : "bg-transparent border-primary text-primary hover:bg-primary hover:text-white"
+              ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-900/30"
+              : "bg-white/5 border border-white/10 text-zinc-300 hover:bg-white/10 hover:text-white"
             }`}
           >
             {(currentUser === "A"
@@ -320,7 +327,7 @@ export default function NegotiationChat({
                 <CheckCircle2 className="h-5 w-5" /> Confirmed
               </span>
             ) : (
-              "Click to Confirm"
+              "Confirm Agreement"
             )}
           </Button>
         </div>
