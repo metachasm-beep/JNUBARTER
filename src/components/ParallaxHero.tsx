@@ -1,145 +1,109 @@
 "use client";
 
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
-import { useRef } from "react";
+import { motion, useScroll, useTransform, useSpring, useMotionValue } from "framer-motion";
+import { useRef, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { signIn } from "next-auth/react";
-import { Sparkles, Layers, ChevronDown, GraduationCap, Box } from "lucide-react";
+import { Sparkles, Library, GraduationCap, ChevronDown, MousePointer2 } from "lucide-react";
 
 export function ParallaxHero({ scrollToMarket }: { scrollToMarket: () => void }) {
   const containerRef = useRef(null);
   
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"]
-  });
+  // Design Spell: Mouse Particles
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const [isHovering, setIsHovering] = useState(false);
 
-  // Smooth scroll springs for buttery motion
-  const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 60,
-    damping: 30,
-    restDelta: 0.001
-  });
-
-  // ISOMETRIC TRANSFORMATIONS
-  // Background zooms in and centers
-  const bgZ = useTransform(smoothProgress, [0, 0.8], [-400, 0]);
-  const bgRotate = useTransform(smoothProgress, [0, 1], [-5, 0]);
-  
-  // Midground slides in from the right diagonal
-  const midX = useTransform(smoothProgress, [0, 1], [400, 0]);
-  const midY = useTransform(smoothProgress, [0, 1], [200, 0]);
-  const midScale = useTransform(smoothProgress, [0, 1], [0.8, 1]);
-  
-  // Foreground artifacts slide in from the left diagonal
-  const foreX = useTransform(smoothProgress, [0, 1], [-400, 0]);
-  const foreY = useTransform(smoothProgress, [0, 1], [-200, 0]);
-  
-  // Text fading/scaling
-  const textOpacity = useTransform(smoothProgress, [0, 0.4], [1, 0]);
-  const textY = useTransform(smoothProgress, [0, 1], ["0%", "20%"]);
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      mouseX.set(e.clientX);
+      mouseY.set(e.clientY);
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, [mouseX, mouseY]);
 
   return (
-    <section 
+    <div 
       ref={containerRef} 
-      className="relative w-full h-[200vh] bg-[#020204] overflow-hidden flex flex-col items-center"
+      className="relative w-full min-h-screen flex items-center justify-center pointer-events-none"
     >
-      {/* 1. THE ISOMETRIC STACK WRAPPER (STICKY) */}
-      <div className="sticky top-0 w-full h-screen flex items-center justify-center perspective-[2500px]">
+      {/* Design Spell: Interactive Knowledge Aura */}
+      <motion.div 
+        style={{ 
+          x: mouseX, 
+          y: mouseY,
+          translateX: "-50%",
+          translateY: "-50%"
+        }}
+        className="fixed inset-0 w-[600px] h-[600px] bg-accent/5 rounded-full blur-[120px] pointer-events-none z-10 mix-blend-screen"
+      />
+
+      {/* Hero Typography Scene */}
+      <div className="relative z-50 text-center px-8 flex flex-col items-center gap-16 pointer-events-auto">
         
-        <div className="relative w-full max-w-7xl aspect-video preserve-3d transform rotate-x-[55deg] rotate-z-[-35deg] scale-150 md:scale-100">
+        <div className="flex flex-col items-center gap-8">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+            className="flex items-center gap-4 bg-white/5 border border-white/10 backdrop-blur-3xl px-10 py-4 rounded-full text-[12px] font-black uppercase tracking-[0.5em] text-accent italic shadow-[0_30px_60px_rgba(0,0,0,0.8)]"
+          >
+            <Library className="h-4 w-4" /> Scholarly Node Initialization
+          </motion.div>
           
-          {/* LAYER 0: ISOMETRIC CAMPUS BASE */}
-          <motion.div 
-            style={{ translateZ: bgZ, rotateZ: bgRotate }}
-            className="absolute inset-0 z-0 pointer-events-none"
-          >
-            <img 
-              src="/images/parallax/isometric_bg.png" 
-              alt="Isometric University" 
-              className="w-full h-full object-contain opacity-50 contrast-125"
-            />
-          </motion.div>
-
-          {/* LAYER 1: LIBRARY SECTION (MID) */}
-          <motion.div 
-            style={{ x: midX, y: midY, scale: midScale, translateZ: 150 }}
-            className="absolute inset-0 z-10 pointer-events-none"
-          >
-            <img 
-              src="/images/parallax/isometric_mid.png" 
-              alt="Library Section" 
-              className="w-full h-full object-contain drop-shadow-[0_50px_100px_rgba(0,0,0,1)]"
-            />
-          </motion.div>
-
-          {/* LAYER 2: SCHOLARLY ARTIFACTS (FORE) */}
-          <motion.div 
-            style={{ x: foreX, y: foreY, translateZ: 400 }}
-            className="absolute inset-0 z-40 pointer-events-none"
-          >
-            <motion.img 
-              animate={{ 
-                translateZ: [400, 420, 400],
-                rotate: [0, 1, 0]
-              }}
-              transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-              src="/images/parallax/isometric_near.png" 
-              alt="Academic Artifacts" 
-              className="w-full h-full object-contain filter drop-shadow-[0_100px_200px_rgba(0,0,0,1)]"
-            />
-          </motion.div>
+          <h1 className="text-8xl md:text-[240px] font-black tracking-[-0.1em] leading-[0.65] text-white mix-blend-difference drop-shadow-[0_80px_80px_rgba(0,0,0,1)]">
+            MERIT <br/> 
+            <span className="text-accent italic font-serif font-light opacity-80">REGISTRY.</span>
+          </h1>
+        </div>
+        
+        <div className="space-y-6 max-w-5xl mx-auto">
+          <p className="text-stone-400 font-medium text-xl md:text-4xl leading-tight drop-shadow-2xl">
+            The world's first <span className="text-white font-black underline decoration-accent decoration-4 underline-offset-8">Zero-Currency</span> <br/> 
+            standard for Academic Exchange.
+          </p>
+          <div className="h-px w-32 bg-accent/40 mx-auto" />
+          <p className="text-stone-500 text-sm md:text-lg tracking-[0.2em] uppercase font-black">
+            Powered by Multi-Party Barter Chains
+          </p>
         </div>
 
-        {/* 2. OVERLAY TEXT (FIXED POSITION RELATIVE TO HERO) */}
-        <motion.div 
-          style={{ opacity: textOpacity, y: textY }}
-          className="absolute inset-0 z-50 flex flex-col items-center justify-center text-center px-8 pointer-events-none"
-        >
-          <div className="space-y-10 pointer-events-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-              className="flex items-center gap-4 bg-accent/10 border border-accent/20 backdrop-blur-3xl px-8 py-3 rounded-full text-[12px] font-black uppercase tracking-[0.5em] text-accent italic shadow-[0_20px_60px_rgba(0,0,0,0.8)]"
+        {/* Magnetic Button Interaction */}
+        <div className="flex flex-col md:flex-row items-center justify-center gap-12 pt-12">
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="relative group"
+          >
+            <Button 
+              onClick={() => signIn("google")}
+              className="rounded-full bg-white text-black text-[13px] font-black uppercase tracking-[0.2em] px-28 h-28 shadow-[0_0_120px_rgba(255,255,255,0.3)] hover:bg-accent hover:text-white transition-all duration-700 relative overflow-hidden"
             >
-              <Box className="h-4 w-4" /> Spatial Merit Protocol
-            </motion.div>
-            
-            <h1 className="text-7xl md:text-[220px] font-black tracking-[-0.1em] leading-[0.7] text-white mix-blend-difference drop-shadow-[0_60px_60px_rgba(0,0,0,1)]">
-              MERIT <br/> 
-              <span className="text-accent italic font-serif font-light opacity-90">PROTOCOL.</span>
-            </h1>
-
-            <p className="text-stone-400 font-medium text-lg md:text-3xl max-w-4xl mx-auto leading-tight drop-shadow-2xl">
-              The spatial standard for <span className="text-white">Academic Reciprocity</span>. <br/>
-              A living, multi-layered architecture for decentralized exchange.
-            </p>
-
-            <div className="flex flex-col md:flex-row items-center justify-center gap-10 pt-12">
-              <Button 
-                onClick={() => signIn("google")}
-                className="rounded-[2.5rem] bg-white text-black text-[12px] font-black uppercase tracking-widest px-24 h-24 shadow-[0_0_100px_rgba(255,255,255,0.2)] hover:bg-accent hover:text-white hover:scale-105 transition-all duration-700 group"
-              >
-                Enter Registry <Sparkles className="ml-3 h-4 w-4 group-hover:animate-ping" />
-              </Button>
-              
-              <Button 
-                variant="ghost"
-                onClick={scrollToMarket}
-                className="rounded-full text-white/40 text-[10px] font-black uppercase tracking-widest px-10 h-24 hover:text-white hover:bg-white/5 transition-all flex flex-col gap-2"
-              >
-                <span>Explore Map</span>
-                <ChevronDown className="h-4 w-4 animate-bounce" />
-              </Button>
-            </div>
-          </div>
-        </motion.div>
+              <span className="relative z-10 flex items-center gap-4">
+                Initialize Connection <Sparkles className="h-5 w-5 group-hover:rotate-45 transition-transform" />
+              </span>
+              <div className="absolute inset-0 bg-gradient-to-r from-accent to-accent-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+            </Button>
+            <div className="absolute -inset-4 bg-accent/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+          </motion.div>
+          
+          <Button 
+            variant="ghost"
+            onClick={scrollToMarket}
+            className="rounded-full text-white/30 text-[11px] font-black uppercase tracking-[0.3em] px-12 h-28 hover:text-white hover:bg-white/5 transition-all flex flex-col gap-3 group"
+          >
+            <span>Descend to Market</span>
+            <ChevronDown className="h-5 w-5 animate-bounce group-hover:text-accent" />
+          </Button>
+        </div>
       </div>
 
-      {/* 3. ATMOSPHERIC BLENDING */}
-      <div className="absolute bottom-0 left-0 right-0 h-[60vh] bg-gradient-to-t from-[#020204] via-[#020204]/90 to-transparent z-[60] pointer-events-none" />
-      <div className="absolute inset-0 z-10 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30 mix-blend-screen" />
-    </section>
+      {/* Global Scroll Hint (Editorial) */}
+      <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 opacity-30">
+        <div className="w-px h-24 bg-gradient-to-b from-transparent via-white to-transparent" />
+        <span className="text-[10px] font-black uppercase tracking-[0.5em] text-white [writing-mode:vertical-lr]">Scroll to Reveal World</span>
+      </div>
+    </div>
   );
 }
