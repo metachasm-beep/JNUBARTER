@@ -58,7 +58,7 @@ export function ProfileViewDrawer({
       
       if (res.ok) {
         setHasVouched(!hasVouched);
-        setLocalReputation(prev => hasVouched ? prev - 5 : prev + 5);
+        setLocalReputation((prev: number) => hasVouched ? prev - 5 : prev + 5);
         toast.success(hasVouched ? "Vouch removed." : "Vouch registered! Reputation ledger updated.");
       } else {
         throw new Error();
