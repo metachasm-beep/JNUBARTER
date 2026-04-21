@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client';
-import { Pool } from '@neondatabase/serverless';
 import { PrismaNeon } from '@prisma/adapter-neon';
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
@@ -29,8 +28,8 @@ export const prisma = (() => {
   }
 
   // PRISMA 7: Must use Driver Adapter for Neon/Postgres
-  const pool = new Pool({ connectionString: sanitizedUrl });
-  const adapter = new PrismaNeon(pool);
+  // Pass the config object directly to the adapter
+  const adapter = new PrismaNeon({ connectionString: sanitizedUrl });
 
   const client = new PrismaClient({
     adapter,
