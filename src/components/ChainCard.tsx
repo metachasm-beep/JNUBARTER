@@ -51,7 +51,7 @@ export function ChainCard({ chain, index }: ChainCardProps) {
                 <GraduationCap className="h-3 w-3 text-primary/60" />
               </div>
               <span className="text-[10px] font-black uppercase tracking-tight text-zinc-700">
-                {user}
+                {user.name}
               </span>
             </div>
             <ArrowRight className="h-3 w-3 text-zinc-200 flex-shrink-0" />
@@ -63,7 +63,7 @@ export function ChainCard({ chain, index }: ChainCardProps) {
             <GraduationCap className="h-3 w-3 text-primary" />
           </div>
           <span className="text-[10px] font-black uppercase tracking-tight text-primary">
-            {chain.users[0]}
+            {chain.users[0].name}
           </span>
         </div>
       </div>
@@ -86,7 +86,7 @@ export function ChainCard({ chain, index }: ChainCardProps) {
                 {i + 1}.
               </span>
               <span className="text-[10px] font-bold uppercase tracking-tight text-zinc-600 leading-tight">
-                {listing}
+                {listing.title}
               </span>
               {i < chain.listings.length - 1 && (
                 <ArrowRight className="h-2.5 w-2.5 text-zinc-200 ml-auto flex-shrink-0" />
