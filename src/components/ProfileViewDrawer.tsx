@@ -17,12 +17,27 @@ import { Package, Briefcase, Star, MapPin, Zap, GraduationCap } from "lucide-rea
 import SpotlightCard from "./SpotlightCard";
 import { ReputationDial } from "./ReputationDial";
 
-export function ProfileViewDrawer({ user }: { user: any }) {
+export function ProfileViewDrawer({ 
+  user, 
+  children, 
+  isOpen, 
+  onOpenChange 
+}: { 
+  user: any; 
+  children?: React.ReactNode; 
+  isOpen?: boolean; 
+  onOpenChange?: (open: boolean) => void;
+}) {
   return (
-    <Drawer>
-      <DrawerTrigger asChild>
-        <div className="flex items-center gap-2 cursor-pointer group">
-           <Avatar className="h-6 w-6 border border-stone-200 group-hover:border-accent/50 transition-colors">
+    <Drawer open={isOpen} onOpenChange={onOpenChange}>
+      {children ? (
+        <DrawerTrigger asChild>
+          {children}
+        </DrawerTrigger>
+      ) : (
+        <DrawerTrigger asChild>
+          <div className="flex items-center gap-2 cursor-pointer group">
+             <Avatar className="h-6 w-6 border border-stone-200 group-hover:border-accent/50 transition-colors">
               <AvatarFallback className="bg-stone-100 text-stone-600 text-[10px] font-bold uppercase">
                  {user.name.substring(0, 1)}
               </AvatarFallback>
