@@ -178,12 +178,20 @@ export function InitializeNodeModal({ isOpen, onClose, initialStep }: Initialize
     }
 
     try {
-      await atomicSyncUser(result.data as any);
+      const syncResult = await atomicSyncUser(result.data as any);
       toast.success("NODE DEPLOYED: Reciprocity Engine Initialized");
       onClose();
-      window.location.reload();
-    } catch (err) {
-      toast.error("Deployment failed — try again.");
+      
+      // Delay reload to let the toast be seen
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+    } catch (err: any) {
+      console.error("[Launch] Activation Error:", err);
+      toast.error("Deployment failed", {
+        description: err.message || "The network node could not be synchronized. Please check your connection.",
+        duration: 5000
+      });
     } finally {
       setIsLoading(false);
     }
