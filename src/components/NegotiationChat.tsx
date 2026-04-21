@@ -201,7 +201,7 @@ export default function NegotiationChat({
           className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide"
         >
           {isLoadingHistory ? (
-            <div className="flex items-center justify-center h-full gap-2 text-zinc-500">
+            <div className="flex items-center justify-center h-full gap-2 text-zinc-400">
               <Loader2 className="h-4 w-4 animate-spin" />
               <span className="text-xs font-medium">
                 Loading history...
@@ -209,7 +209,7 @@ export default function NegotiationChat({
             </div>
           ) : messages.length === 0 ? (
             <div className="flex items-center justify-center h-full">
-              <p className="text-xs text-zinc-500 font-medium">
+              <p className="text-xs text-zinc-400 font-medium">
                 No messages yet — initiate negotiation
               </p>
             </div>
@@ -230,7 +230,7 @@ export default function NegotiationChat({
                 >
                   {m.text}
                 </div>
-                <span className="text-[10px] text-zinc-500 mt-1.5 font-medium">
+                <span className="text-[10px] text-zinc-400 mt-1.5 font-medium">
                   {m.sender === currentUser ? "You" : m.sender} • {new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </span>
               </div>
@@ -247,7 +247,7 @@ export default function NegotiationChat({
             }
             placeholder="Propose modification..."
             disabled={isSending}
-            className="rounded-xl border border-white/10 bg-white/5 text-sm h-12 text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-1 focus-visible:ring-emerald-500/50 transition-all"
+            className="rounded-xl border border-white/10 bg-white/5 text-sm h-12 text-zinc-200 placeholder:text-zinc-400 focus-visible:ring-1 focus-visible:ring-emerald-500/50 transition-all"
           />
           <Button
             onClick={sendMessage}
@@ -270,7 +270,7 @@ export default function NegotiationChat({
         
         <div className="space-y-1 relative z-10">
           <h3 className="text-base font-semibold text-white tracking-tight">Live Agreement</h3>
-          <p className="text-xs text-zinc-500 font-medium">
+          <p className="text-xs text-zinc-400 font-medium">
             Manifesto compliant swap
           </p>
         </div>
@@ -282,7 +282,7 @@ export default function NegotiationChat({
               className="p-3.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm flex justify-between items-center group hover:bg-white/10 transition-all"
             >
               <span className="text-sm font-medium text-zinc-200">{item}</span>
-              <AlertCircle className="h-4 w-4 text-zinc-500 opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity" />
+              <AlertCircle className="h-4 w-4 text-zinc-400 opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity" />
             </div>
           ))}
           <Button
