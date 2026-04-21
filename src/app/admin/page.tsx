@@ -1,27 +1,27 @@
 import { prisma } from "@/lib/prisma";
 import { Users, Package, RefreshCw, Star, ShieldAlert, Cpu, Activity, TrendingUp, Search, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { SeedActivityButton } from "@/components/admin/SeedActivityButton";
 
 export default async function AdminDashboard() {
   try {
-    const userCount = await prisma.user.count();
-    const listingCount = await prisma.listing.count();
-    const swapCount = await prisma.swap.count();
-    const averageReputation = await prisma.user.aggregate({ _avg: { reputation: true } });
-    const avgRep = averageReputation._avg.reputation ?? 0;
+    const userCount = await prisma.user.count().catch(() => 0);
+    const listingCount = await prisma.listing.count().catch(() => 0);
+    const swapCount = await prisma.swap.count().catch(() => 0);
     
     // Enhancement #1 & #7 — Alerts
-    const flaggedCount = await prisma.listing.count({ where: { isFlagged: true } });
+    const flaggedCount = await prisma.listing.count({ where: { isFlagged: true } }).catch(() => 0);
     const recentAlerts = await prisma.auditLog.findMany({ 
       take: 5, 
       orderBy: { createdAt: "desc" },
       include: { user: { select: { name: true } } }
-    });
+    }).catch(() => []);
 
     // Enhancement #3 — Usage
     const usageStats = await prisma.usageLog.aggregate({
       _sum: { cost: true, tokens: true }
-    });
+    }).catch(() => ({ _sum: { cost: 0, tokens: 0 } }));
+    
     const usageCost = usageStats?._sum?.cost ?? 0;
     const usageTokens = usageStats?._sum?.tokens ?? 0;
 
@@ -29,7 +29,7 @@ export default async function AdminDashboard() {
     const networkSentiment = await prisma.auditLog.findFirst({
       where: { action: "SENTIMENT_ANALYSIS" },
       orderBy: { createdAt: "desc" }
-    });
+    }).catch(() => null);
     const sentimentData = (networkSentiment?.metadata as any) || { label: "STABLE", score: 50 };
 
     return (
@@ -45,23 +45,7 @@ export default async function AdminDashboard() {
           </div>
           
           <div className="flex items-center gap-4">
-             {/* TEMPORARY SEEDING CTA */}
-             <button 
-               onClick={async () => {
-                 const res = await fetch("/api/admin/seed-activity", { method: "POST" });
-                 if (res.ok) alert("ACTIVITY SEEDED: 50 Users & 50 Listings Added.");
-                 else alert("Seeding Failed. Check Console.");
-               }}
-               className="glass-card px-6 py-4 rounded-3xl border-stone-200 bg-accent/10 hover:bg-accent/20 transition-all flex items-center gap-3 group"
-             >
-                <div className="h-8 w-8 rounded-full bg-accent flex items-center justify-center text-white">
-                   <Zap className="h-4 w-4 group-hover:animate-bounce" />
-                </div>
-                <div className="text-left">
-                   <p className="text-[10px] font-mono font-bold text-accent uppercase tracking-widest leading-none">Developer Tool</p>
-                   <h4 className="text-sm font-black text-primary uppercase italic">Seed Activity</h4>
-                </div>
-             </button>
+             <SeedActivityButton />
 
              <div className="text-right glass-card p-6 rounded-3xl border-stone-200">
                 <p className="text-[10px] font-mono font-bold text-stone-400 uppercase tracking-widest">Platform Costs</p>
