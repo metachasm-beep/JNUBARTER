@@ -86,9 +86,13 @@ export function TopNav() {
   const mouseX = useMotionValue(Infinity);
 
   const handleNavigation = (href: string, scrollId?: string) => {
-    if (pathname === href && scrollId) {
-      const el = document.getElementById(scrollId);
-      if (el) el.scrollIntoView({ behavior: "smooth" });
+    if (pathname === href) {
+      if (scrollId) {
+        const el = document.getElementById(scrollId);
+        if (el) el.scrollIntoView({ behavior: "smooth" });
+      } else {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
     } else {
       router.push(href);
       if (scrollId) {
@@ -103,7 +107,7 @@ export function TopNav() {
   const navItems = [
     { icon: Home, label: "Registry", href: "/", onClick: () => handleNavigation("/", "market") },
     { icon: Search, label: "Explore", href: "/", onClick: () => handleNavigation("/") },
-    { icon: PlusSquare, label: "Exchange", href: "/setup", onClick: () => router.push("/setup") },
+    { icon: PlusSquare, label: "Exchange", href: "/setup", onClick: () => handleNavigation("/setup") },
     { icon: MessageSquare, label: "Flux", href: "/", onClick: () => handleNavigation("/", "flux-notifications") },
   ];
 
@@ -117,26 +121,24 @@ export function TopNav() {
 
   return (
     <div className="fixed top-6 left-0 right-0 z-[99999] px-6">
-      <div className={cn("mx-auto flex justify-center", isAdminRoute ? "max-w-3xl" : "max-w-2xl")}>
+      <div className={cn("mx-auto flex justify-center", isAdminRoute ? "max-w-4xl" : "max-w-3xl")}>
         <motion.nav 
           onMouseMove={(e) => mouseX.set(e.pageX)}
           onMouseLeave={() => mouseX.set(Infinity)}
-          className="flex items-center gap-2 p-2 px-6 glass-card border-iridescent rounded-[2.5rem] shadow-2xl h-16"
+          className="flex items-center gap-2 p-2 px-6 glass-card border-iridescent rounded-[2.5rem] shadow-2xl h-20"
         >
           {/* LOGO AREA */}
-          {!isAdminRoute && (
-            <div className="pr-2 mr-2 border-r border-stone-200/50">
-               <button 
-                 onClick={() => router.push("/")}
-                 className="h-10 w-10 flex items-center justify-center rounded-full bg-stone-100 text-stone-500 hover:bg-stone-200 transition-colors"
-               >
-                  <Home className="h-5 w-5" />
-               </button>
-            </div>
-          )}
+          <div className="pr-4 mr-2 border-r border-stone-200/50">
+             <button 
+               onClick={() => handleNavigation("/")}
+               className="h-12 w-12 flex items-center justify-center rounded-full bg-primary text-accent hover:bg-stone-800 transition-all shadow-lg"
+             >
+                <Home className="h-6 w-6" />
+             </button>
+          </div>
 
           {/* DOCK ITEMS */}
-          <div className="flex items-center gap-2 h-full">
+          <div className="flex items-center gap-3 h-full">
             {currentItems.map((item) => (
               <NavItem 
                 key={item.label} 
@@ -148,47 +150,54 @@ export function TopNav() {
           </div>
 
           {/* SYSTEM AREA */}
-          <div className="flex items-center gap-2 pl-4 ml-2 border-l border-stone-200/50">
+          <div className="flex items-center gap-3 pl-4 ml-2 border-l border-stone-200/50">
             {isAdmin && !isAdminRoute && (
                <div className="tooltip-container tooltip-bottom">
                   <button 
                     onClick={() => router.push("/admin")}
-                    className="h-10 w-10 flex items-center justify-center rounded-full text-stone-400 hover:text-primary hover:bg-stone-100 transition-all"
+                    className="h-12 w-12 flex items-center justify-center rounded-full text-stone-400 hover:text-primary hover:bg-stone-100 transition-all"
                   >
-                    <Shield className="h-5 w-5" />
+                    <Shield className="h-6 w-6" />
                   </button>
                   <div className="tooltip-content !text-primary !bg-white/95 border border-stone-100 font-bold">Admin HQ</div>
                </div>
             )}
 
             {session ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <div className="tooltip-container tooltip-bottom">
                   <button 
-                    onClick={() => router.push("/setup")}
-                    className="h-10 w-10 rounded-full overflow-hidden border-2 border-transparent hover:border-accent transition-all shadow-sm"
+                    onClick={() => handleNavigation("/setup")}
+                    className={cn(
+                      "h-12 w-12 rounded-full overflow-hidden border-2 transition-all shadow-md",
+                      pathname === "/setup" ? "border-accent scale-110" : "border-transparent hover:border-accent"
+                    )}
                   >
                     {session.user?.image ? (
-                      <Image src={session.user.image} alt="Profile" width={40} height={40} className="object-cover" />
+                      <Image src={session.user.image} alt="Profile" width={48} height={48} className="object-cover" />
                     ) : (
-                      <div className="bg-stone-100 flex items-center justify-center h-full text-stone-400"><User className="h-5 w-5" /></div>
+                      <div className="bg-stone-100 flex items-center justify-center h-full text-stone-400"><User className="h-6 w-6" /></div>
                     )}
                   </button>
                   <div className="tooltip-content !text-primary !bg-white/95 border border-stone-100 font-bold">Node Settings</div>
                 </div>
-                <button 
-                  onClick={() => signOut()}
-                  className="p-2 text-stone-300 hover:text-destructive transition-colors"
-                >
-                  <LogOut className="h-5 w-5" />
-                </button>
+                
+                <div className="tooltip-container tooltip-bottom">
+                  <button 
+                    onClick={() => signOut()}
+                    className="h-12 w-12 flex items-center justify-center rounded-full text-stone-300 hover:text-destructive hover:bg-destructive/5 transition-all"
+                  >
+                    <LogOut className="h-6 w-6" />
+                  </button>
+                  <div className="tooltip-content !text-primary !bg-white/95 border border-stone-100 font-bold">Sign Out</div>
+                </div>
               </div>
             ) : (
               <button 
                 onClick={() => signIn("google")}
-                className="px-6 py-2 rounded-full bg-primary text-white text-[9px] font-black uppercase tracking-widest hover:bg-stone-800 transition-all"
+                className="px-8 h-12 rounded-full bg-primary text-white text-[10px] font-black uppercase tracking-widest hover:bg-stone-800 transition-all shadow-lg"
               >
-                Join
+                Join Node
               </button>
             )}
           </div>

@@ -137,7 +137,7 @@ export default function Dock({
   const isHovered = useMotionValue(0);
 
   return (
-    <div className="fixed bottom-6 left-0 right-0 z-50 flex justify-center pointer-events-none">
+    <div className={`flex justify-center pointer-events-none ${className.includes('fixed') ? '' : 'relative'}`}>
       <motion.div
         onMouseMove={({ pageX }) => {
           isHovered.set(1);
