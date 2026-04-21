@@ -1,4 +1,6 @@
 import { PrismaClient } from '@prisma/client';
+import { Pool } from '@neondatabase/serverless';
+import { PrismaNeon } from '@prisma/adapter-neon';
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
@@ -23,15 +25,15 @@ export const prisma = (() => {
     .replace(/\s/g, '');
 
   if (typeof window === 'undefined') {
-    console.log(`[Prisma] Initializing with URL length: ${sanitizedUrl.length}`);
+    console.log(`[Prisma] Initializing with Neon Adapter. URL length: ${sanitizedUrl.length}`);
   }
 
+  // PRISMA 7: Must use Driver Adapter for Neon/Postgres
+  const pool = new Pool({ connectionString: sanitizedUrl });
+  const adapter = new PrismaNeon(pool);
+
   const client = new PrismaClient({
-    datasources: {
-      db: {
-        url: sanitizedUrl,
-      },
-    },
+    adapter,
     log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
   });
 
