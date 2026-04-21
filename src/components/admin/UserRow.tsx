@@ -41,6 +41,9 @@ export function UserRow({ user, onInspect }: { user: any, onInspect: () => void 
                 <span className="text-[10px] font-mono font-bold text-stone-500 uppercase tracking-tighter">
                   {user.verificationReports[0].status}
                 </span>
+                {user.idCardUrl && user.verificationReports[0].status === 'PENDING_REVIEW' && (
+                  <Badge className="bg-amber-500 text-white text-[8px] px-2 py-0.5 animate-pulse border-none">ID ATTACHED</Badge>
+                )}
              </div>
            ) : (
              <span className="text-[10px] font-mono text-stone-300 uppercase italic">Pending Intel</span>

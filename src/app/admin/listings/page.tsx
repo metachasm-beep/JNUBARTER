@@ -21,7 +21,7 @@ export default async function ListingModeration() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
         {listings.map((listing) => (
-          <div key={listing.id} className={`glass-card border-stone-200 rounded-[3rem] bg-white overflow-hidden flex flex-col shadow-2xl shadow-stone-200/20 group relative ${listing.isFlagged ? 'ring-2 ring-red-500/20' : ''}`}>
+          <div key={listing.id} className={`glass-card border-stone-200 rounded-[3rem] bg-white flex flex-col shadow-2xl shadow-stone-200/20 group relative ${listing.isFlagged ? 'ring-2 ring-red-500/20' : ''}`}>
              
              {/* Enhancement #1 — Flag Indicator */}
              {listing.isFlagged && (
@@ -31,7 +31,7 @@ export default async function ListingModeration() {
                 </div>
              )}
 
-             <div className="h-4 w-full bg-stone-50 group-hover:bg-primary transition-colors" />
+             <div className="h-4 w-full bg-stone-50 group-hover:bg-primary transition-colors rounded-t-[3rem]" />
              
              <div className="p-10 flex-1 space-y-8">
                 <div className="space-y-4">
@@ -68,7 +68,7 @@ export default async function ListingModeration() {
                          <p className="text-[9px] font-mono text-stone-300 uppercase truncate max-w-[100px]">{listing.user.email}</p>
                       </div>
                    </div>
-                   <ListingActions listingId={listing.id} title={listing.title} />
+                   <ListingActions listing={listing} listingId={listing.id} title={listing.title} />
                 </div>
              </div>
           </div>
