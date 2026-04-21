@@ -123,6 +123,17 @@ export default async function AdminDashboard() {
       </div>
     );
   } catch (error: any) {
+    // Attempt to check Neo4j as well for a complete picture
+    let neo4jStatus = "UNCHECKED";
+    try {
+      const { getNeo4jDriver } = await import("@/lib/neo4j");
+      const driver = getNeo4jDriver();
+      await driver.verifyConnectivity();
+      neo4jStatus = "CONNECTED";
+    } catch (e: any) {
+      neo4jStatus = `FAILED: ${e.message}`;
+    }
+
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-12 bg-stone-50">
         <div className="glass-card p-12 rounded-[3rem] border-red-100 bg-white shadow-2xl text-center max-w-xl">
@@ -130,24 +141,35 @@ export default async function AdminDashboard() {
            <h2 className="text-3xl font-black uppercase italic text-primary tracking-tighter mb-4">Telemetry Failure</h2>
            <p className="text-stone-500 text-sm font-medium mb-8">The Command Center was unable to establish a secure link with the network infrastructure.</p>
            <div className="bg-red-50 p-6 rounded-2xl text-left border border-red-100 overflow-x-auto">
-              <p className="text-[10px] font-mono text-red-600 leading-relaxed">
+              <p className="text-[10px] font-mono text-red-600 leading-relaxed font-bold">
                 ERROR: {error.message || 'Unknown Server Error'}
               </p>
-              <div className="mt-4 pt-4 border-t border-red-100">
-                <p className="text-[8px] font-mono text-red-400 uppercase font-bold mb-1">Diagnostics:</p>
-                <p className="text-[8px] font-mono text-red-300">
-                  Heartbeat: {new Date().toISOString()}
-                </p>
-                <p className="text-[8px] font-mono text-red-300">
-                  URL Length: {process.env.DATABASE_URL?.length || 0} characters
-                </p>
-                <p className="text-[8px] font-mono text-red-400 uppercase font-bold mt-2 mb-1">Available Keys:</p>
-                <p className="text-[8px] font-mono text-red-300 break-all">
-                  {Object.keys(process.env).filter(k => !k.includes('SECRET') && !k.includes('PASSWORD') && !k.includes('KEY')).join(', ')}
+              <div className="mt-4 pt-4 border-t border-red-100 space-y-2">
+                <p className="text-[8px] font-mono text-red-400 uppercase font-bold mb-1">Infrastructure Diagnostics:</p>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="space-y-1">
+                    <p className="text-[8px] font-mono text-red-300">Heartbeat: {new Date().toISOString()}</p>
+                    <p className="text-[8px] font-mono text-red-300">Prisma Source: {process.env.DATABASE_URL ? `ACTIVE (${process.env.DATABASE_URL.length} chars)` : 'MISSING'}</p>
+                    <p className="text-[8px] font-mono text-red-300">Neo4j Link: {neo4jStatus}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-[8px] font-mono text-red-300">Node Version: {process.version}</p>
+                    <p className="text-[8px] font-mono text-red-300">Environment: {process.env.NODE_ENV}</p>
+                  </div>
+                </div>
+                
+                <p className="text-[8px] font-mono text-red-400 uppercase font-bold mt-4 mb-1">Available Keys (Sanitized):</p>
+                <p className="text-[8px] font-mono text-red-300 break-all leading-relaxed">
+                  {Object.keys(process.env)
+                    .filter(k => !k.includes('SECRET') && !k.includes('PASSWORD') && !k.includes('KEY') && !k.includes('AUTH') && !k.includes('TOKEN'))
+                    .join(', ')}
                 </p>
               </div>
            </div>
-           <a href="/admin" className="mt-8 inline-flex items-center justify-center h-12 px-8 rounded-2xl bg-primary text-white text-[10px] font-mono font-black uppercase tracking-widest">Retry Connection</a>
+           <div className="flex gap-4 justify-center mt-10">
+             <a href="/admin" className="h-12 px-8 rounded-2xl bg-primary text-white text-[10px] font-mono font-black uppercase tracking-widest flex items-center justify-center">Retry Connection</a>
+             <a href="/" className="h-12 px-8 rounded-2xl border border-stone-200 text-stone-400 text-[10px] font-mono font-bold uppercase tracking-widest flex items-center justify-center">Exit Command</a>
+           </div>
         </div>
       </div>
     );

@@ -13,12 +13,18 @@ export const prisma = (() => {
     if (typeof window === 'undefined') {
       console.error("CRITICAL: DATABASE_URL is invalid or missing.");
     }
-    // Return a dummy client that will fail on use but won't crash the build
     return new PrismaClient();
   }
 
-  // Deep sanitize the URL
-  const sanitizedUrl = rawUrl.trim().replace(/[\r\n]/g, '').replace(/\s/g, '');
+  // Deep sanitize the URL: remove quotes, newlines, and whitespace
+  const sanitizedUrl = rawUrl.trim()
+    .replace(/^["']|["']$/g, '') // Remove wrapping quotes
+    .replace(/[\r\n]/g, '')
+    .replace(/\s/g, '');
+
+  if (typeof window === 'undefined') {
+    console.log(`[Prisma] Initializing with URL length: ${sanitizedUrl.length}`);
+  }
 
   const client = new PrismaClient({
     datasources: {
