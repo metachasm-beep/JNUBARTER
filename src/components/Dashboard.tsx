@@ -123,22 +123,24 @@ export function Dashboard({ openSetup }: DashboardProps) {
         <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {stats.map((stat, i) => (
             <HoverCard key={stat.label}>
-              <HoverCardTrigger asChild>
-                <motion.div 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.1 }}
-                  onClick={() => handleStatClick(stat.label)}
-                  className="glass-card p-6 rounded-[2rem] border-stone-100 flex flex-col justify-between h-40 group hover:border-accent/20 transition-all cursor-pointer shadow-sm"
-                >
-                  <div className={`p-2 rounded-xl bg-stone-50 w-fit ${stat.color} group-hover:scale-110 transition-transform`}>
-                    <stat.icon className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-mono font-bold text-stone-400 uppercase tracking-widest">{stat.label}</p>
-                    <h4 className="text-2xl font-black text-primary">{stat.value}</h4>
-                  </div>
-                </motion.div>
+              <HoverCardTrigger 
+                render={
+                  <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.1 }}
+                    onClick={() => handleStatClick(stat.label)}
+                    className="glass-card p-6 rounded-[2rem] border-stone-100 flex flex-col justify-between h-40 group hover:border-accent/20 transition-all cursor-pointer shadow-sm"
+                  />
+                }
+              >
+                <div className={`p-2 rounded-xl bg-stone-50 w-fit ${stat.color} group-hover:scale-110 transition-transform`}>
+                  <stat.icon className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-mono font-bold text-stone-400 uppercase tracking-widest">{stat.label}</p>
+                  <h4 className="text-2xl font-black text-primary">{stat.value}</h4>
+                </div>
               </HoverCardTrigger>
               <HoverCardContent className="w-64 glass-card border-accent/10 p-4 shadow-xl">
                 <div className="space-y-2">
