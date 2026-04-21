@@ -21,6 +21,13 @@ import { ListingSkeleton } from "@/components/ListingSkeleton";
 import { useListingsFlat } from "@/hooks/useListings";
 import { useVerification } from "@/hooks/useVerification";
 import { IdVerificationRequest } from "@/components/IdVerificationRequest";
+import { 
+  HoverCard, 
+  HoverCardTrigger, 
+  HoverCardContent 
+} from "@/components/ui/hover-card";
+import { PortfolioFolderModal } from "@/components/PortfolioFolderModal";
+import { useState } from "react";
 
 interface DashboardProps {
   openSetup: (step?: number) => void;
@@ -32,12 +39,44 @@ export function Dashboard({ openSetup }: DashboardProps) {
   const { data: verifyData } = useVerification();
   const listings = listingsData?.listings ?? [];
 
+  const [isFolderOpen, setIsFolderOpen] = useState(false);
+  const [selectedStat, setSelectedStat] = useState<string | undefined>();
+
+  const handleStatClick = (label: string) => {
+    setSelectedStat(label);
+    setIsFolderOpen(true);
+  };
+
   // Mock stats for a comprehensive feel
   const stats = [
-    { label: "Reciprocity Threads", value: "3", icon: Zap, color: "text-accent" },
-    { label: "Contribution Index", value: "450", icon: ShieldCheck, color: "text-blue-500" },
-    { label: "Network Reach", value: "Top 5%", icon: Users, color: "text-purple-500" },
-    { label: "Efficiency Quotient", value: "98%", icon: Target, color: "text-emerald-500" },
+    { 
+      label: "Reciprocity Threads", 
+      value: "3", 
+      icon: Zap, 
+      color: "text-accent",
+      description: "Active peer-to-peer exchange chains currently linked to your scholarly profile."
+    },
+    { 
+      label: "Contribution Index", 
+      value: "450", 
+      icon: ShieldCheck, 
+      color: "text-blue-500",
+      description: "A comprehensive score reflecting your total value added to the JNU academic ecosystem."
+    },
+    { 
+      label: "Network Reach", 
+      value: "Top 5%", 
+      icon: Users, 
+      color: "text-purple-500",
+      description: "Percentage of the academic network accessible through your direct and secondary connections."
+    },
+    { 
+      label: "Efficiency Quotient", 
+      value: "98%", 
+      icon: Target, 
+      color: "text-emerald-500",
+      description: "Historical success rate of your initiated and fulfilled reciprocity agreements."
+    },
   ];
 
   return (
@@ -83,21 +122,33 @@ export function Dashboard({ openSetup }: DashboardProps) {
         {/* STATS GRID: VITALITY METRICS */}
         <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {stats.map((stat, i) => (
-            <motion.div 
-              key={stat.label}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className="glass-card p-6 rounded-[2rem] border-stone-100 flex flex-col justify-between h-40 group hover:border-accent/20 transition-all cursor-default shadow-sm"
-            >
-              <div className={`p-2 rounded-xl bg-stone-50 w-fit ${stat.color} group-hover:scale-110 transition-transform`}>
-                <stat.icon className="h-5 w-5" />
-              </div>
-              <div>
-                <p className="text-[10px] font-mono font-bold text-stone-400 uppercase tracking-widest">{stat.label}</p>
-                <h4 className="text-2xl font-black text-primary">{stat.value}</h4>
-              </div>
-            </motion.div>
+            <HoverCard key={stat.label}>
+              <HoverCardTrigger asChild>
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                  onClick={() => handleStatClick(stat.label)}
+                  className="glass-card p-6 rounded-[2rem] border-stone-100 flex flex-col justify-between h-40 group hover:border-accent/20 transition-all cursor-pointer shadow-sm"
+                >
+                  <div className={`p-2 rounded-xl bg-stone-50 w-fit ${stat.color} group-hover:scale-110 transition-transform`}>
+                    <stat.icon className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-mono font-bold text-stone-400 uppercase tracking-widest">{stat.label}</p>
+                    <h4 className="text-2xl font-black text-primary">{stat.value}</h4>
+                  </div>
+                </motion.div>
+              </HoverCardTrigger>
+              <HoverCardContent className="w-64 glass-card border-accent/10 p-4 shadow-xl">
+                <div className="space-y-2">
+                  <h4 className="text-[10px] font-black uppercase tracking-widest text-accent italic">{stat.label}</h4>
+                  <p className="text-[11px] text-secondary leading-relaxed font-medium">
+                    {stat.description}
+                  </p>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
           ))}
         </section>
 
@@ -198,6 +249,12 @@ export function Dashboard({ openSetup }: DashboardProps) {
           </div>
         </div>
       </div>
+      
+      <PortfolioFolderModal 
+        isOpen={isFolderOpen} 
+        onClose={() => setIsFolderOpen(false)} 
+        initialTab={selectedStat}
+      />
     </div>
   );
 }
