@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
+import { uploadToDrive } from "@/lib/google-drive";
 
 export async function POST(req: Request) {
   try {
@@ -19,10 +20,15 @@ export async function POST(req: Request) {
     const userId = session.user.id;
     console.log("[ID_UPLOAD] Processing upload for user:", userId);
 
-    // 1. Update User with ID Card URL (base64 for now)
+    // 1. Upload to Google Drive
+    const fileName = `JNU_ID_${userId}_${Date.now()}.jpg`;
+    const driveUrl = await uploadToDrive(idCardBase64, fileName);
+    console.log("[ID_UPLOAD] Drive URL:", driveUrl);
+
+    // 2. Update User with ID Card URL
     await prisma.user.update({
       where: { id: userId },
-      data: { idCardUrl: idCardBase64 }
+      data: { idCardUrl: driveUrl }
     });
 
     // 2. Create/Update a Verification Report with PENDING_REVIEW status
