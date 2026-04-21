@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
-import { Shield, Users, Package, Activity, LogOut, LayoutDashboard } from "lucide-react";
+import { Shield, Users, Package, Activity, LogOut, LayoutDashboard, RefreshCw } from "lucide-react";
 import Link from "next/link";
 
 export default async function AdminLayout({
