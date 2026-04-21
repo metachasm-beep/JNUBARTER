@@ -42,6 +42,7 @@ model User {
   pushSubscriptions PushSubscription[]
   auditLogs       AuditLog[]
   verificationReports VerificationReport[]
+  multiSwapParticipations MultiSwapParticipant[]
 }
 
 model AuditLog {
@@ -140,6 +141,7 @@ model Listing {
   updatedAt     DateTime  @updatedAt
 
   swapItems     SwapItem[]
+  multiSwapParticipations MultiSwapParticipant[]
 }
 
 enum ListingType {
@@ -181,6 +183,27 @@ enum SwapStatus {
   ACCEPTED
   EXECUTED
   CANCELLED
+}
+
+model MultiSwap {
+  id            String    @id @default(cuid())
+  status        SwapStatus @default(PROPOSED)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  participants  MultiSwapParticipant[]
+}
+
+model MultiSwapParticipant {
+  id            String    @id @default(cuid())
+  multiSwapId   String
+  multiSwap     MultiSwap @relation(fields: [multiSwapId], references: [id], onDelete: Cascade)
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  givingListingId String
+  givingListing   Listing @relation(fields: [givingListingId], references: [id])
+  receivingTag  String    
+  hasConfirmed  Boolean   @default(false)
 }
 
 model SwapItem {

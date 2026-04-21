@@ -27,6 +27,7 @@ import {
   HoverCardContent 
 } from "@/components/ui/hover-card";
 import { PortfolioFolderModal } from "@/components/PortfolioFolderModal";
+import { TriangulationSuggestions } from "@/components/TriangulationSuggestions";
 import { useState } from "react";
 
 interface DashboardProps {
@@ -171,6 +172,8 @@ export function Dashboard({ openSetup }: DashboardProps) {
           {/* LEFT: RECENT ACTIVITY & OPPORTUNITIES */}
           <div className="lg:col-span-2 space-y-12">
             
+            <TriangulationSuggestions />
+
             <section id="market">
               <div className="flex items-center justify-between mb-8">
                 <h3 className="text-xl font-black uppercase tracking-tighter italic text-primary">Optimal Exchange Potentials</h3>

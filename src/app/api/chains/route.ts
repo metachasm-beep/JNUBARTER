@@ -1,12 +1,16 @@
 import { NextResponse } from "next/server";
 import { findBarterChains } from "@/lib/barter-engine";
+import { auth } from "@/auth";
 
 export const dynamic = "force-dynamic";
-export const revalidate = 60; // cache for 60s — chains don't change that fast
 
 export async function GET() {
   try {
-    const chains = await findBarterChains();
+    const session = await auth();
+    if (!session?.user?.id) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
+    const chains = await findBarterChains(session.user.id);
     return NextResponse.json({ chains });
   } catch (error) {
     console.error("[GET /api/chains]", error);
