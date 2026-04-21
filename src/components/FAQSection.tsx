@@ -52,10 +52,10 @@ export function FAQSection() {
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
         >
-          <Accordion type="single" collapsible className="w-full space-y-4">
+          <Accordion className="w-full space-y-4">
             {FAQ_DATA.map((item, i) => (
               <AccordionItem key={i} value={`item-${i}`} className="border-white/5 bg-white/5 backdrop-blur-2xl rounded-3xl px-8 overflow-hidden transition-all hover:bg-white/10">
-                <AccordionTrigger className="text-left text-sm md:text-base font-bold uppercase tracking-tight text-white hover:no-underline hover:text-accent transition-all py-6 font-sans">
+                <AccordionTrigger className="text-left text-sm md:text-base font-bold uppercase tracking-tight text-white hover:no-underline hover:text-accent transition-all py-6 font-sans border-none">
                   {item.q}
                 </AccordionTrigger>
                 <AccordionContent className="text-stone-400 leading-relaxed font-medium pt-2 pb-8 text-base md:text-lg">
