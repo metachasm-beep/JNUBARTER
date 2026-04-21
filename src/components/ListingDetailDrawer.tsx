@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Package, Briefcase, Zap, MessageSquare, ShieldCheck, Clock, Share2, Star, Loader2 } from "lucide-react";
 import SpotlightCard from "./SpotlightCard";
+import { ProfileViewDrawer } from "./ProfileViewDrawer";
 
 interface ListingDetailDrawerProps {
   listing: any;
