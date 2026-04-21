@@ -47,6 +47,7 @@ export function ProfileViewDrawer({
            </span>
         </div>
       </DrawerTrigger>
+      )}
       <DrawerContent className="bg-background border-stone-200 p-6 h-[90vh]">
         <div className="mx-auto w-12 h-1.5 rounded-full bg-stone-200 mb-8" />
         
