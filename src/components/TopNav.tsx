@@ -36,41 +36,28 @@ interface NavItemProps {
   onClick?: () => void;
 }
 
-const NavItem = ({ icon: Icon, label, href, isActive, mouseX, onClick }: NavItemProps) => {
-  const ref = useRef<HTMLButtonElement>(null);
-  const distance = 140;
-  const magnification = 60;
-  const baseSize = 44;
-
-  const mouseDistance = useTransform(mouseX, (val) => {
-    const rect = ref.current?.getBoundingClientRect() ?? { x: 0, width: baseSize };
-    return val - rect.x - rect.width / 2;
-  });
-
-  const widthTransform = useTransform(mouseDistance, [-distance, 0, distance], [baseSize, magnification, baseSize]);
-  const width = useSpring(widthTransform, { mass: 0.1, stiffness: 150, damping: 12 });
-
+const NavItem = ({ icon: Icon, label, href, isActive, onClick }: Omit<NavItemProps, 'mouseX'>) => {
   return (
-    <div className="tooltip-container tooltip-bottom flex items-center justify-center">
-      <motion.button
-        ref={ref}
-        style={{ width, height: width }}
-        onClick={onClick}
-        className={cn(
-          "relative flex items-center justify-center rounded-full transition-colors",
-          isActive ? "bg-primary text-accent shadow-lg" : "bg-white/40 text-stone-400 hover:bg-white/60 hover:text-primary"
-        )}
-      >
-        <Icon className={cn("h-1/2 w-1/2", isActive ? "stroke-[2.5]" : "stroke-2")} />
-        {isActive && (
-          <motion.div 
-            layoutId="active-pill-dot"
-            className="absolute -bottom-1 h-1 w-1 rounded-full bg-accent"
-          />
-        )}
-      </motion.button>
-      <div className="tooltip-content !text-primary !bg-white/95 !shadow-xl border border-stone-100 font-bold">{label}</div>
-    </div>
+    <button
+      onClick={onClick}
+      className={cn(
+        "relative flex items-center gap-2 px-5 py-2.5 rounded-full transition-all duration-500 group",
+        isActive 
+          ? "bg-primary text-accent shadow-lg shadow-primary/20 scale-105" 
+          : "text-stone-400 hover:text-primary hover:bg-stone-50"
+      )}
+    >
+      <Icon className={cn("h-4 w-4 transition-transform group-hover:scale-110", isActive ? "stroke-[2.5]" : "stroke-2")} />
+      <span className="text-[10px] font-black uppercase tracking-[0.15em] whitespace-nowrap">
+        {label}
+      </span>
+      {isActive && (
+        <motion.div 
+          layoutId="active-pill-glow"
+          className="absolute inset-0 rounded-full bg-accent/5 ring-1 ring-accent/20 -z-10"
+        />
+      )}
+    </button>
   );
 };
 
@@ -80,10 +67,8 @@ export function TopNav() {
   const pathname = usePathname();
   const router = useRouter();
   const { data: session } = useSession();
-  const isAdmin = (session?.user as any)?.role === "ADMIN";
+  const isAdmin = (session?.user as any)?.role === "ADMIN" || session?.user?.email === "metachasm@gmail.com";
   const isAdminRoute = pathname.startsWith("/admin");
-
-  const mouseX = useMotionValue(Infinity);
 
   const handleNavigation = (href: string, scrollId?: string) => {
     if (pathname === href) {
@@ -120,89 +105,89 @@ export function TopNav() {
   const currentItems = isAdminRoute ? adminItems : navItems;
 
   return (
-    <div className="fixed top-6 left-0 right-0 z-[99999] px-6">
-      <div className={cn("mx-auto flex justify-center", isAdminRoute ? "max-w-4xl" : "max-w-3xl")}>
-        <motion.nav 
-          onMouseMove={(e) => mouseX.set(e.pageX)}
-          onMouseLeave={() => mouseX.set(Infinity)}
-          className="flex items-center gap-2 p-2 px-6 glass-card border-iridescent rounded-[2.5rem] shadow-2xl h-20"
-        >
-          {/* LOGO AREA */}
-          <div className="pr-4 mr-2 border-r border-stone-200/50">
-             <button 
-               onClick={() => handleNavigation("/")}
-               className="h-12 w-12 flex items-center justify-center rounded-full bg-primary text-accent hover:bg-stone-800 transition-all shadow-lg"
-             >
-                <Home className="h-6 w-6" />
-             </button>
-          </div>
+    <div 
+      className="fixed top-0 left-0 right-0 z-[99999] px-6 py-6 flex justify-center pointer-events-none"
+      style={{ top: '0', bottom: 'auto' }}
+    >
+      <motion.nav 
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        className="flex items-center gap-2 p-2 px-3 glass-card border-iridescent rounded-full shadow-[0_20px_50px_-10px_rgba(0,0,0,0.1)] h-14 pointer-events-auto"
+      >
+        {/* LOGO AREA */}
+        <div className="pr-2 mr-1 border-r border-stone-200/50 h-full flex items-center">
+           <button 
+             onClick={() => handleNavigation("/")}
+             className="h-10 w-10 flex items-center justify-center rounded-full bg-primary text-accent hover:bg-stone-800 transition-all shadow-md group"
+           >
+              <Home className="h-4 w-4 group-hover:scale-110 transition-transform" />
+           </button>
+        </div>
 
-          {/* DOCK ITEMS */}
-          <div className="flex items-center gap-3 h-full">
-            {currentItems.map((item) => (
-              <NavItem 
-                key={item.label} 
-                {...item} 
-                isActive={pathname === item.href} 
-                mouseX={mouseX} 
-              />
-            ))}
-          </div>
+        {/* NAV ITEMS */}
+        <div className="flex items-center gap-1 h-full">
+          {currentItems.map((item) => (
+            <NavItem 
+              key={item.label} 
+              {...item} 
+              isActive={pathname === item.href} 
+            />
+          ))}
+        </div>
 
-          {/* SYSTEM AREA */}
-          <div className="flex items-center gap-3 pl-4 ml-2 border-l border-stone-200/50">
-            {isAdmin && !isAdminRoute && (
-               <div className="tooltip-container tooltip-bottom">
-                  <button 
-                    onClick={() => router.push("/admin")}
-                    className="h-12 w-12 flex items-center justify-center rounded-full text-stone-400 hover:text-primary hover:bg-stone-100 transition-all"
-                  >
-                    <Shield className="h-6 w-6" />
-                  </button>
-                  <div className="tooltip-content !text-primary !bg-white/95 border border-stone-100 font-bold">Admin HQ</div>
-               </div>
-            )}
+        {/* SYSTEM AREA */}
+        <div className="flex items-center gap-2 pl-3 ml-1 border-l border-stone-200/50 h-full">
+          {isAdmin && !isAdminRoute && (
+             <div className="tooltip-container tooltip-bottom">
+                <button 
+                  onClick={() => router.push("/admin")}
+                  className="h-10 w-10 flex items-center justify-center rounded-full text-stone-400 hover:text-primary hover:bg-stone-50 transition-all"
+                >
+                  <Shield className="h-4 w-4" />
+                </button>
+                <div className="tooltip-content !text-primary !bg-white/95 border border-stone-100 font-bold">Admin HQ</div>
+             </div>
+          )}
 
-            {session ? (
-              <div className="flex items-center gap-3">
-                <div className="tooltip-container tooltip-bottom">
-                  <button 
-                    onClick={() => handleNavigation("/setup")}
-                    className={cn(
-                      "h-12 w-12 rounded-full overflow-hidden border-2 transition-all shadow-md",
-                      pathname === "/setup" ? "border-accent scale-110" : "border-transparent hover:border-accent"
-                    )}
-                  >
-                    {session.user?.image ? (
-                      <Image src={session.user.image} alt="Profile" width={48} height={48} className="object-cover" />
-                    ) : (
-                      <div className="bg-stone-100 flex items-center justify-center h-full text-stone-400"><User className="h-6 w-6" /></div>
-                    )}
-                  </button>
-                  <div className="tooltip-content !text-primary !bg-white/95 border border-stone-100 font-bold">Node Settings</div>
-                </div>
-                
-                <div className="tooltip-container tooltip-bottom">
-                  <button 
-                    onClick={() => signOut()}
-                    className="h-12 w-12 flex items-center justify-center rounded-full text-stone-300 hover:text-destructive hover:bg-destructive/5 transition-all"
-                  >
-                    <LogOut className="h-6 w-6" />
-                  </button>
-                  <div className="tooltip-content !text-primary !bg-white/95 border border-stone-100 font-bold">Sign Out</div>
-                </div>
+          {session ? (
+            <div className="flex items-center gap-2">
+              <div className="tooltip-container tooltip-bottom">
+                <button 
+                  onClick={() => handleNavigation("/setup")}
+                  className={cn(
+                    "h-10 w-10 rounded-full overflow-hidden border-2 transition-all shadow-sm",
+                    pathname === "/setup" ? "border-accent scale-105" : "border-transparent hover:border-accent"
+                  )}
+                >
+                  {session.user?.image ? (
+                    <Image src={session.user.image} alt="Profile" width={40} height={40} className="object-cover" />
+                  ) : (
+                    <div className="bg-stone-100 flex items-center justify-center h-full text-stone-400"><User className="h-4 w-4" /></div>
+                  )}
+                </button>
+                <div className="tooltip-content !text-primary !bg-white/95 border border-stone-100 font-bold">Node Settings</div>
               </div>
-            ) : (
-              <button 
-                onClick={() => signIn("google")}
-                className="px-8 h-12 rounded-full bg-primary text-white text-[10px] font-black uppercase tracking-widest hover:bg-stone-800 transition-all shadow-lg"
-              >
-                Join Node
-              </button>
-            )}
-          </div>
-        </motion.nav>
-      </div>
+              
+              <div className="tooltip-container tooltip-bottom">
+                <button 
+                  onClick={() => signOut()}
+                  className="h-10 w-10 flex items-center justify-center rounded-full text-stone-300 hover:text-destructive hover:bg-destructive/5 transition-all"
+                >
+                  <LogOut className="h-4 w-4" />
+                </button>
+                <div className="tooltip-content !text-primary !bg-white/95 border border-stone-100 font-bold">Sign Out</div>
+              </div>
+            </div>
+          ) : (
+            <button 
+              onClick={() => signIn("google")}
+              className="px-6 h-10 rounded-full bg-primary text-white text-[9px] font-black uppercase tracking-[0.2em] hover:bg-stone-800 transition-all shadow-md"
+            >
+              Join Node
+            </button>
+          )}
+        </div>
+      </motion.nav>
     </div>
   );
 }
