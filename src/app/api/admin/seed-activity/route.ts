@@ -17,12 +17,15 @@ const commodityTitles = [
   "Desk Lamp", "Power Bank", "Water Bottle", "Backpack", "Study Table"
 ];
 
-export async function POST() {
-  // TEMPORARILY DISABLED AUTH CHECK TO ALLOW SEEDING
-  // const session = await getServerSession(authOptions);
-  // if (session?.user?.role !== "ADMIN") {
-  //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  // }
+export async function POST(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const secret = searchParams.get("secret");
+  
+  const session = await getServerSession(authOptions);
+  
+  if (session?.user?.role !== "ADMIN" && secret !== "jnu_activity_seed_2026_safe") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   try {
     console.log("Seeding 50 dummy users via API...");
