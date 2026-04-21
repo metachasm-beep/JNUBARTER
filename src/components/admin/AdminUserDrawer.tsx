@@ -20,7 +20,7 @@ import {
   Mail,
   Calendar
 } from "lucide-react";
-import { ReputationDial } from "./ReputationDial";
+import { ReputationDial } from "../ReputationDial";
 
 export function AdminUserDrawer({ 
   user, 
