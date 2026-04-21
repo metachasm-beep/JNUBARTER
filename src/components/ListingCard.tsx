@@ -108,5 +108,3 @@ export function ListingCard({ listing, className }: ListingCardProps) {
     </>
   );
 }
-  );
-}
