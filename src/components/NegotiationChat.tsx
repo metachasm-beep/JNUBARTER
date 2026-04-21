@@ -5,10 +5,11 @@ import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Send, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { Send, CheckCircle2, AlertCircle, Loader2, ChevronLeft } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { SwapMessage, SwapMessageSchema } from "@/lib/schemas";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface SwapState {
   userAConfirmed: boolean;
@@ -32,7 +33,10 @@ export default function NegotiationChat({
     userBConfirmed: false,
     items: ["Technical SEO Audit", "React Component Library"],
   });
+  const [isAddingItem, setIsAddingItem] = useState(false);
+  const [newItemText, setNewItemText] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   // Validated + immutable message append
   const appendMessage = useCallback((msg: unknown) => {
@@ -177,7 +181,30 @@ export default function NegotiationChat({
         // Non-blocking — execution can be retried
         console.error("[NegotiationChat] execute endpoint failed");
       }
+    } else if (
+      (currentUser === "A" && newState.userAConfirmed) || 
+      (currentUser === "B" && newState.userBConfirmed)
+    ) {
+      toast.info("Waiting for the other party to confirm...");
     }
+  };
+
+  const handleAddItem = async () => {
+    if (!newItemText.trim()) {
+      setIsAddingItem(false);
+      return;
+    }
+    const newItems = [...swapState.items, newItemText.trim()];
+    const newState = { ...swapState, items: newItems };
+    
+    setSwapState(newState);
+    await supabase.channel(`swap:${swapId}`).send({
+      type: "broadcast",
+      event: "state_update",
+      payload: newState,
+    });
+    setNewItemText("");
+    setIsAddingItem(false);
   };
 
   return (
@@ -185,9 +212,14 @@ export default function NegotiationChat({
       {/* Left Side: Chat */}
       <div className="flex-1 flex flex-col border-r border-white/10">
         <div className="p-4 border-b border-white/10 bg-white/5 backdrop-blur-md flex justify-between items-center">
-          <h2 className="text-sm font-semibold text-zinc-100">
-            Negotiation Thread
-          </h2>
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="icon" onClick={() => router.back()} className="h-8 w-8 text-zinc-400 hover:text-white hover:bg-white/10 rounded-full">
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <h2 className="text-sm font-semibold text-zinc-100">
+              Negotiation Thread
+            </h2>
+          </div>
           <div className="flex items-center gap-2">
             <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
             <span className="text-[10px] font-medium text-emerald-500 uppercase tracking-widest">
@@ -285,12 +317,29 @@ export default function NegotiationChat({
               <AlertCircle className="h-4 w-4 text-zinc-400 opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity" />
             </div>
           ))}
-          <Button
-            variant="ghost"
-            className="w-full rounded-xl border border-dashed border-white/20 text-xs text-zinc-400 hover:text-zinc-200 hover:border-white/40 hover:bg-white/5 transition-all h-10"
-          >
-            + Add Item
-          </Button>
+          {isAddingItem ? (
+            <div className="flex gap-2">
+              <Input 
+                value={newItemText} 
+                onChange={e => setNewItemText(e.target.value)}
+                onKeyDown={e => e.key === "Enter" && handleAddItem()}
+                placeholder="Item name..."
+                className="h-10 text-sm rounded-xl bg-black/40 border-white/20 text-white placeholder:text-zinc-500"
+                autoFocus
+              />
+              <Button onClick={handleAddItem} className="h-10 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white shadow-md">
+                Add
+              </Button>
+            </div>
+          ) : (
+            <Button
+              variant="ghost"
+              onClick={() => setIsAddingItem(true)}
+              className="w-full rounded-xl border border-dashed border-white/20 text-xs text-zinc-400 hover:text-zinc-200 hover:border-white/40 hover:bg-white/5 transition-all h-10"
+            >
+              + Add Item
+            </Button>
+          )}
         </div>
 
         <div className="mt-auto space-y-4 relative z-10">
