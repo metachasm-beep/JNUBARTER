@@ -180,11 +180,11 @@ export function PortfolioFolderModal({ isOpen, onClose, initialTab }: PortfolioF
                            
                            <div>
                              <h2 className="text-5xl font-black text-primary tracking-tighter uppercase italic">{activeStat.value}</h2>
-                             <p className="text-[10px] font-mono font-bold text-stone-400 uppercase tracking-[0.3em] mt-2">{activeStat.label}</p>
+                             <p className="text-[10px] font-mono font-bold text-stone-600 uppercase tracking-[0.3em] mt-2">{activeStat.label}</p>
                            </div>
 
                            <div className="max-w-xs mx-auto">
-                              <p className="text-sm text-stone-500 font-medium leading-relaxed italic">
+                              <p className="text-sm text-stone-700 font-medium leading-relaxed italic">
                                 "{activeStat.desc}"
                               </p>
                            </div>

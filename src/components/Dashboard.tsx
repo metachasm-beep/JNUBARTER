@@ -145,7 +145,7 @@ export function Dashboard({ openSetup }: DashboardProps) {
               <HoverCardContent className="w-64 glass-card border-accent/10 p-4 shadow-xl">
                 <div className="space-y-2">
                   <h4 className="text-[10px] font-black uppercase tracking-widest text-accent italic">{stat.label}</h4>
-                  <p className="text-[11px] text-secondary leading-relaxed font-medium">
+                  <p className="text-[11px] text-primary leading-relaxed font-medium">
                     {stat.description}
                   </p>
                 </div>
