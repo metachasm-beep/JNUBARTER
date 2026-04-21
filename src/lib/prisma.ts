@@ -27,8 +27,19 @@ export const prisma = (() => {
     console.log(`[Prisma] Initializing with Neon Adapter. URL length: ${sanitizedUrl.length}`);
   }
 
+  // If localhost, use standard driver instead of Neon adapter
+  if (sanitizedUrl.includes('localhost') || sanitizedUrl.includes('127.0.0.1')) {
+    if (typeof window === 'undefined') {
+      console.log(`[Prisma] Initializing with Standard Driver (Localhost Detected).`);
+    }
+    const client = new PrismaClient({
+      log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+    });
+    if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = client;
+    return client;
+  }
+
   // PRISMA 7: Must use Driver Adapter for Neon/Postgres
-  // Pass the config object directly to the adapter
   const adapter = new PrismaNeon({ connectionString: sanitizedUrl });
 
   const client = new PrismaClient({

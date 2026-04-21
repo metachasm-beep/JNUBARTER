@@ -81,9 +81,38 @@ export async function POST(req: Request) {
     });
 
     const results = await Promise.all([...servicePromises, ...commodityPromises]);
-    console.log(`[Seed] Success. Created ${results.length} entries.`);
+    console.log(`[Seed] Success. Created ${results.length} listings.`);
 
-    return NextResponse.json({ message: "50 entries seeded." });
+    // 4. Create 50 Swaps
+    console.log("[Seed] Creating 50 dummy swaps...");
+    const existingUsers = await prisma.user.findMany({ 
+      where: { NOT: { id: systemUser.id } },
+      take: 10 
+    });
+
+    if (existingUsers.length > 0) {
+      const swapPromises = Array.from({ length: 50 }).map((_, i) => {
+        const otherUser = existingUsers[i % existingUsers.length];
+        const listing = results[i % results.length];
+        
+        return prisma.swap.create({
+          data: {
+            initiatorId: systemUser.id,
+            receiverId: otherUser.id,
+            status: "ACCEPTED",
+            items: {
+              create: [
+                { listingId: listing.id, addedById: systemUser.id }
+              ]
+            }
+          }
+        });
+      });
+      await Promise.all(swapPromises);
+      console.log("[Seed] 50 Swaps created.");
+    }
+
+    return NextResponse.json({ message: "50 listings and 50 swaps seeded." });
   } catch (error: any) {
     console.error("[Seed] CRITICAL FAILURE:", error);
     
