@@ -29,7 +29,10 @@ export default async function UserManagement() {
     <div className="space-y-12 pb-24">
       <header className="flex items-end justify-between border-b border-stone-200 pb-12">
         <div className="space-y-2">
-          <h2 className="text-6xl font-extrabold tracking-tighter text-primary uppercase italic leading-none">Peer<br />Network</h2>
+          <h2 className="text-6xl font-extrabold tracking-tighter text-primary uppercase italic leading-none flex items-center gap-4">
+            Peer<br />Network
+            <span className="text-2xl opacity-20">[{users.length}]</span>
+          </h2>
           <p className="text-stone-400 font-medium max-w-sm pt-4 italic">Manage node identities, access privileges, and verify scholarly authority.</p>
         </div>
         <div className="relative group">
