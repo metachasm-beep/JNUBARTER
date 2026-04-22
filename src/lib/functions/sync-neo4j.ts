@@ -5,8 +5,11 @@ import { syncListingToNeo4j, reconcileAllListings } from "../barter-sync";
  * TRIGGERED SYNC: Atomic update of Neo4j when a listing is created or updated.
  */
 export const syncListingCreated = inngest.createFunction(
-  { id: "sync-listing-created", name: "Sync Listing to Neo4j" },
-  { event: "listing.created" },
+  { 
+    id: "sync-listing-created", 
+    name: "Sync Listing to Neo4j",
+    triggers: [{ event: "listing.created" }]
+  },
   async ({ event, step }) => {
     const { listingId } = event.data;
     
@@ -20,8 +23,11 @@ export const syncListingCreated = inngest.createFunction(
  * RECONCILIATION: Bulk sync of all listings to fix drift.
  */
 export const reconcileGraph = inngest.createFunction(
-  { id: "reconcile-graph", name: "Reconcile Neo4j Graph" },
-  { event: "admin/reconcile.graph" },
+  { 
+    id: "reconcile-graph", 
+    name: "Reconcile Neo4j Graph",
+    triggers: [{ event: "admin/reconcile.graph" }]
+  },
   async ({ step }) => {
     const result = await step.run("bulk-reconcile", async () => {
       return await reconcileAllListings();
