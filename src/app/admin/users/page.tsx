@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { Search } from "lucide-react";
 import { UserTable } from "@/components/admin/UserTable";
 import { getSignedUrl } from "@/lib/storage";
+import { ErrorBoundary } from "react-error-boundary";
 
 export const dynamic = "force-dynamic";
 
@@ -50,7 +51,9 @@ export default async function UserManagement() {
         </div>
       </header>
 
-        <UserTable initialUsers={usersWithStats} />
+        <ErrorBoundary fallback={<div className="p-12 text-center text-red-500 font-mono text-[10px] uppercase">Rendering Error: Component Crash Detected</div>}>
+          <UserTable initialUsers={usersWithStats} />
+        </ErrorBoundary>
       </div>
     );
   } catch (err: any) {
