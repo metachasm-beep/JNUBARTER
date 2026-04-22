@@ -20,7 +20,7 @@ export const ParallaxHero = ({ scrollToMarket }: { scrollToMarket: () => void })
       {/* HIGH CONTRAST JNU BACKGROUND */}
       <div className="absolute inset-0 z-0">
         <div 
-          className="absolute inset-0 bg-cover bg-center opacity-40 scale-105"
+          className="absolute inset-0 bg-cover bg-center opacity-40 scale-105 brightness-[0.4] contrast-[1.5]"
           style={{ backgroundImage: "url('/images/jnu_hero_bg.png')" }}
         />
         {/* Cinematic Vignette & Gradient Mask */}
