@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { swapLimit } from "@/lib/ratelimit";
 
 export async function POST(req: Request) {
   try {
@@ -9,6 +10,12 @@ export async function POST(req: Request) {
     
     if (!session?.user?.id) {
       return new NextResponse("Unauthorized", { status: 401 });
+    }
+
+    // Ratelimit guard
+    const { success } = await swapLimit.limit(session.user.id);
+    if (!success) {
+      return new NextResponse("Too many swap requests. Please wait.", { status: 429 });
     }
 
     const { listingId, receiverId } = await req.json();

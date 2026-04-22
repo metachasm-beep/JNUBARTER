@@ -54,6 +54,8 @@ model AuditLog {
   entityId  String?
   metadata  Json?
   createdAt DateTime @default(now())
+
+  @@index([userId])
 }
 
 model UsageLog {
@@ -79,6 +81,9 @@ model VerificationReport {
   findings  String?
   evidence  Json?
   createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([status])
 }
 
 enum UserRole {
@@ -140,6 +145,11 @@ model Listing {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
+  @@index([userId])
+  @@index([type])
+  @@index([category])
+  @@index([isFlagged])
+
   swapItems     SwapItem[]
   multiSwapParticipations MultiSwapParticipant[]
 }
@@ -170,6 +180,10 @@ model Swap {
   expiresAt     DateTime  @default(dbgenerated("NOW() + INTERVAL '72 hours'"))
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+
+  @@index([initiatorId])
+  @@index([receiverId])
+  @@index([status])
 
   items         SwapItem[]
   messages      Message[]
@@ -204,6 +218,10 @@ model MultiSwapParticipant {
   givingListing   Listing @relation(fields: [givingListingId], references: [id])
   receivingTag  String    
   hasConfirmed  Boolean   @default(false)
+
+  @@index([multiSwapId])
+  @@index([userId])
+  @@index([givingListingId])
 }
 
 model SwapItem {
@@ -213,6 +231,9 @@ model SwapItem {
   listingId     String
   listing       Listing   @relation(fields: [listingId], references: [id])
   addedById     String
+
+  @@index([swapId])
+  @@index([listingId])
 }
 
 model Message {
@@ -222,6 +243,9 @@ model Message {
   senderId      String
   content       String
   createdAt     DateTime  @default(now())
+
+  @@index([swapId])
+  @@index([senderId])
 }
 
 model Vouch {
@@ -235,6 +259,9 @@ model Vouch {
   content       String
   skillsVouched String[]
   createdAt     DateTime  @default(now())
+
+  @@index([senderId])
+  @@index([receiverId])
 }
 
 model Notification {
@@ -247,6 +274,9 @@ model Notification {
   createdAt DateTime         @default(now())
 
   swap      Swap?            @relation(fields: [refId], references: [id])
+
+  @@index([userId])
+  @@index([refId])
 }
 
 model PushSubscription {
@@ -257,6 +287,8 @@ model PushSubscription {
   p256dh    String
   auth      String
   createdAt DateTime @default(now())
+
+  @@index([userId])
 }
 
 enum NotificationType {

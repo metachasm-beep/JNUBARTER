@@ -15,7 +15,6 @@
     "@capacitor/android": "^8.3.1",
     "@capacitor/cli": "^8.3.1",
     "@capacitor/core": "^8.3.1",
-    "@clerk/nextjs": "^7.2.3",
     "@ducanh2912/next-pwa": "^10.2.9",
     "@google/generative-ai": "^0.24.1",
     "@hookform/resolvers": "^5.2.2",

@@ -6,6 +6,7 @@ import { authOptions } from "@/auth";
 import { validatePolicy } from "@/lib/agents/policy-guard";
 import { embedText, listingToEmbedText, persistListingEmbedding } from "@/lib/embeddings";
 import { z } from "zod";
+import { listingLimit } from "@/lib/ratelimit";
 
 export const dynamic = "force-dynamic";
 
@@ -84,6 +85,15 @@ export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Ratelimit guard
+  const { success } = await listingLimit.limit(session.user.id);
+  if (!success) {
+    return NextResponse.json(
+      { error: "Too many listings. Please wait a few minutes." },
+      { status: 429 }
+    );
   }
 
   const body = await req.json();
