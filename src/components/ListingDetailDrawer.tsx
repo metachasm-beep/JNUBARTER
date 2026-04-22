@@ -82,49 +82,6 @@ export function ListingDetailDrawer({ listing, isOpen, onOpenChange }: ListingDe
     }
   };
 
-  const handleMessage = async () => {
-    console.log("[ListingDetailDrawer] Message Peer clicked. Lister ID:", listerId);
-    if (!session?.user?.id) {
-      console.warn("[ListingDetailDrawer] No session user ID");
-      toast.error("Protocol Access Denied: Please sign in to establish a channel.");
-      return;
-    }
-
-    if (isOwnListing) {
-      console.warn("[ListingDetailDrawer] Attempted to message self");
-      toast.error("Self-Communication Error: You cannot message your own node.");
-      return;
-    }
-
-    setIsActionPending(true);
-    try {
-      console.log("[ListingDetailDrawer] Sending POST to /api/swaps for message channel");
-      const res = await fetch("/api/swaps", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          listingId: listing.id,
-          receiverId: listerId
-        })
-      });
-
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error("[ListingDetailDrawer] Message channel setup failed:", res.status, errorText);
-        throw new Error(errorText);
-      }
-      
-      const swap = await res.json();
-      console.log("[ListingDetailDrawer] Message channel setup:", swap.id);
-      toast.success("Secure channel initialized.");
-      router.push(`/swap/${swap.id}`);
-    } catch (error) {
-      console.error("[ListingDetailDrawer] handleMessage error:", error);
-      toast.error("Failed to establish secure link.");
-    } finally {
-      setIsActionPending(false);
-    }
-  };
 
   return (
     <Drawer open={isOpen} onOpenChange={onOpenChange}>
@@ -224,7 +181,7 @@ export function ListingDetailDrawer({ listing, isOpen, onOpenChange }: ListingDe
         </div>
 
         <DrawerFooter className="px-0 pt-6 border-t border-stone-100">
-           <div className="grid grid-cols-2 gap-4">
+           <div className="grid grid-cols-1">
               <Button 
                 onClick={handlePropose}
                 disabled={isActionPending}
@@ -232,15 +189,6 @@ export function ListingDetailDrawer({ listing, isOpen, onOpenChange }: ListingDe
               >
                  {isActionPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4" />}
                  Propose Swap
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={handleMessage}
-                disabled={isActionPending}
-                className="h-16 rounded-3xl border-stone-200 text-stone-500 font-black uppercase tracking-widest text-xs flex items-center gap-2"
-              >
-                 {isActionPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <MessageSquare className="h-4 w-4" />}
-                 Message Peer
               </Button>
            </div>
         </DrawerFooter>
