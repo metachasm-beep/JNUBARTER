@@ -42,7 +42,7 @@ export function FAQSection() {
             viewport={{ once: true }}
           >
             <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-white uppercase font-serif italic drop-shadow-[0_10px_20px_rgba(0,0,0,1)]">Institutional FAQ</h2>
-            <p className="text-stone-400 font-medium tracking-tight mt-4 text-lg">layman's guide to the JNU scholarly reciprocity protocol.</p>
+            <p className="text-stone-200 font-medium tracking-tight mt-4 text-lg italic">layman's guide to the JNU scholarly reciprocity protocol.</p>
           </motion.div>
         </div>
         
@@ -54,11 +54,11 @@ export function FAQSection() {
         >
           <Accordion className="w-full space-y-4">
             {FAQ_DATA.map((item, i) => (
-              <AccordionItem key={i} value={`item-${i}`} className="border-white/5 bg-white/5 backdrop-blur-2xl rounded-3xl px-8 overflow-hidden transition-all hover:bg-white/10">
+              <AccordionItem key={i} value={`item-${i}`} className="border-white/10 bg-white/5 backdrop-blur-2xl rounded-3xl px-8 overflow-hidden transition-all hover:bg-white/10">
                 <AccordionTrigger className="text-left text-sm md:text-base font-bold uppercase tracking-tight text-white hover:no-underline hover:text-accent transition-all py-6 font-sans border-none">
                   {item.q}
                 </AccordionTrigger>
-                <AccordionContent className="text-stone-400 leading-relaxed font-medium pt-2 pb-8 text-base md:text-lg">
+                <AccordionContent className="text-stone-100 leading-relaxed font-medium pt-2 pb-8 text-base md:text-lg">
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
