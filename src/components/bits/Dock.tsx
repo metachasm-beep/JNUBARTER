@@ -17,7 +17,7 @@ interface DockItemProps {
   baseItemSize: number;
 }
 
-function DockItem({ children, className = '', onClick, mouseX, spring, distance, magnification, baseItemSize }: DockItemProps) {
+function DockItem({ children, className = '', onClick, href, mouseX, spring, distance, magnification, baseItemSize }: DockItemProps) {
   const ref = useRef<HTMLDivElement>(null);
   const isHovered = useMotionValue(0);
 
