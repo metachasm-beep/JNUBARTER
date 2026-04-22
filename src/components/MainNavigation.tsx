@@ -8,7 +8,8 @@ import {
   Activity, 
   User, 
   LogIn,
-  LayoutGrid
+  LayoutGrid,
+  LogOut
 } from "lucide-react";
 import Link from "next/link";
 import { signIn, useSession, signOut } from "next-auth/react";
@@ -55,6 +56,12 @@ export default function MainNavigation() {
       label: "Profile",
       href: "/profile"
     });
+    navItems.push({
+      icon: <LogOut className="h-5 w-5" />,
+      label: "Sign Out",
+      onClick: () => signOut({ callbackUrl: "/" }),
+      className: "hover:bg-red-50 hover:text-red-500"
+    } as any);
   } else {
     navItems.push({
       icon: <LogIn className="h-5 w-5" />,

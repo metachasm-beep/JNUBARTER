@@ -129,11 +129,21 @@ export default function DiscoveryPage() {
                  listingsLoading ? (
                    Array(6).fill(0).map((_, i) => <ListingSkeleton key={i} />)
                  ) : (
-                   listings.map((listing, idx) => (
-                     <motion.div key={listing.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-                       <ListingCard listing={listing} />
-                     </motion.div>
-                   ))
+                   listings.length > 0 ? (
+                     listings.map((listing, idx) => (
+                       <motion.div key={listing.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+                         <ListingCard listing={listing} />
+                       </motion.div>
+                     ))
+                   ) : (
+                     <div className="col-span-full py-24 text-center space-y-4">
+                       <div className="h-12 w-12 bg-stone-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                          <Search className="h-6 w-6 text-stone-300" />
+                       </div>
+                       <h4 className="text-xl font-bold text-primary uppercase italic">No active flows detected</h4>
+                       <p className="text-sm text-stone-400 max-w-xs mx-auto">The registry is currently waiting for new scholarly exchange nodes to initialize.</p>
+                     </div>
+                   )
                  )
                )}
             </div>
