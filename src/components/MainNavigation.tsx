@@ -12,12 +12,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { signIn, useSession, signOut } from "next-auth/react";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
-} from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import ShinyText from "./bits/ShinyText";
 import Dock from "./bits/Dock";
