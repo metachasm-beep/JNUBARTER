@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ShieldCheck, CheckCircle2, GraduationCap, Package, Briefcase, Trash2, ShieldAlert, X, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { ProfileSchema } from "@/lib/schemas";
-import { atomicSyncUser } from "@/lib/barter-sync";
+import { atomicSyncUserAction } from "@/app/actions/profile";
 import { motion, AnimatePresence } from "framer-motion";
 import { validatePolicy, PolicyValidationResult } from "@/lib/agents/policy-guard";
 import { useSession } from "next-auth/react";
@@ -180,7 +180,7 @@ export function InitializeNodeModal({ isOpen, onClose, initialStep }: Initialize
     }
 
     try {
-      const syncResult = await atomicSyncUser(result.data as any);
+      const syncResult = await atomicSyncUserAction(result.data as any);
       toast.success("NODE DEPLOYED: Reciprocity Engine Initialized");
       onClose();
       

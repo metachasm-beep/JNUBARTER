@@ -14,6 +14,15 @@ import CountUp from "./bits/CountUp";
 import Lanyard from "./bits/Lanyard";
 
 export const ParallaxHero = ({ scrollToMarket }: { scrollToMarket: () => void }) => {
+  const [stats, setStats] = React.useState({ verifiedNodes: 0, activeSwaps: 0 });
+
+  React.useEffect(() => {
+    fetch('/api/stats')
+      .then(res => res.json())
+      .then(data => setStats(data))
+      .catch(console.error);
+  }, []);
+
   return (
     <div className="relative w-full min-h-screen flex items-center justify-center overflow-hidden">
       
@@ -112,8 +121,8 @@ export const ParallaxHero = ({ scrollToMarket }: { scrollToMarket: () => void })
             className="mt-20 grid grid-cols-2 gap-x-12 gap-y-8 border-t pt-10 w-full max-w-md border-white/10"
           >
             {[
-              { label: "Verified Nodes", value: 2400, suffix: "+", icon: Globe },
-              { label: "Active Swaps", value: 12800, suffix: "", icon: Sparkles },
+              { label: "Verified Nodes", value: stats.verifiedNodes, suffix: "", icon: Globe },
+              { label: "Active Swaps", value: stats.activeSwaps, suffix: "", icon: Sparkles },
             ].map((stat, i) => (
               <div key={i} className="flex flex-col gap-1">
                 <div className="flex items-center gap-2 text-stone-400">

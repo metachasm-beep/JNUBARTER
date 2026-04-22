@@ -10,12 +10,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ShieldCheck, Video, CheckCircle2, GraduationCap, Package, Briefcase, Trash2, AlertCircle, ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
 import { ProfileSchema } from "@/lib/schemas";
-import { atomicSyncUser } from "@/lib/barter-sync";
+import { atomicSyncUserAction } from "@/app/actions/profile";
+import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { validatePolicy, PolicyValidationResult } from "@/lib/agents/policy-guard";
 
 export default function ProfileSetup() {
+  const { data: session } = useSession();
   const [step, setStep] = useState(1);
   const [name, setName] = useState<string>("");
   const [bio, setBio] = useState<string>("");
@@ -116,7 +118,16 @@ export default function ProfileSetup() {
 
   const handleLaunch = async () => {
     setIsLoading(true);
-    const result = ProfileSchema.safeParse({ name, bio, school, hostel, offers, wants });
+    const result = ProfileSchema.safeParse({ 
+      userId: session?.user?.id,
+      name, 
+      bio, 
+      school, 
+      hostel, 
+      offers, 
+      wants 
+    });
+    
     if (!result.success) {
       toast.error("Profile validation failed. Ensure all fields are valid.");
       setIsLoading(false);
@@ -124,7 +135,7 @@ export default function ProfileSetup() {
     }
 
     try {
-      await atomicSyncUser(result.data);
+      await atomicSyncUserAction(result.data as any);
       toast.success("NODE DEPLOYED: Reciprocity Engine Initialized");
       window.location.href = "/";
     } catch (err) {

@@ -6,6 +6,7 @@ import { UserRow } from "./UserRow";
 import { AdminUserDrawer } from "./AdminUserDrawer";
 
 export function UserTable({ initialUsers }: { initialUsers: any[] }) {
+  console.log("[UserTable] Received initialUsers:", initialUsers);
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 

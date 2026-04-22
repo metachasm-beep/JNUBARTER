@@ -39,7 +39,7 @@ export default function CountUp({
     stiffness
   });
 
-  const isInView = useInView(ref, { once: true, margin: '0px' });
+  const isInView = useInView(ref, { once: true, margin: '-50px' });
 
   const getDecimalPlaces = (num: number) => {
     const str = num.toString();

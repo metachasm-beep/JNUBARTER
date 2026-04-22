@@ -1,5 +1,5 @@
 import { inngest } from "../inngest/client";
-import { syncListingToNeo4j, reconcileAllListings } from "../barter-sync";
+import { syncListingToNeo4j, reconcileAllListings, syncProfileToNeo4j } from "../barter-sync";
 
 /**
  * TRIGGERED SYNC: Atomic update of Neo4j when a listing is created or updated.
@@ -15,6 +15,24 @@ export const syncListingCreated = inngest.createFunction(
     
     await step.run("neo4j-sync", async () => {
       return await syncListingToNeo4j(listingId);
+    });
+  }
+);
+
+/**
+ * TRIGGERED SYNC: Atomic update of Neo4j when a user profile is created/updated.
+ */
+export const syncProfileUpdated = inngest.createFunction(
+  { 
+    id: "sync-profile-updated", 
+    name: "Sync Profile to Neo4j",
+    triggers: [{ event: "profile.updated" }]
+  },
+  async ({ event, step }) => {
+    const { userId, name, offers, wants } = event.data;
+    
+    await step.run("neo4j-sync-profile", async () => {
+      return await syncProfileToNeo4j(userId, name, offers, wants);
     });
   }
 );

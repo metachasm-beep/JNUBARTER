@@ -44,7 +44,7 @@ export { verifyPeerAuthority } from "./functions/verify-authority";
 export { analyzeNetworkSentiment } from "./functions/sentiment-engine";
 
 // Phase 2 — Neo4j Sync
-export { syncListingCreated, reconcileGraph } from "./functions/sync-neo4j";
+export { syncListingCreated, reconcileGraph, syncProfileUpdated } from "./functions/sync-neo4j";
 
 
 

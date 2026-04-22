@@ -89,6 +89,23 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  // 🛡️ IDENTITY GATE: Only verified members may post to the marketplace.
+  // This enforces the Manual ID Review pipeline end-to-end.
+  const dbUser = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { isVerified: true },
+  });
+  if (!dbUser?.isVerified) {
+    return NextResponse.json(
+      {
+        error: "ID_NOT_VERIFIED",
+        message:
+          "Your JNU identity has not been verified yet. Please upload your ID card and wait for admin approval before posting.",
+      },
+      { status: 403 }
+    );
+  }
+
   // Ratelimit guard
   const { success } = await listingLimit.limit(session.user.id);
   if (!success) {

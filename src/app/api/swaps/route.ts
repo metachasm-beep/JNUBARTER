@@ -12,6 +12,22 @@ export async function POST(req: Request) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
+    // 🛡️ IDENTITY GATE: Only verified members may initiate swaps.
+    const dbUser = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { isVerified: true },
+    });
+    if (!dbUser?.isVerified) {
+      return NextResponse.json(
+        {
+          error: "ID_NOT_VERIFIED",
+          message:
+            "Your JNU identity has not been verified yet. Please wait for admin approval before initiating swaps.",
+        },
+        { status: 403 }
+      );
+    }
+
     // Ratelimit guard
     const { success } = await swapLimit.limit(session.user.id);
     if (!success) {

@@ -43,24 +43,7 @@ export const expireStaleSwaps = inngest.createFunction(
       });
     });
 
-    // Step 3 — Release listing locks in Neo4j
-    await step.run("release-neo4j-locks", async () => {
-      const driver = getNeo4jDriver();
-      const session = driver.session();
-      try {
-        await session.executeWrite((tx) =>
-          tx.run(
-            `MATCH (l:Listing)-[:LOCKED_IN_NEGOTIATION]->(s:Swap)
-             WHERE s.id IN $ids
-             SET l.status = 'ACTIVE'
-             DELETE (l)-[:LOCKED_IN_NEGOTIATION]->(s)`,
-            { ids: expiredIds }
-          )
-        );
-      } finally {
-        await session.close();
-      }
-    });
+    // Step 3 was Neo4j lock release, which was dead code. Swap state is fully managed in Postgres.
 
     // Step 4 — Notify both parties for each expired swap
     await step.run("notify-parties", async () => {
