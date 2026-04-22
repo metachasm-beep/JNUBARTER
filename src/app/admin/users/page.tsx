@@ -25,6 +25,8 @@ export default async function UserManagement() {
     return u;
   }));
 
+  console.log(`[AdminUsers] Rendering Peer Registry with ${users.length} users.`);
+
   return (
     <div className="space-y-12 pb-24">
       <header className="flex items-end justify-between border-b border-stone-200 pb-12">

@@ -51,8 +51,8 @@ export function UserRow({ user, onInspect }: { user: any, onInspect: () => void 
         </td>
         <td className="px-10 py-8">
           <div className="flex gap-8">
-            <StatPill label="Nodes" val={user._count.listings} />
-            <StatPill label="Flows" val={user._count.swapsInitiated + user._count.swapsReceived} />
+            <StatPill label="Nodes" val={user._count?.listings || 0} />
+            <StatPill label="Flows" val={(user._count?.swapsInitiated || 0) + (user._count?.swapsReceived || 0)} />
           </div>
         </td>
         <td className="px-10 py-8 text-right" onClick={(e) => e.stopPropagation()}>
