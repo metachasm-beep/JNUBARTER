@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Search } from "lucide-react";
 import { UserRow } from "./UserRow";
 import { AdminUserDrawer } from "./AdminUserDrawer";
 
