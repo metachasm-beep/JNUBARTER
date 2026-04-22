@@ -6,30 +6,26 @@ import { getSignedUrl } from "@/lib/storage";
 export const dynamic = "force-dynamic";
 
 export default async function UserManagement() {
-  const usersRaw = await prisma.user.findMany({
-    orderBy: { createdAt: "desc" },
-    include: { 
-      _count: { select: { listings: true, swapsInitiated: true, swapsReceived: true } },
-      verificationReports: { take: 1, orderBy: { createdAt: "desc" } },
-      listings: { take: 10, orderBy: { createdAt: "desc" } },
-      auditLogs: { take: 10, orderBy: { createdAt: "desc" } },
-      swapsInitiated: { take: 5, orderBy: { createdAt: "desc" } },
-      swapsReceived: { take: 5, orderBy: { createdAt: "desc" } }
-    }
-  });
+  try {
+    const users = await prisma.user.findMany({
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        reputation: true,
+        isVerified: true,
+        idCardUrl: true,
+        createdAt: true,
+        _count: { select: { listings: true, swapsInitiated: true, swapsReceived: true } },
+        verificationReports: { take: 1, orderBy: { createdAt: "desc" }, select: { status: true } },
+      },
+    });
 
-  // Generate signed URLs for users with ID photos
-  const users = await Promise.all(usersRaw.map(async (u) => {
-    if (u.idCardUrl && !u.idCardUrl.startsWith('http')) {
-      const signedUrl = await getSignedUrl(u.idCardUrl);
-      return { ...u, idCardUrl: signedUrl };
-    }
-    return u;
-  }));
+    console.log(`[AdminUsers] Fetched ${users.length} users for Peer Registry.`);
 
-  console.log(`[AdminUsers] Rendering Peer Registry with ${users.length} users.`);
-
-  return (
+    return (
     <div className="space-y-12 pb-24">
       <header className="flex items-end justify-between border-b border-stone-200 pb-12">
         <div className="space-y-2">
@@ -47,6 +43,15 @@ export default async function UserManagement() {
       </header>
 
         <UserTable initialUsers={users} />
-    </div>
-  );
+      </div>
+    );
+  } catch (err: any) {
+    console.error("[AdminUsers] FAILED to load Peer Registry:", err.message);
+    return (
+      <div className="flex flex-col items-center justify-center py-24 gap-4">
+        <p className="text-sm font-black text-red-500 uppercase italic">Registry Load Failed</p>
+        <p className="text-[10px] font-mono text-stone-400 uppercase tracking-widest">Check server logs for details.</p>
+      </div>
+    );
+  }
 }

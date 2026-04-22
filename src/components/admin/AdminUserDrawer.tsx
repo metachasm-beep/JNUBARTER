@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { 
   Sheet, 
   SheetContent, 
@@ -14,12 +15,11 @@ import {
   RefreshCw, 
   Activity, 
   MapPin, 
-  GraduationCap, 
   ShieldCheck, 
   History, 
-  ExternalLink,
   Mail,
-  Calendar
+  Calendar,
+  Loader2
 } from "lucide-react";
 import { ReputationDial } from "../ReputationDial";
 
@@ -32,7 +32,23 @@ export function AdminUserDrawer({
   isOpen: boolean, 
   onClose: () => void 
 }) {
-  if (!user) return null;
+  const [fullUser, setFullUser] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (isOpen && user?.id) {
+      setLoading(true);
+      setFullUser(null);
+      fetch(`/api/admin/users/${user.id}`)
+        .then(r => r.json())
+        .then(data => setFullUser(data))
+        .catch(console.error)
+        .finally(() => setLoading(false));
+    }
+  }, [isOpen, user?.id]);
+
+  const displayUser = fullUser || user;
+  if (!displayUser) return null;
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
