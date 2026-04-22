@@ -41,11 +41,11 @@ export default function DiscoveryPage() {
     }
   }, [status, session, hasAttemptedAutoOpen, isAdmin]);
 
-  useEffect(() => {
-    if (status === "authenticated" && isAdmin && pathname === "/") {
-      window.location.href = "/admin";
-    }
-  }, [status, isAdmin, pathname]);
+  // useEffect(() => {
+  //   if (status === "authenticated" && isAdmin && pathname === "/") {
+  //     window.location.href = "/admin";
+  //   }
+  // }, [status, isAdmin, pathname]);
 
   const scrollToFold = (id: string) => {
     const el = document.getElementById(id);
