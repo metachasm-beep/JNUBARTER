@@ -20,12 +20,12 @@ export const ParallaxHero = ({ scrollToMarket }: { scrollToMarket: () => void })
       {/* HIGH CONTRAST JNU BACKGROUND */}
       <div className="absolute inset-0 z-0">
         <div 
-          className="absolute inset-0 bg-cover bg-center opacity-40 scale-105 brightness-[0.4] contrast-[1.5]"
+          className="absolute inset-0 bg-cover bg-center opacity-50 scale-105 brightness-[0.65] contrast-[1.2]"
           style={{ backgroundImage: "url('/images/jnu_hero_bg.png')" }}
         />
-        {/* Cinematic Vignette & Gradient Mask */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black via-black/40 to-black z-1" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,black_100%)] z-1" />
+        {/* Softened Cinematic Vignette & Gradient Mask */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-black/80 z-1" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_20%,black_85%)] z-1" />
       </div>
 
       <div className="relative z-10 w-full max-w-7xl mx-auto px-8 flex flex-col md:flex-row items-center justify-between gap-12 py-20">
