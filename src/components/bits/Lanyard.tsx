@@ -70,7 +70,6 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false }) {
   const rot = new THREE.Vector3();
   const dir = new THREE.Vector3();
   
-  // FIX: Ensure colliders is explicitly false (not just boolean) to satisfy RigidBodyProps
   const segmentProps = { 
     canSleep: true, 
     colliders: false as const, 
@@ -151,11 +150,18 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false }) {
             position={[0, -1.2, -0.05]}
             onPointerOver={() => hover(true)}
             onPointerOut={() => hover(false)}
-            onPointerUp={e => (e.currentTarget.releasePointerCapture(e.pointerId), drag(false))}
-            onPointerDown={e => (
-              e.currentTarget.setPointerCapture(e.pointerId),
-              drag(new THREE.Vector3().copy(e.point).sub(vec.copy(card.current.translation())))
-            )}
+            onPointerUp={e => {
+              if (e.currentTarget) {
+                e.currentTarget.releasePointerCapture(e.pointerId);
+              }
+              drag(false);
+            }}
+            onPointerDown={e => {
+              if (e.currentTarget) {
+                e.currentTarget.setPointerCapture(e.pointerId);
+              }
+              drag(new THREE.Vector3().copy(e.point).sub(vec.copy(card.current.translation())));
+            }}
           >
             <mesh geometry={nodes.card.geometry}>
               <meshPhysicalMaterial
