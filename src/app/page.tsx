@@ -83,7 +83,7 @@ export default function DiscoveryPage() {
       <div className="relative z-10 w-full">
         
         {/* HERO SECTION */}
-        <section className="relative min-h-screen flex items-center justify-center pt-20">
+        <section className="relative min-h-screen flex items-center justify-center">
           <ParallaxHero scrollToMarket={() => scrollToFold('market')} />
         </section>
 

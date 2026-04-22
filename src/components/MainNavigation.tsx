@@ -98,12 +98,12 @@ export default function MainNavigation() {
 
   return (
     <header 
-      className="fixed top-6 left-0 right-0 z-[9999] px-6 flex justify-center pointer-events-none"
+      className="fixed top-0 left-0 right-0 z-[9999] flex justify-center pointer-events-none"
     >
       <motion.nav 
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="flex items-center gap-0.5 p-0 px-1 md:p-0.5 md:px-2 glass-card border-iridescent rounded-full shadow-2xl h-9 md:h-10 pointer-events-auto bg-white/80"
+        className="flex items-center gap-0.5 p-0 glass-card border-iridescent rounded-b-[2rem] shadow-2xl h-10 md:h-12 pointer-events-auto bg-white/80 border-t-0"
       >
         {/* BRAND */}
         <div className="pr-2 mr-1 border-r border-stone-200/50 flex items-center">
@@ -163,7 +163,7 @@ export default function MainNavigation() {
           ) : (
             <button 
               onClick={() => signIn("google")}
-              className="px-5 h-9 rounded-full bg-primary text-white text-[9px] font-black uppercase tracking-widest hover:bg-stone-800 transition-all shadow-sm"
+              className="px-8 h-full rounded-br-[2rem] bg-primary text-white text-[10px] font-black uppercase tracking-widest hover:bg-stone-800 transition-all shadow-sm"
             >
               Join
             </button>
