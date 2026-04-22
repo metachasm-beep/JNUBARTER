@@ -9,8 +9,12 @@ export async function POST(req: Request) {
     
     // 1. Delete all listings first (foreign key dependency)
     if (forceClean) {
+      // Clear logs first
+      await prisma.auditLog.deleteMany({}).catch(() => {});
+      await prisma.usageLog.deleteMany({}).catch(() => {});
+      await prisma.swap.deleteMany({}).catch(() => {});
       await prisma.listing.deleteMany({});
-      console.log("Forced purge of all listings complete.");
+      console.log("Forced purge of all data complete.");
     } else {
       await prisma.listing.deleteMany({ where: { isSystem: true } });
     }
@@ -24,15 +28,14 @@ export async function POST(req: Request) {
     });
     console.log("User cleanup complete.");
 
-    console.log("Injecting fresh users...");
+    console.log("Injecting fresh representative users...");
     const createdUsers = [];
     for (const userData of users) {
-      // Use upsert to be safe, though deleteMany should have cleared it
       const u = await prisma.user.create({ data: userData });
       createdUsers.push(u);
     }
 
-    console.log("Injecting fresh listings...");
+    console.log("Injecting fresh high-fidelity listings with metadata...");
     const listingPromises = createdUsers.map((user, i) => {
       const isService = i % 2 === 0;
       const source = isService ? realisticServices : realisticCommodities;
@@ -45,6 +48,7 @@ export async function POST(req: Request) {
           category: isService ? "SERVICE" : "COMMODITY",
           title: item.title,
           description: item.desc,
+          tags: item.tags || [isService ? "SERVICE" : "GOODS", "ACADEMIC"],
           effortEstimate: isService ? (i % 3 === 0 ? "LOW" : i % 3 === 1 ? "MEDIUM" : "HIGH") as any : undefined,
           condition: !isService ? (i % 2 === 0 ? "Good" : "New") : undefined,
           isSystem: true
