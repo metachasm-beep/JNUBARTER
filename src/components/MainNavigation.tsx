@@ -21,30 +21,29 @@ export default function MainNavigation() {
   const { data: session } = useSession();
   const router = useRouter();
 
-  const navItems: Array<{ icon: React.ReactNode; label: string; onClick: () => void; className?: string }> = [
+  const navItems = [
     {
       icon: <Home className="h-5 w-5" />,
       label: "Registry",
-      onClick: () => router.push("/")
+      href: "/"
     },
     {
       icon: <Search className="h-5 w-5" />,
       label: "Explore",
-      onClick: () => router.push("/#market")
+      href: "/#market"
     },
     {
       icon: <Repeat className="h-5 w-5" />,
       label: "Exchange",
-      onClick: () => router.push("/dashboard")
+      href: "/dashboard"
     },
     {
       icon: <Activity className="h-5 w-5" />,
       label: "Flux",
-      onClick: () => router.push("/dashboard?tab=telemetry")
+      href: "/dashboard?tab=telemetry"
     }
   ];
 
-  // Add Auth item
   if (session) {
     navItems.push({
       icon: (
@@ -54,7 +53,7 @@ export default function MainNavigation() {
         </Avatar>
       ),
       label: "Profile",
-      onClick: () => router.push("/profile")
+      href: "/profile"
     });
   } else {
     navItems.push({
@@ -62,14 +61,17 @@ export default function MainNavigation() {
       label: "Join Protocol",
       onClick: () => signIn("google"),
       className: "bg-primary text-white hover:bg-stone-800"
-    });
+    } as any);
   }
 
   return (
     <header className="fixed top-0 left-0 right-0 z-[9999] flex justify-center pointer-events-none">
       <div className="pointer-events-auto">
         <Dock 
-          items={navItems} 
+          items={navItems.map(item => ({
+            ...item,
+            onClick: item.onClick || (item.href ? () => router.push(item.href) : undefined)
+          }))} 
           panelHeight={60}
           magnification={80}
           distance={150}

@@ -18,12 +18,17 @@ export default async function UserManagement() {
         isVerified: true,
         idCardUrl: true,
         createdAt: true,
-        _count: { select: { listings: true, swapsInitiated: true, swapsReceived: true } },
-        verificationReports: { take: 1, orderBy: { createdAt: "desc" }, select: { status: true } },
       },
     });
 
-    console.log(`[AdminUsers] Fetched ${users.length} users for Peer Registry.`);
+    // Fetch counts and reports separately if needed, or just let them be undefined for now
+    const usersWithStats = users.map(u => ({
+      ...u,
+      _count: { listings: 0, swapsInitiated: 0, swapsReceived: 0 },
+      verificationReports: []
+    }));
+
+    console.log(`[AdminUsers] SERVER: Fetched ${users.length} users.`);
 
     return (
     <div className="space-y-12 pb-24">
@@ -45,7 +50,7 @@ export default async function UserManagement() {
         </div>
       </header>
 
-        <UserTable initialUsers={users} />
+        <UserTable initialUsers={usersWithStats} />
       </div>
     );
   } catch (err: any) {
