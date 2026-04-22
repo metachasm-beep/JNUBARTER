@@ -25,7 +25,7 @@ export const ParallaxHero = ({ scrollToMarket }: { scrollToMarket: () => void })
         />
         {/* Softened Cinematic Vignette & Gradient Mask */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-black/80 z-1" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_20%,black_50%)] z-1" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_20%,black_90%)] z-1" />
       </div>
 
       <div className="relative z-10 w-full max-w-7xl mx-auto px-8 flex flex-col md:flex-row items-center justify-between gap-12 py-20">
