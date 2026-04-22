@@ -2,23 +2,13 @@
 
 /* eslint-disable react/no-unknown-property */
 import { useEffect, useRef, useState, Suspense } from 'react';
-import { Canvas, extend, useFrame, ThreeElement } from '@react-three/fiber';
+import { Canvas, extend, useFrame } from '@react-three/fiber';
 import { useGLTF, useTexture, Environment, Lightformer } from '@react-three/drei';
 import { BallCollider, CuboidCollider, Physics, RigidBody, useRopeJoint, useSphericalJoint } from '@react-three/rapier';
 import { MeshLineGeometry, MeshLineMaterial } from 'meshline';
 import * as THREE from 'three';
 
 extend({ MeshLineGeometry, MeshLineMaterial });
-
-// Add types for custom JSX elements
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      meshLineGeometry: ThreeElement<typeof MeshLineGeometry>;
-      meshLineMaterial: ThreeElement<typeof MeshLineMaterial>;
-    }
-  }
-}
 
 interface LanyardProps {
   position?: [number, number, number];
