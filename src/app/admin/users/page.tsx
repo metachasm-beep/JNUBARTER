@@ -3,6 +3,8 @@ import { Search } from "lucide-react";
 import { UserTable } from "@/components/admin/UserTable";
 import { getSignedUrl } from "@/lib/storage";
 
+export const dynamic = "force-dynamic";
+
 export default async function UserManagement() {
   const usersRaw = await prisma.user.findMany({
     orderBy: { createdAt: "desc" },
