@@ -7,13 +7,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ShieldCheck, CheckCircle2, GraduationCap, Package, Briefcase, Trash2, ShieldAlert, X } from "lucide-react";
+import { ShieldCheck, CheckCircle2, GraduationCap, Package, Briefcase, Trash2, ShieldAlert, X, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { ProfileSchema } from "@/lib/schemas";
 import { atomicSyncUser } from "@/lib/barter-sync";
 import { motion, AnimatePresence } from "framer-motion";
 import { validatePolicy, PolicyValidationResult } from "@/lib/agents/policy-guard";
 import { useSession } from "next-auth/react";
+import { SocraticListingAssistant } from "@/components/SocraticListingAssistant";
 
 interface StepCardProps {
   num: number;
@@ -104,6 +105,7 @@ export function InitializeNodeModal({ isOpen, onClose, initialStep }: Initialize
   const [wantInput, setWantInput] = useState<string>("");
   const [wants, setWants] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSocraticMode, setIsSocraticMode] = useState(false);
 
   const addWant = () => {
     const trimmed = wantInput.trim().toUpperCase();
@@ -259,6 +261,32 @@ export function InitializeNodeModal({ isOpen, onClose, initialStep }: Initialize
 
             <StepCard num={2} title="What You Offer" label="What can you help others with?" activeStep={step} onStepClick={setStep}>
               <div className="space-y-8 pt-4">
+                 {!isSocraticMode ? (
+                   <Button 
+                    variant="ghost" 
+                    onClick={() => setIsSocraticMode(true)}
+                    className="w-full h-10 border-2 border-dashed border-accent/20 rounded-2xl text-[9px] font-black uppercase tracking-widest text-accent hover:bg-accent/5 mb-2"
+                   >
+                    <Sparkles className="h-3 w-3 mr-2" />
+                    Stuck? Help me identify my assets
+                   </Button>
+                 ) : (
+                   <div className="mb-4">
+                     <SocraticListingAssistant onSelect={(t, c) => {
+                       setOfferTitle(t);
+                       setCategory(c);
+                       setIsSocraticMode(false);
+                     }} />
+                     <Button 
+                      variant="ghost" 
+                      onClick={() => setIsSocraticMode(false)}
+                      className="w-full h-8 mt-2 text-[8px] font-bold uppercase tracking-widest text-stone-400"
+                     >
+                      Cancel Assistant
+                     </Button>
+                   </div>
+                 )}
+                 
                  <div className="space-y-4">
                     <Label className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-400">New Offering</Label>
                     <div className="flex gap-2">

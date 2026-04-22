@@ -3,6 +3,7 @@
 import React from "react";
 import NegotiationChat from "@/components/NegotiationChat";
 import { Badge } from "@/components/ui/badge";
+import { SwapPlaybook } from "@/components/SwapPlaybook";
 
 export default function SwapClient({ swapId }: { swapId: string }) {
   return (
@@ -23,8 +24,13 @@ export default function SwapClient({ swapId }: { swapId: string }) {
       </header>
 
       {/* Main Content */}
-      <div className="flex-1 overflow-hidden p-6">
-        <NegotiationChat swapId={swapId} currentUser="A" />
+      <div className="flex-1 flex overflow-hidden p-6 gap-6">
+        <div className="flex-1">
+          <NegotiationChat swapId={swapId} currentUser="A" />
+        </div>
+        <div className="w-80 shrink-0 h-full">
+          <SwapPlaybook status="PROPOSED" />
+        </div>
       </div>
 
       <footer className="p-4 bg-neutral-900 border-t-2 border-neutral-800 text-center">

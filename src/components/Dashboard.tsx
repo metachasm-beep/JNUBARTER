@@ -29,6 +29,8 @@ import {
 import { PortfolioFolderModal } from "@/components/PortfolioFolderModal";
 import { TriangulationSuggestions } from "@/components/TriangulationSuggestions";
 import { useState } from "react";
+import { ReputationAudit } from "@/components/ReputationAudit";
+import { VerificationTimeline } from "@/components/VerificationTimeline";
 
 interface DashboardProps {
   openSetup: (step?: number) => void;
@@ -44,9 +46,20 @@ export function Dashboard({ openSetup }: DashboardProps) {
   const [isIdModalOpen, setIsIdModalOpen] = useState(false);
   const [selectedStat, setSelectedStat] = useState<string | undefined>();
 
+  const isVerified = verifyData?.isVerified;
+
   const handleStatClick = (label: string) => {
     setSelectedStat(label);
     setIsFolderOpen(true);
+  };
+
+  // 🛡️ IDENTITY GATE: Intercept listing creation for unverified users.
+  const handleListNewAsset = () => {
+    if (!isVerified) {
+      setIsIdModalOpen(true);
+      return;
+    }
+    openSetup(2);
   };
 
   // Mock stats for a comprehensive feel
@@ -196,34 +209,14 @@ export function Dashboard({ openSetup }: DashboardProps) {
                 )}
               </div>
             </section>
-
-            <section id="flux-notifications">
-              <div className="flex items-center justify-between mb-8">
-                <h3 className="text-xl font-black uppercase tracking-tighter italic text-primary">Network Flux Notifications</h3>
-              </div>
-              <div className="space-y-4">
-                 {[
-                   { title: "Merit Vouch Logged", desc: "A peer from SIS just vouched for your Research skills.", icon: Sparkles, time: "2h ago" },
-                   { title: "Reciprocity Match Identified", desc: "User 'Aspirant_99' seeks your Research help and offers the resources you need.", icon: Zap, time: "5h ago" },
-                   { title: "Protocol Synchronization", desc: "Barter Protocol v2.5 initialized. Improved semantic matching online.", icon: Clock, time: "1d ago" }
-                 ].map((signal, i) => (
-                   <div key={i} className="flex items-center gap-4 p-5 glass-card rounded-[1.5rem] border-stone-100 hover:border-accent/10 transition-colors group cursor-pointer">
-                      <div className="h-10 w-10 rounded-xl bg-stone-50 flex items-center justify-center text-accent group-hover:scale-110 transition-transform">
-                        <signal.icon className="h-5 w-5" />
-                      </div>
-                      <div className="flex-1">
-                        <h5 className="text-[12px] font-black uppercase tracking-tight text-primary">{signal.title}</h5>
-                        <p className="text-[11px] text-stone-500 line-clamp-1">{signal.desc}</p>
-                      </div>
-                      <span className="text-[9px] font-mono font-bold text-stone-300 uppercase">{signal.time}</span>
-                   </div>
-                 ))}
-              </div>
-            </section>
+            
+            <ReputationAudit />
           </div>
 
           {/* RIGHT: PERSONAL ASSETS & STATS */}
           <div className="space-y-12">
+            <VerificationTimeline />
+            
             <section className="glass-card p-8 rounded-[2.5rem] border-stone-100 bg-white/40">
               <h3 className="text-lg font-black uppercase tracking-tighter italic text-primary mb-6">Your Scholarly Capital</h3>
               <div className="space-y-6">
@@ -257,10 +250,10 @@ export function Dashboard({ openSetup }: DashboardProps) {
                 Nodes with 5+ assets see a 400% increase in triangular match probability.
               </p>
               <Button 
-                onClick={() => openSetup(2)}
+                onClick={handleListNewAsset}
                 className="w-full h-12 rounded-xl bg-white text-accent text-[10px] font-black uppercase tracking-widest hover:scale-[1.02] transition-transform"
               >
-                List New Asset
+                {isVerified ? "List New Asset" : "Verify ID to List"}
               </Button>
             </section>
           </div>

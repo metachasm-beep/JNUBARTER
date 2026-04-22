@@ -48,6 +48,24 @@ export const onSwapExecuted = inngest.createFunction(
           where: { id: receiverId },
           data: { reputation: { increment: 10 } },
         }),
+        prisma.auditLog.create({
+          data: {
+            userId: initiatorId,
+            action: "REPUTATION_CHANGE",
+            entity: "USER",
+            entityId: initiatorId,
+            metadata: { delta: 10, reason: "SWAP_COMPLETED", swapId }
+          }
+        }),
+        prisma.auditLog.create({
+          data: {
+            userId: receiverId,
+            action: "REPUTATION_CHANGE",
+            entity: "USER",
+            entityId: receiverId,
+            metadata: { delta: 10, reason: "SWAP_COMPLETED", swapId }
+          }
+        })
       ]);
     });
 

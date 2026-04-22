@@ -25,7 +25,8 @@ export async function POST(
         where: { id: userId },
         data: { 
           isVerified: true,
-          idCardUrl: null // Data minimization: delete sensitive ID after verification
+          reputation: { increment: 20 }, // Grant +20 for completing identity verification
+          idCardUrl: null 
         }
       }),
       prisma.verificationReport.create({
@@ -47,6 +48,15 @@ export async function POST(
           entity: "USER",
           entityId: userId,
           metadata: { method: "MANUAL_ID_REVIEW" }
+        }
+      }),
+      prisma.auditLog.create({
+        data: {
+          userId,
+          action: "REPUTATION_CHANGE",
+          entity: "USER",
+          entityId: userId,
+          metadata: { delta: 20, reason: "ID_VERIFIED" }
         }
       })
     ]);
