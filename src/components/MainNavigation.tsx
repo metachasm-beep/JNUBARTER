@@ -103,7 +103,7 @@ export default function MainNavigation() {
       <motion.nav 
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="flex items-center gap-1 p-1 px-2 md:p-1.5 md:px-4 glass-card border-iridescent rounded-full shadow-2xl h-12 md:h-14 pointer-events-auto bg-white/80"
+        className="flex items-center gap-1 p-0.5 px-1.5 md:p-1 md:px-3 glass-card border-iridescent rounded-full shadow-2xl h-10 md:h-11 pointer-events-auto bg-white/80"
       >
         {/* BRAND */}
         <div className="pr-3 mr-2 border-r border-stone-200/50 flex items-center">
