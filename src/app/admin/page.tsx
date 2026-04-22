@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { Users, Package, RefreshCw, Star, ShieldAlert, Cpu, Activity, TrendingUp, Search, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { ReconcileButton } from "@/components/admin/ReconcileButton";
 
 export default async function AdminDashboard() {
   try {
@@ -116,6 +117,7 @@ export default async function AdminDashboard() {
                   <div className="tooltip-content">Launch Auth Guard</div>
                 </div>
              </div>
+             <ReconcileButton />
           </div>
         </div>
       </div>

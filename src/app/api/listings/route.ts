@@ -7,6 +7,7 @@ import { validatePolicy } from "@/lib/agents/policy-guard";
 import { embedText, listingToEmbedText, persistListingEmbedding } from "@/lib/embeddings";
 import { z } from "zod";
 import { listingLimit } from "@/lib/ratelimit";
+import { inngest } from "@/lib/inngest";
 
 export const dynamic = "force-dynamic";
 
@@ -151,6 +152,12 @@ export async function POST(req: Request) {
     .catch((err) =>
       console.error("[POST /api/listings] embedding failed:", err)
     );
+
+  // Sync to Neo4j via Inngest
+  await inngest.send({
+    name: "listing.created",
+    data: { listingId: listing.id },
+  });
 
   return NextResponse.json({ listing }, { status: 201 });
 }

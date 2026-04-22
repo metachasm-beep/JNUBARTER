@@ -43,5 +43,8 @@ export { verifyPeerAuthority } from "./functions/verify-authority";
 // Enhancement #9 — Sentiment Engine
 export { analyzeNetworkSentiment } from "./functions/sentiment-engine";
 
+// Phase 2 — Neo4j Sync
+export { syncListingCreated, reconcileGraph } from "./functions/sync-neo4j";
+
 
 
