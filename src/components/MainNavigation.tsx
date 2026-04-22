@@ -21,7 +21,7 @@ export default function MainNavigation() {
   const { data: session } = useSession();
   const router = useRouter();
 
-  const navItems = [
+  const navItems: Array<{ icon: React.ReactNode; label: string; onClick: () => void; className?: string }> = [
     {
       icon: <Home className="h-5 w-5" />,
       label: "Registry",
