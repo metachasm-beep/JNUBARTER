@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     const report = await prisma.verificationReport.findFirst({
       where: {
         userId: (session.user as any).id,
-        status: "CHALLENGED"
+        status: "PENDING_REVIEW"
       },
       orderBy: { createdAt: "desc" }
     });

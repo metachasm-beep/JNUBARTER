@@ -35,7 +35,7 @@ export function UserRow({ user, onInspect }: { user: any, onInspect: () => void 
              <div className="flex items-center gap-2">
                 <div className={`h-2 w-2 rounded-full ${
                   user.verificationReports[0].status === 'VERIFIED' ? 'bg-emerald-500' : 
-                  user.verificationReports[0].status === 'CHALLENGED' ? 'bg-amber-500 animate-pulse' : 
+                  user.verificationReports[0].status === 'PENDING_REVIEW' ? 'bg-amber-500 animate-pulse' : 
                   'bg-stone-300'
                 }`} />
                 <span className="text-[10px] font-mono font-bold text-stone-500 uppercase tracking-tighter">
