@@ -8,6 +8,7 @@ import { embedText, listingToEmbedText, persistListingEmbedding } from "@/lib/em
 import { z } from "zod";
 import { listingLimit } from "@/lib/ratelimit";
 import { inngest } from "@/lib/inngest";
+import { sendAlert } from "@/lib/alerts";
 
 export const dynamic = "force-dynamic";
 
@@ -91,6 +92,10 @@ export async function POST(req: Request) {
   // Ratelimit guard
   const { success } = await listingLimit.limit(session.user.id);
   if (!success) {
+    await sendAlert("SECURITY", "User hitting listing rate limit repeatedly", {
+      userId: session.user.id,
+      email: session.user.email
+    });
     return NextResponse.json(
       { error: "Too many listings. Please wait a few minutes." },
       { status: 429 }
