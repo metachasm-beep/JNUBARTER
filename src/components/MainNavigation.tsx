@@ -35,7 +35,7 @@ const NavItem = ({ icon: Icon, label, href, isActive, onClick }: NavItemProps) =
     <button
       onClick={onClick}
       className={cn(
-        "relative flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 group",
+        "relative flex items-center gap-1.5 px-3 py-2 rounded-full transition-all duration-300 group",
         isActive 
           ? "bg-primary text-accent shadow-md scale-105" 
           : "text-stone-400 hover:text-primary hover:bg-stone-50"
@@ -103,10 +103,10 @@ export default function MainNavigation() {
       <motion.nav 
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="flex items-center gap-1 p-0.5 px-1.5 md:p-1 md:px-3 glass-card border-iridescent rounded-full shadow-2xl h-10 md:h-11 pointer-events-auto bg-white/80"
+        className="flex items-center gap-0.5 p-0.5 px-1 md:p-1 md:px-2 glass-card border-iridescent rounded-full shadow-2xl h-10 md:h-11 pointer-events-auto bg-white/80"
       >
         {/* BRAND */}
-        <div className="pr-3 mr-2 border-r border-stone-200/50 flex items-center">
+        <div className="pr-2 mr-1 border-r border-stone-200/50 flex items-center">
            <button 
              onClick={() => handleNavigation("/")}
              className="h-9 w-9 flex items-center justify-center rounded-full bg-primary text-accent hover:bg-stone-800 transition-all shadow-sm"
@@ -116,7 +116,7 @@ export default function MainNavigation() {
         </div>
 
         {/* ITEMS */}
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5">
           {currentItems.map((item) => (
             <NavItem 
               key={item.label} 
@@ -127,7 +127,7 @@ export default function MainNavigation() {
         </div>
 
         {/* PROFILE/AUTH */}
-        <div className="flex items-center gap-2 pl-3 ml-2 border-l border-stone-200/50">
+        <div className="flex items-center gap-1.5 pl-2 ml-1 border-l border-stone-200/50">
           {isAdmin && !isAdminRoute && (
              <button 
                onClick={() => router.push("/admin")}
