@@ -70,9 +70,14 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false }) {
   const rot = new THREE.Vector3();
   const dir = new THREE.Vector3();
   
-  const segmentProps = { type: 'dynamic' as const, canSleep: true, colliders: false, angularDamping: 4, linearDamping: 4 };
+  // FIX: Ensure colliders is explicitly false (not just boolean) to satisfy RigidBodyProps
+  const segmentProps = { 
+    canSleep: true, 
+    colliders: false as const, 
+    angularDamping: 4, 
+    linearDamping: 4 
+  };
   
-  // FIX: Point to the public folder where we copied the assets
   const { nodes, materials } = useGLTF('/bits/lanyard/card.glb') as any;
   const texture = useTexture('/bits/lanyard/lanyard.png');
   
@@ -130,13 +135,13 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false }) {
     <>
       <group position={[0, 4, 0]}>
         <RigidBody ref={fixed} {...segmentProps} type="fixed" />
-        <RigidBody position={[0.5, 0, 0]} ref={j1} {...segmentProps}>
+        <RigidBody position={[0.5, 0, 0]} ref={j1} {...segmentProps} type="dynamic">
           <BallCollider args={[0.1]} />
         </RigidBody>
-        <RigidBody position={[1, 0, 0]} ref={j2} {...segmentProps}>
+        <RigidBody position={[1, 0, 0]} ref={j2} {...segmentProps} type="dynamic">
           <BallCollider args={[0.1]} />
         </RigidBody>
-        <RigidBody position={[1.5, 0, 0]} ref={j3} {...segmentProps}>
+        <RigidBody position={[1.5, 0, 0]} ref={j3} {...segmentProps} type="dynamic">
           <BallCollider args={[0.1]} />
         </RigidBody>
         <RigidBody position={[2, 0, 0]} ref={card} {...segmentProps} type={dragged ? 'kinematicPosition' : 'dynamic'}>
