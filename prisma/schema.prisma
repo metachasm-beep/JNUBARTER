@@ -77,13 +77,19 @@ model VerificationReport {
   id        String   @id @default(cuid())
   userId    String
   user      User     @relation(fields: [userId], references: [id])
-  status    String   // PENDING, COMPLETED, FAILED
+  status    VerificationStatus
   findings  String?
   evidence  Json?
   createdAt DateTime @default(now())
 
   @@index([userId])
   @@index([status])
+}
+
+enum VerificationStatus {
+  PENDING_REVIEW
+  VERIFIED
+  REJECTED
 }
 
 enum UserRole {
@@ -295,12 +301,4 @@ enum NotificationType {
   VOUCH_PROMPT
   SWAP_MATCHED
   SWAP_EXPIRED
-}
-model ProfileVouch {
-  id          String   @id @default(cuid())
-  voterId     String
-  votedId     String
-  createdAt   DateTime @default(now())
-
-  @@unique([voterId, votedId])
 }
