@@ -68,10 +68,7 @@ export default function MainNavigation() {
     <header className="fixed top-0 left-0 right-0 z-[9999] flex justify-center pointer-events-none">
       <div className="pointer-events-auto">
         <Dock 
-          items={navItems.map(item => ({
-            ...item,
-            onClick: item.onClick || (item.href ? () => router.push(item.href) : undefined)
-          }))} 
+          items={navItems} 
           panelHeight={60}
           magnification={80}
           distance={150}

@@ -2,12 +2,14 @@
 
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence, MotionValue } from 'framer-motion';
 import React, { Children, cloneElement, useEffect, useMemo, useRef, useState } from 'react';
+import Link from 'next/link';
 import './Dock.css';
 
 interface DockItemProps {
   children: React.ReactNode;
   className?: string;
   onClick?: () => void;
+  href?: string;
   mouseX: MotionValue<number>;
   spring: { mass: number; stiffness: number; damping: number };
   distance: number;
@@ -30,7 +32,7 @@ function DockItem({ children, className = '', onClick, mouseX, spring, distance,
   const targetSize = useTransform(mouseDistance, [-distance, 0, distance], [baseItemSize, magnification, baseItemSize]);
   const size = useSpring(targetSize, spring);
 
-  return (
+  const content = (
     <motion.div
       ref={ref}
       style={{
@@ -55,6 +57,12 @@ function DockItem({ children, className = '', onClick, mouseX, spring, distance,
       })}
     </motion.div>
   );
+
+  if (href) {
+    return <Link href={href}>{content}</Link>;
+  }
+
+  return content;
 }
 
 function DockLabel({ children, className = '', ...rest }: { children: React.ReactNode; className?: string; isHovered?: MotionValue<number> }) {
@@ -97,6 +105,7 @@ interface DockProps {
     icon: React.ReactNode;
     label: string;
     onClick?: () => void;
+    href?: string;
     className?: string;
   }>;
   className?: string;
@@ -148,6 +157,7 @@ export default function Dock({
           <DockItem
             key={index}
             onClick={item.onClick}
+            href={item.href}
             className={item.className}
             mouseX={mouseX}
             spring={spring}
