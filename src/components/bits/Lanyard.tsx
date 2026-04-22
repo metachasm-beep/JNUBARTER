@@ -151,14 +151,16 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false }) {
             onPointerOver={() => hover(true)}
             onPointerOut={() => hover(false)}
             onPointerUp={e => {
-              if (e.currentTarget) {
-                e.currentTarget.releasePointerCapture(e.pointerId);
+              const target = e.currentTarget as unknown as HTMLElement;
+              if (target && target.releasePointerCapture) {
+                target.releasePointerCapture(e.pointerId);
               }
               drag(false);
             }}
             onPointerDown={e => {
-              if (e.currentTarget) {
-                e.currentTarget.setPointerCapture(e.pointerId);
+              const target = e.currentTarget as unknown as HTMLElement;
+              if (target && target.setPointerCapture) {
+                target.setPointerCapture(e.pointerId);
               }
               drag(new THREE.Vector3().copy(e.point).sub(vec.copy(card.current.translation())));
             }}
