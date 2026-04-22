@@ -1,175 +1,87 @@
-"use client";
+'use client';
 
-import React from "react";
+import { motion } from "framer-motion";
 import { 
   Home, 
   Search, 
-  PlusSquare, 
-  MessageSquare, 
+  Repeat, 
+  Activity, 
   User, 
-  Shield, 
-  LogOut, 
-  LayoutDashboard, 
-  Users, 
-  Package 
+  LogIn,
+  LayoutGrid
 } from "lucide-react";
+import Link from "next/link";
+import { signIn, useSession, signOut } from "next-auth/react";
 import { 
-  motion, 
-  AnimatePresence
-} from "framer-motion";
-import { usePathname, useRouter } from "next/navigation";
-import { useSession, signOut, signIn } from "next-auth/react";
-import Image from "next/image";
-import { cn } from "@/lib/utils";
-
-interface NavItemProps {
-  icon: any;
-  label: string;
-  href: string;
-  isActive: boolean;
-  onClick?: () => void;
-}
-
-const NavItem = ({ icon: Icon, label, href, isActive, onClick }: NavItemProps) => {
-  return (
-    <button
-      onClick={onClick}
-      className={cn(
-        "relative flex items-center gap-1.5 px-3 py-2 rounded-full transition-all duration-300 group",
-        isActive 
-          ? "bg-primary text-accent shadow-md scale-105" 
-          : "text-stone-400 hover:text-primary hover:bg-stone-50"
-      )}
-    >
-      <Icon className={cn("h-4 w-4 transition-transform group-hover:scale-110", isActive ? "stroke-[2.5]" : "stroke-2")} />
-      <span className="text-[10px] font-black uppercase tracking-[0.1em] whitespace-nowrap hidden md:inline-block">
-        {label}
-      </span>
-      {isActive && (
-        <motion.div 
-          layoutId="nav-pill-dot"
-          className="absolute -bottom-1 left-1/2 -translate-x-1/2 h-1 w-1 rounded-full bg-accent md:hidden"
-        />
-      )}
-    </button>
-  );
-};
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import ShinyText from "./bits/ShinyText";
+import Dock from "./bits/Dock";
+import { useRouter } from "next/navigation";
 
 export default function MainNavigation() {
-  const pathname = usePathname();
-  const router = useRouter();
   const { data: session } = useSession();
-  const isAdmin = (session?.user as any)?.role === "ADMIN" || session?.user?.email === "metachasm@gmail.com";
-  const isAdminRoute = pathname.startsWith("/admin");
-
-  const handleNavigation = (href: string, scrollId?: string) => {
-    if (pathname === href) {
-      if (scrollId) {
-        const el = document.getElementById(scrollId);
-        if (el) el.scrollIntoView({ behavior: "smooth" });
-      } else {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-    } else {
-      router.push(href);
-      if (scrollId) {
-        setTimeout(() => {
-          const el = document.getElementById(scrollId);
-          if (el) el.scrollIntoView({ behavior: "smooth" });
-        }, 300);
-      }
-    }
-  };
+  const router = useRouter();
 
   const navItems = [
-    { icon: Home, label: "Registry", href: "/", onClick: () => handleNavigation("/", "market") },
-    { icon: Search, label: "Explore", href: "/", onClick: () => handleNavigation("/") },
-    { icon: PlusSquare, label: "Exchange", href: "/setup", onClick: () => handleNavigation("/setup") },
-    { icon: MessageSquare, label: "Flux", href: "/", onClick: () => handleNavigation("/", "flux-notifications") },
+    {
+      icon: <Home className="h-5 w-5" />,
+      label: "Registry",
+      onClick: () => router.push("/")
+    },
+    {
+      icon: <Search className="h-5 w-5" />,
+      label: "Explore",
+      onClick: () => router.push("/#market")
+    },
+    {
+      icon: <Repeat className="h-5 w-5" />,
+      label: "Exchange",
+      onClick: () => router.push("/dashboard")
+    },
+    {
+      icon: <Activity className="h-5 w-5" />,
+      label: "Flux",
+      onClick: () => router.push("/dashboard?tab=telemetry")
+    }
   ];
 
-  const adminItems = [
-    { icon: LayoutDashboard, label: "Overview", href: "/admin", onClick: () => router.push("/admin") },
-    { icon: Users, label: "Peers", href: "/admin/users", onClick: () => router.push("/admin/users") },
-    { icon: Package, label: "Mod", href: "/admin/listings", onClick: () => router.push("/admin/listings") },
-  ];
-
-  const currentItems = isAdminRoute ? adminItems : navItems;
+  // Add Auth item
+  if (session) {
+    navItems.push({
+      icon: (
+        <Avatar className="h-8 w-8 border-2 border-primary/10">
+          <AvatarImage src={session.user?.image || ""} />
+          <AvatarFallback className="bg-stone-100 text-[10px] font-black">{session.user?.name?.charAt(0)}</AvatarFallback>
+        </Avatar>
+      ),
+      label: "Profile",
+      onClick: () => router.push("/profile")
+    });
+  } else {
+    navItems.push({
+      icon: <LogIn className="h-5 w-5" />,
+      label: "Join Protocol",
+      onClick: () => signIn("google"),
+      className: "bg-primary text-white hover:bg-stone-800"
+    });
+  }
 
   return (
-    <header 
-      className="fixed top-0 left-0 right-0 z-[9999] flex justify-center pointer-events-none"
-    >
-      <motion.nav 
-        initial={{ y: -50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className="flex items-center gap-0.5 p-0 glass-card border-iridescent rounded-b-[2rem] shadow-2xl h-10 md:h-12 pointer-events-auto bg-white/80 border-t-0"
-      >
-        {/* BRAND */}
-        <div className="pr-2 mr-1 border-r border-stone-200/50 flex items-center">
-           <button 
-             onClick={() => handleNavigation("/")}
-             className="h-9 w-9 flex items-center justify-center rounded-full bg-primary text-accent hover:bg-stone-800 transition-all shadow-sm"
-           >
-              <Home className="h-4 w-4" />
-           </button>
-        </div>
-
-        {/* ITEMS */}
-        <div className="flex items-center gap-0.5">
-          {currentItems.map((item) => (
-            <NavItem 
-              key={item.label} 
-              {...item} 
-              isActive={pathname === item.href} 
-            />
-          ))}
-        </div>
-
-        {/* PROFILE/AUTH */}
-        <div className="flex items-center gap-1.5 pl-2 ml-1 border-l border-stone-200/50">
-          {isAdmin && !isAdminRoute && (
-             <button 
-               onClick={() => router.push("/admin")}
-               className="h-9 w-9 flex items-center justify-center rounded-full text-stone-400 hover:text-primary hover:bg-stone-50"
-             >
-               <Shield className="h-4 w-4" />
-             </button>
-          )}
-
-          {session ? (
-            <div className="flex items-center gap-2">
-              <button 
-                onClick={() => handleNavigation("/setup")}
-                className={cn(
-                  "h-9 w-9 rounded-full overflow-hidden border-2 transition-all",
-                  pathname === "/setup" ? "border-accent" : "border-transparent hover:border-accent"
-                )}
-              >
-                {session.user?.image ? (
-                  <Image src={session.user.image} alt="Profile" width={36} height={36} className="object-cover" />
-                ) : (
-                  <div className="bg-stone-100 flex items-center justify-center h-full text-stone-400"><User className="h-4 w-4" /></div>
-                )}
-              </button>
-              
-              <button 
-                onClick={() => signOut()}
-                className="h-9 w-9 flex items-center justify-center rounded-full text-stone-300 hover:text-destructive hover:bg-destructive/5"
-              >
-                <LogOut className="h-4 w-4" />
-              </button>
-            </div>
-          ) : (
-            <button 
-              onClick={() => signIn("google")}
-              className="px-8 h-full rounded-br-[2rem] bg-primary text-white text-[10px] font-black uppercase tracking-widest hover:bg-stone-800 transition-all shadow-sm"
-            >
-              Join
-            </button>
-          )}
-        </div>
-      </motion.nav>
+    <header className="fixed top-0 left-0 right-0 z-[9999] flex justify-center pointer-events-none">
+      <div className="pointer-events-auto">
+        <Dock 
+          items={navItems} 
+          panelHeight={60}
+          magnification={80}
+          distance={150}
+          baseItemSize={45}
+        />
+      </div>
     </header>
   );
 }
