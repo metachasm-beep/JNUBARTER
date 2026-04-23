@@ -39,6 +39,7 @@ export default function RootLayout({
           className={`${firaSans.variable} ${firaCode.variable} h-full antialiased`}
         >
           <head>
+            <meta name="google-adsense-account" content="ca-pub-8618345567810746" />
             <Script
               async
               src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8618345567810746"
