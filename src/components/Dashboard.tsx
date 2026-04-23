@@ -31,6 +31,8 @@ import { TriangulationSuggestions } from "@/components/TriangulationSuggestions"
 import { useState } from "react";
 import { ReputationAudit } from "@/components/ReputationAudit";
 import { VerificationTimeline } from "@/components/VerificationTimeline";
+import { useSearchParams } from "next/navigation";
+import { FluxFeed } from "@/components/FluxFeed";
 
 interface DashboardProps {
   openSetup: (step?: number) => void;
@@ -38,6 +40,9 @@ interface DashboardProps {
 
 export function Dashboard({ openSetup }: DashboardProps) {
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
+  const currentView = searchParams.get("view");
+  
   const { data: listingsData, isLoading } = useListingsFlat();
   const { data: verifyData } = useVerification();
   const listings = listingsData?.listings ?? [];
@@ -185,9 +190,13 @@ export function Dashboard({ openSetup }: DashboardProps) {
           {/* LEFT: RECENT ACTIVITY & OPPORTUNITIES */}
           <div className="lg:col-span-2 space-y-12">
             
-            <TriangulationSuggestions />
+            {currentView === "flux" ? (
+              <FluxFeed />
+            ) : (
+              <>
+                <TriangulationSuggestions />
 
-            <section id="market">
+                <section id="market">
               <div className="flex items-center justify-between mb-8">
                 <h3 className="text-xl font-black uppercase tracking-tighter italic text-primary">Optimal Exchange Potentials</h3>
                 <Button variant="ghost" className="text-[10px] font-black uppercase tracking-widest text-accent hover:bg-accent/5">View Registry <ArrowUpRight className="ml-2 h-3 w-3" /></Button>
@@ -210,7 +219,9 @@ export function Dashboard({ openSetup }: DashboardProps) {
               </div>
             </section>
             
-            <ReputationAudit />
+                <ReputationAudit />
+              </>
+            )}
           </div>
 
           {/* RIGHT: PERSONAL ASSETS & STATS */}

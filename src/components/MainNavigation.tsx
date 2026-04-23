@@ -42,7 +42,12 @@ export default function MainNavigation() {
     {
       icon: <Activity className="h-5 w-5" />,
       label: "Flux",
-      href: "/dashboard?tab=telemetry"
+      href: "/dashboard?view=flux"
+    },
+    {
+      icon: <Zap className="h-5 w-5" />,
+      label: "Telemetry",
+      href: "/admin" 
     }
   ];
 
