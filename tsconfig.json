@@ -33,6 +33,7 @@
   ],
   "exclude": [
     "node_modules",
+    "superpowers-main",
     "antigravity-awesome-skills-main",
     "antigravity-skills-main",
     "awesome-design-md-main",
