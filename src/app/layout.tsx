@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fira_Sans, Fira_Code } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 
 const firaSans = Fira_Sans({
@@ -37,6 +38,14 @@ export default function RootLayout({
           lang="en"
           className={`${firaSans.variable} ${firaCode.variable} h-full antialiased`}
         >
+          <head>
+            <Script
+              async
+              src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8618345567810746"
+              crossOrigin="anonymous"
+              strategy="afterInteractive"
+            />
+          </head>
           <body className="min-h-full flex flex-col bg-background text-foreground selection:bg-primary/30">
             <CommandMenu />
             <AppContainer>{children}</AppContainer>
