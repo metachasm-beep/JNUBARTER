@@ -10,7 +10,8 @@ import {
   User, 
   LogIn,
   LayoutGrid,
-  LogOut
+  LogOut,
+  Zap
 } from "lucide-react";
 import Link from "next/link";
 import { signIn, useSession, signOut } from "next-auth/react";
