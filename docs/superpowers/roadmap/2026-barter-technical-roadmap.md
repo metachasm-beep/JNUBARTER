@@ -14,6 +14,14 @@ Following a comprehensive functional audit, the BARTER platform has undergone a 
 - **Sync Hooks:** Integrated atomic Neo4j updates into mutation pipelines.
 
 ### 2.2 Security & Resilience [DONE]
+# 🛠️ JNU Barter Technical Roadmap (2026)
+*Last updated: 2026-04-23* - **Status: Build Stabilized & Superpowers UX Live**
+
+## Current Status
+- [x] **Infrastructure Hardening**: Moved profile sync to Server Actions to resolve client-side bundle leaks.
+- [x] **Identity Lifecycle**: Verification timeline integrated.
+- [x] **Reputation Audit**: Live ledger for trust transparency.
+- [x] **Socratic Assistant**: Guided onboarding active.
 - **API Throttling:** Implemented Upstash sliding-window rate limiting for mutations (Listings & Swaps).
 - **Middleware Shield:** Closed the `/admin` matcher gap in Next.js middleware.
 - **Active Alerting:** Deployed Discord webhook integration for real-time infrastructure and security notifications.
