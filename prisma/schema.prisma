@@ -8,6 +8,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -145,6 +146,7 @@ model Listing {
   tags          String[]
   effortEstimate EffortEstimate? // Only for services
   condition     String?     // Only for commodities (E.g. New, Used)
+  embedding     Unsupported("vector(768)")? 
   isFlagged     Boolean   @default(false)
   flagReason    String?
   isSystem      Boolean   @default(false) // For dummy/seeding entries

@@ -7,7 +7,7 @@ import { validatePolicy } from "@/lib/agents/policy-guard";
 import { embedText, listingToEmbedText, persistListingEmbedding } from "@/lib/embeddings";
 import { z } from "zod";
 import { listingLimit } from "@/lib/ratelimit";
-import { inngest } from "@/lib/inngest";
+import { inngest } from "@/lib/inngest/client";
 import { sendAlert } from "@/lib/alerts";
 
 export const dynamic = "force-dynamic";
