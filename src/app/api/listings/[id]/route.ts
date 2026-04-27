@@ -25,7 +25,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Listing not found" }, { status: 404 });
     }
 
-    const isAdmin = (session.user as any)?.role === "ADMIN";
+    const isAdmin = (session.user as any)?.role === "ADMIN" || (session.user.email && ADMIN_EMAILS.includes(session.user.email));
     const isOwner = listing.userId === session.user.id;
 
     if (!isOwner && !isAdmin) {
@@ -43,6 +43,8 @@ export async function DELETE(
   }
 }
 
+import { ADMIN_EMAILS } from "@/lib/constants";
+
 export async function PATCH(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -55,7 +57,7 @@ export async function PATCH(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const isAdmin = (session.user as any)?.role === "ADMIN";
+    const isAdmin = (session.user as any)?.role === "ADMIN" || (session.user.email && ADMIN_EMAILS.includes(session.user.email));
     if (!isAdmin) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }

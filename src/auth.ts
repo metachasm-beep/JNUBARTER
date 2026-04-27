@@ -19,7 +19,7 @@ declare module "next-auth" {
   }
 }
 
-const ADMIN_EMAILS = ["metachasm@gmail.com"];
+import { ADMIN_EMAILS } from "@/lib/constants";
 
 export const authOptions: NextAuthOptions = {
   providers: [

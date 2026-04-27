@@ -24,7 +24,9 @@ export async function GET(req: Request) {
 
     const status = searchParams.get("status") || "APPROVED";
     const userId = searchParams.get("userId");
-    const isAdmin = (session?.user as any)?.role === "ADMIN";
+    
+    const { ADMIN_EMAILS } = await import("@/lib/constants");
+    const isAdmin = (session?.user as any)?.role === "ADMIN" || (session?.user?.email && ADMIN_EMAILS.includes(session.user.email));
 
     const where: any = {};
 

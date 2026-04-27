@@ -40,7 +40,8 @@ export function ListingModeration() {
         toast.success(`Listing ${status.toLowerCase()} successfully`);
         setListings((prev) => prev.filter((l) => l.id !== id));
       } else {
-        toast.error("Action failed");
+        const errData = await res.json().catch(() => ({}));
+        toast.error(`Action failed: ${errData.error || "Unknown error"}`);
       }
     } catch (err) {
       toast.error("An error occurred");
