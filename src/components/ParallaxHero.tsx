@@ -93,14 +93,6 @@ export const ParallaxHero = ({ scrollToMarket }: { scrollToMarket: () => void })
             transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
             className="flex flex-col sm:flex-row items-center gap-6"
           >
-            <Button 
-              size="lg" 
-              onClick={() => signIn("google")}
-              className="rounded-full h-16 px-10 text-[11px] font-black uppercase tracking-widest bg-accent hover:bg-accent/90 text-white shadow-2xl shadow-accent/40"
-            >
-              Initialize Node
-              <Zap className="ml-2 size-4 fill-white" />
-            </Button>
 
             <Button 
               variant="outline" 
