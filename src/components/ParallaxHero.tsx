@@ -106,10 +106,10 @@ export const ParallaxHero = ({ scrollToMarket }: { scrollToMarket: () => void })
               variant="outline" 
               size="lg"
               onClick={scrollToMarket}
-              className="rounded-full h-16 px-8 text-[11px] font-black uppercase tracking-widest border-white/20 text-white hover:bg-white/10 backdrop-blur-md transition-all group"
+              className="rounded-full h-16 px-8 text-[11px] font-black uppercase tracking-widest border-transparent bg-white text-stone-900 hover:bg-stone-100 shadow-xl transition-all group"
             >
               Enter Registry
-              <ArrowRight className="ml-2 size-4 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="ml-2 size-4 group-hover:translate-x-1 transition-transform text-stone-900" />
             </Button>
           </motion.div>
 
