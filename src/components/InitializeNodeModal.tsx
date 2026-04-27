@@ -181,6 +181,9 @@ export function InitializeNodeModal({ isOpen, onClose, initialStep }: Initialize
 
     try {
       const syncResult = await atomicSyncUserAction(result.data as any);
+      if (!syncResult.success) {
+        throw new Error(syncResult.error);
+      }
       toast.success("NODE DEPLOYED: Reciprocity Engine Initialized");
       onClose();
       
@@ -225,7 +228,7 @@ export function InitializeNodeModal({ isOpen, onClose, initialStep }: Initialize
                 <GraduationCap className="h-5 w-5 md:h-6 md:w-6 text-accent" />
               </div>
               <div>
-                <h2 className="text-xl md:text-3xl font-black uppercase tracking-tighter text-primary italic">Create Profile</h2>
+                <h2 className="text-xl md:text-3xl font-black uppercase tracking-tighter text-primary italic">Create New Listing</h2>
                 <p className="text-[8px] md:text-[10px] font-mono font-bold text-stone-400 uppercase tracking-[0.2em] mt-1">JNU Onboarding</p>
               </div>
             </div>
@@ -391,7 +394,7 @@ export function InitializeNodeModal({ isOpen, onClose, initialStep }: Initialize
                    disabled={isLoading} 
                    className="w-full h-16 rounded-2xl btn-premium text-white font-black uppercase text-xs tracking-[0.2em] shadow-2xl shadow-accent/20"
                  >
-                    {isLoading ? "Saving Profile..." : "Create My Profile"}
+                    {isLoading ? "Deploying Listing..." : "Create New Listing"}
                  </Button>
               </div>
             </StepCard>
