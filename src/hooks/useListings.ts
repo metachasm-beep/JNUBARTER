@@ -22,6 +22,7 @@ export interface Listing {
   tags: string[];
   videoUrl: string | null;
   images: string[];
+  status: "PENDING" | "APPROVED" | "REJECTED";
   createdAt: string;
   user: ListingUser;
 }
