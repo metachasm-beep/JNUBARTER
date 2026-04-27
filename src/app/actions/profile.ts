@@ -4,7 +4,6 @@ import { prisma } from "@/lib/prisma";
 import { inngest } from "@/lib/inngest/client";
 import { ProfileSchema } from "@/lib/schemas";
 import { z } from "zod";
-import DOMPurify from "isomorphic-dompurify";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
 
