@@ -35,6 +35,8 @@ interface UseListingsOptions {
   type?: "OFFER" | "WANT";
   category?: "SERVICE" | "COMMODITY";
   school?: string;
+  userId?: string;
+  status?: "PENDING" | "APPROVED" | "REJECTED";
 }
 
 async function fetchListings(
@@ -45,6 +47,8 @@ async function fetchListings(
   if (options.type) params.set("type", options.type);
   if (options.category) params.set("category", options.category);
   if (options.school) params.set("school", options.school);
+  if (options.userId) params.set("userId", options.userId);
+  if (options.status) params.set("status", options.status);
   if (cursor) params.set("cursor", cursor);
 
   const res = await fetch(`/api/listings?${params.toString()}`);

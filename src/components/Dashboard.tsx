@@ -45,8 +45,21 @@ export function Dashboard({ openSetup }: DashboardProps) {
   const currentView = searchParams.get("view");
   
   const { data: listingsData, isLoading } = useListingsFlat();
+  const { data: myListingsData } = useListingsFlat({ 
+    userId: session?.user?.id, 
+    status: "PENDING" // We can fetch pending ones separately or just all for user
+  });
+  const { data: myApprovedListingsData } = useListingsFlat({
+    userId: session?.user?.id,
+    status: "APPROVED"
+  });
+
   const { data: verifyData } = useVerification();
   const listings = listingsData?.listings ?? [];
+  const myListings = [
+    ...(myListingsData?.listings ?? []),
+    ...(myApprovedListingsData?.listings ?? [])
+  ];
 
   const [isFolderOpen, setIsFolderOpen] = useState(false);
   const [isIdModalOpen, setIsIdModalOpen] = useState(false);
@@ -234,25 +247,34 @@ export function Dashboard({ openSetup }: DashboardProps) {
             <section className="glass-card p-8 rounded-[2.5rem] border-stone-100 bg-white/40">
               <h3 className="text-lg font-black uppercase tracking-tighter italic text-primary mb-6">Your Scholarly Capital</h3>
               <div className="space-y-6">
-                <div className="space-y-3">
-                  <p className="text-[9px] font-mono font-bold text-stone-400 uppercase tracking-[0.2em]">Assets Provided</p>
-                  <div className="flex flex-wrap gap-2">
-                    <Badge className="bg-stone-100 text-stone-600 border-stone-200 text-[10px] px-3 py-1 rounded-lg">Research</Badge>
-                    <Badge className="bg-stone-100 text-stone-600 border-stone-200 text-[10px] px-3 py-1 rounded-lg">Drafting</Badge>
+                {myListings.length > 0 ? (
+                  <div className="space-y-4">
+                    {myListings.slice(0, 3).map((listing) => (
+                      <div key={listing.id} className="p-4 rounded-2xl bg-stone-50 border border-stone-100 group relative">
+                        <div className="flex justify-between items-start mb-1">
+                           <p className="text-[10px] font-black uppercase text-primary truncate max-w-[120px]">{listing.title}</p>
+                           <Badge className={`text-[8px] px-1.5 py-0 rounded-md ${listing.status === 'APPROVED' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}`}>
+                             {listing.status}
+                           </Badge>
+                        </div>
+                        <p className="text-[9px] text-stone-400 font-mono italic">{listing.type} • {listing.category}</p>
+                      </div>
+                    ))}
+                    {myListings.length > 3 && (
+                      <p className="text-[9px] text-center text-stone-300 font-bold uppercase tracking-widest">+ {myListings.length - 3} more nodes</p>
+                    )}
                   </div>
-                </div>
-                <div className="space-y-3">
-                  <p className="text-[9px] font-mono font-bold text-stone-400 uppercase tracking-[0.2em]">Resources Sought</p>
-                  <div className="flex flex-wrap gap-2">
-                    <Badge className="bg-accent/5 text-accent border-accent/10 text-[10px] px-3 py-1 rounded-lg italic font-bold">Research Help</Badge>
-                    <Badge className="bg-accent/5 text-accent border-accent/10 text-[10px] px-3 py-1 rounded-lg italic font-bold">Scientific Calc</Badge>
+                ) : (
+                  <div className="text-center py-4">
+                    <p className="text-[10px] text-stone-400 italic">No active nodes in the registry.</p>
                   </div>
-                </div>
+                )}
+                
                 <Button 
                   onClick={() => openSetup(1)}
                   className="w-full mt-4 h-12 rounded-xl border border-stone-100 bg-stone-50 text-primary text-[10px] font-black uppercase tracking-widest hover:bg-stone-100 transition-colors"
                 >
-                  Edit Portfolio
+                  Configure Nodes
                 </Button>
               </div>
             </section>

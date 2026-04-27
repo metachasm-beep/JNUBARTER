@@ -51,6 +51,7 @@ export async function atomicSyncUserAction(data: z.infer<typeof ProfileSchema>):
             title: off.title.toUpperCase(),
             category: off.category,
             type: "OFFER",
+            status: "PENDING",
             description: `Initial offering for ${off.title}`,
             effortEstimate: off.effort,
             condition: off.condition,

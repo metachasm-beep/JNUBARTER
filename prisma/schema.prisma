@@ -146,6 +146,7 @@ model Listing {
   effortEstimate EffortEstimate? // Only for services
   condition     String?     // Only for commodities (E.g. New, Used)
   embedding     Unsupported("vector(768)")? 
+  status        ListingStatus @default(PENDING)
   isFlagged     Boolean   @default(false)
   flagReason    String?
   isSystem      Boolean   @default(false) // For dummy/seeding entries
@@ -155,10 +156,17 @@ model Listing {
   @@index([userId])
   @@index([type])
   @@index([category])
+  @@index([status])
   @@index([isFlagged])
 
   swapItems     SwapItem[]
   multiSwapParticipations MultiSwapParticipant[]
+}
+
+enum ListingStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 enum ListingType {

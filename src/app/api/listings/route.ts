@@ -14,6 +14,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
   try {
+    const session = await getServerSession(authOptions);
     const { searchParams } = new URL(req.url);
     const typeParam = searchParams.get("type");
     const category = searchParams.get("category");
@@ -21,11 +22,23 @@ export async function GET(req: Request) {
     const cursor = searchParams.get("cursor"); // pagination
     const take = 20;
 
-    const where: {
-      type?: ListingType;
-      category?: "SERVICE" | "COMMODITY";
-      user?: { school?: { contains: string; mode: "insensitive" } };
-    } = {};
+    const status = searchParams.get("status") || "APPROVED";
+    const userId = searchParams.get("userId");
+    const isAdmin = (session?.user as any)?.role === "ADMIN";
+
+    const where: any = {};
+
+    // Security: Only admins can filter by non-APPROVED status, 
+    // unless a user is filtering for their own listings.
+    if (isAdmin || (userId && userId === session?.user?.id)) {
+      where.status = status;
+    } else {
+      where.status = "APPROVED";
+    }
+
+    if (userId) {
+      where.userId = userId;
+    }
 
     if (typeParam === "OFFER" || typeParam === "WANT") {
       where.type = typeParam as ListingType;
@@ -157,6 +170,7 @@ export async function POST(req: Request) {
       condition: condition ?? null,
       tags,
       images,
+      status: "PENDING",
     },
     include: {
       user: {
@@ -175,10 +189,14 @@ export async function POST(req: Request) {
       console.error("[POST /api/listings] embedding failed:", err)
     );
 
-  // Sync to Neo4j via Inngest
+  // Sync to Neo4j via Inngest — change event name for policy audit
   await inngest.send({
-    name: "listing.created",
-    data: { listingId: listing.id },
+    name: "barter/listing.created",
+    data: { 
+      listingId: listing.id,
+      title: listing.title,
+      description: listing.description
+    },
   });
 
   return NextResponse.json({ listing }, { status: 201 });

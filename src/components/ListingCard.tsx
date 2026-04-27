@@ -23,20 +23,6 @@ export function ListingCard({ listing, className }: ListingCardProps) {
   const isOffer = listing.type === "OFFER";
   const isService = listing.category === "SERVICE";
 
-  const deleteDummy = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!confirm("Delete this dummy entry?")) return;
-    
-    setIsDeleting(true);
-    const res = await fetch(`/api/admin/dummy?id=${listing.id}`, { method: "DELETE" });
-    if (res.ok) {
-      toast.success("Entry removed.");
-      window.location.reload();
-    } else {
-      toast.error("Failed to delete.");
-      setIsDeleting(false);
-    }
-  };
 
   return (
     <>
@@ -51,6 +37,11 @@ export function ListingCard({ listing, className }: ListingCardProps) {
                 <Badge className={`font-mono text-[9px] font-bold uppercase tracking-wider rounded-full px-3 py-1 ${isOffer ? "bg-accent/10 text-accent" : "bg-stone-200 text-stone-600"}`}>
                   {listing.type}
                 </Badge>
+                {listing.status && listing.status !== "APPROVED" && (
+                  <Badge className={`font-mono text-[9px] font-bold uppercase tracking-wider rounded-full px-3 py-1 ${listing.status === "PENDING" ? "bg-amber-100 text-amber-600" : "bg-red-100 text-red-600"}`}>
+                    {listing.status}
+                  </Badge>
+                )}
                 {listing.isSystem && (
                   <Badge className="bg-primary/10 text-primary border-primary/20 text-[9px] px-2 py-0.5 rounded-full font-mono font-bold">SYSTEM</Badge>
                 )}
@@ -85,9 +76,28 @@ export function ListingCard({ listing, className }: ListingCardProps) {
               <div onClick={(e) => e.stopPropagation()}>
                 <ProfileViewDrawer user={listing.user} />
               </div>
-              {isAdmin && listing.isSystem && (
+              
+              {/* Delete button for Owners or Admins */}
+              {(isAdmin || listing.userId === session?.user?.id) && (
                 <button 
-                  onClick={deleteDummy} 
+                  onClick={async (e) => {
+                    e.stopPropagation();
+                    if (!confirm("Are you sure you want to delete this listing?")) return;
+                    setIsDeleting(true);
+                    try {
+                      const res = await fetch(`/api/listings/${listing.id}`, { method: "DELETE" });
+                      if (res.ok) {
+                        toast.success("Listing deleted successfully");
+                        window.location.reload();
+                      } else {
+                        toast.error("Failed to delete listing");
+                      }
+                    } catch (err) {
+                      toast.error("An error occurred");
+                    } finally {
+                      setIsDeleting(false);
+                    }
+                  }} 
                   disabled={isDeleting}
                   className="text-stone-300 hover:text-destructive transition-colors disabled:opacity-50"
                 >

@@ -8,7 +8,7 @@ export const syncListingCreated = inngest.createFunction(
   { 
     id: "sync-listing-created", 
     name: "Sync Listing to Neo4j",
-    triggers: [{ event: "listing.created" }]
+    triggers: [{ event: "barter/listing.approved" }]
   },
   async ({ event, step }) => {
     const { listingId } = event.data;
