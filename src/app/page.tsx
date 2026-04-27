@@ -41,11 +41,11 @@ export default function DiscoveryPage() {
     }
   }, [status, session, hasAttemptedAutoOpen, isAdmin]);
 
-  // useEffect(() => {
-  //   if (status === "authenticated" && isAdmin && pathname === "/") {
-  //     window.location.href = "/admin";
-  //   }
-  // }, [status, isAdmin, pathname]);
+  useEffect(() => {
+    if (status === "authenticated" && isAdmin && pathname === "/") {
+      window.location.href = "/admin";
+    }
+  }, [status, isAdmin, pathname]);
 
   const scrollToFold = (id: string) => {
     const el = document.getElementById(id);
@@ -53,6 +53,8 @@ export default function DiscoveryPage() {
   };
 
   if (status === "authenticated") {
+    if (isAdmin) return <div className="min-h-screen bg-background flex items-center justify-center font-mono text-[10px] uppercase tracking-widest text-stone-400 italic">Redirection to Command Center...</div>;
+    
     return (
       <div className="min-h-screen bg-background pb-20 overflow-x-hidden font-sans scroll-smooth">
         <Dashboard 

@@ -24,23 +24,26 @@ export default function MainNavigation() {
 
   const isAdmin = (session?.user as any)?.role === "ADMIN" || session?.user?.email === "metachasm@gmail.com";
 
-  const navItems = [
-    {
-      icon: <Home className="h-5 w-5" />,
-      label: "Registry",
-      href: "/"
-    },
-    {
-      icon: <Activity className="h-5 w-5" />,
-      label: "Flux",
-      href: "/?view=flux"
-    },
-    ...(isAdmin ? [{
+  const navItems = [];
+
+  if (isAdmin) {
+    navItems.push({
       icon: <Zap className="h-5 w-5" />,
       label: "Telemetry",
       href: "/admin" 
-    }] : [])
-  ];
+    });
+  } else {
+    navItems.push({
+      icon: <Home className="h-5 w-5" />,
+      label: "Registry",
+      href: "/"
+    });
+    navItems.push({
+      icon: <Activity className="h-5 w-5" />,
+      label: "Flux",
+      href: "/?view=flux"
+    });
+  }
 
   if (session) {
     navItems.push({
