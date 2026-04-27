@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { Users, Package, RefreshCw, Star, ShieldAlert, Cpu, Activity, TrendingUp, Search, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ReconcileButton } from "@/components/admin/ReconcileButton";
+import { ListingModeration } from "@/components/admin/ListingModeration";
 
 export default async function AdminDashboard() {
   try {
@@ -75,8 +76,12 @@ export default async function AdminDashboard() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          {/* Enhancement #7 — Security Feed */}
-          <div className="lg:col-span-2 glass-card border-stone-200 rounded-[3rem] p-10 space-y-8 bg-white/50 backdrop-blur-3xl shadow-2xl shadow-stone-200/40 border-t-white">
+          {/* Registry Moderation Section */}
+          <div className="lg:col-span-2 space-y-12">
+             <ListingModeration />
+             
+             {/* Enhancement #7 — Security Feed */}
+             <div className="glass-card border-stone-200 rounded-[3rem] p-10 space-y-8 bg-white/50 backdrop-blur-3xl shadow-2xl shadow-stone-200/40 border-t-white">
              <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                    <ShieldAlert className="h-6 w-6 text-primary" />
@@ -105,6 +110,8 @@ export default async function AdminDashboard() {
                   </div>
                 ))}
              </div>
+          </div>
+
           </div>
 
           <div className="space-y-8">
