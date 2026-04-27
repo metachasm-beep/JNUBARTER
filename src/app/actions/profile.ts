@@ -15,7 +15,9 @@ const SecurityLayer = {
   },
 };
 
-export async function atomicSyncUserAction(data: z.infer<typeof ProfileSchema>) {
+export type SyncResult = { success: true; error?: never } | { success: false; error: string };
+
+export async function atomicSyncUserAction(data: z.infer<typeof ProfileSchema>): Promise<SyncResult> {
   console.log(`[atomicSyncUserAction] Initializing for user: ${data.userId}`);
   
   const session = await getServerSession(authOptions);
