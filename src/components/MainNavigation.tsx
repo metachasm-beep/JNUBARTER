@@ -4,8 +4,6 @@
 import { motion } from "framer-motion";
 import { 
   Home, 
-  Search, 
-  Repeat, 
   Activity, 
   User, 
   LogIn,
@@ -30,16 +28,6 @@ export default function MainNavigation() {
     {
       icon: <Home className="h-5 w-5" />,
       label: "Registry",
-      href: "/"
-    },
-    {
-      icon: <Search className="h-5 w-5" />,
-      label: "Explore",
-      href: "/#market"
-    },
-    {
-      icon: <Repeat className="h-5 w-5" />,
-      label: "Exchange",
       href: "/"
     },
     {
