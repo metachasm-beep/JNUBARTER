@@ -80,15 +80,23 @@ export async function PATCH(
     });
 
     if (status === "APPROVED") {
-      await inngest.send({
-        name: "barter/listing.approved",
-        data: { listingId: id }
-      });
+      try {
+        await inngest.send({
+          name: "barter/listing.approved",
+          data: { listingId: id }
+        });
+      } catch (innErr) {
+        console.error("[PATCH /api/listings/[id]] Inngest send failed:", innErr);
+        // We don't return error here to allow the DB update to succeed
+      }
     }
 
     return NextResponse.json({ listing: updatedListing });
-  } catch (error) {
+  } catch (error: any) {
     console.error("[PATCH /api/listings/[id]]", error);
-    return NextResponse.json({ error: "Failed to update listing" }, { status: 500 });
+    return NextResponse.json({ 
+      error: "Failed to update listing", 
+      details: error.message 
+    }, { status: 500 });
   }
 }
