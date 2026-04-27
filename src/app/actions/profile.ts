@@ -59,7 +59,7 @@ export async function atomicSyncUserAction(data: z.infer<typeof ProfileSchema>):
         });
       }
 
-      return { success: true };
+      return { success: true } as SyncResult;
     });
 
     // 3. Neo4j Sync via Inngest (Non-blocking for DB transaction)
