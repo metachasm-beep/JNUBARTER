@@ -24,6 +24,8 @@ export default function MainNavigation() {
   const { data: session } = useSession();
   const router = useRouter();
 
+  const isAdmin = (session?.user as any)?.role === "ADMIN" || session?.user?.email === "metachasm@gmail.com";
+
   const navItems = [
     {
       icon: <Home className="h-5 w-5" />,
@@ -38,18 +40,18 @@ export default function MainNavigation() {
     {
       icon: <Repeat className="h-5 w-5" />,
       label: "Exchange",
-      href: "/dashboard"
+      href: "/"
     },
     {
       icon: <Activity className="h-5 w-5" />,
       label: "Flux",
-      href: "/dashboard?view=flux"
+      href: "/?view=flux"
     },
-    {
+    ...(isAdmin ? [{
       icon: <Zap className="h-5 w-5" />,
       label: "Telemetry",
       href: "/admin" 
-    }
+    }] : [])
   ];
 
   if (session) {

@@ -33,6 +33,7 @@ import { ReputationAudit } from "@/components/ReputationAudit";
 import { VerificationTimeline } from "@/components/VerificationTimeline";
 import { useSearchParams } from "next/navigation";
 import { FluxFeed } from "@/components/FluxFeed";
+import Link from "next/link";
 
 interface DashboardProps {
   openSetup: (step?: number) => void;
@@ -199,7 +200,9 @@ export function Dashboard({ openSetup }: DashboardProps) {
                 <section id="market">
               <div className="flex items-center justify-between mb-8">
                 <h3 className="text-xl font-black uppercase tracking-tighter italic text-primary">Optimal Exchange Potentials</h3>
-                <Button variant="ghost" className="text-[10px] font-black uppercase tracking-widest text-accent hover:bg-accent/5">View Registry <ArrowUpRight className="ml-2 h-3 w-3" /></Button>
+                <Link href="/#market">
+                  <Button variant="ghost" className="text-[10px] font-black uppercase tracking-widest text-accent hover:bg-accent/5">View Registry <ArrowUpRight className="ml-2 h-3 w-3" /></Button>
+                </Link>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {isLoading ? (
