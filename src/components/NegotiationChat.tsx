@@ -20,9 +20,11 @@ interface SwapState {
 export default function NegotiationChat({
   swapId,
   currentUser,
+  initialItems = [],
 }: {
   swapId: string;
   currentUser: string;
+  initialItems?: string[];
 }) {
   const [messages, setMessages] = useState<SwapMessage[]>([]);
   const [input, setInput] = useState("");
@@ -31,7 +33,7 @@ export default function NegotiationChat({
   const [swapState, setSwapState] = useState<SwapState>({
     userAConfirmed: false,
     userBConfirmed: false,
-    items: ["Technical SEO Audit", "React Component Library"],
+    items: initialItems,
   });
   const [isAddingItem, setIsAddingItem] = useState(false);
   const [newItemText, setNewItemText] = useState("");
