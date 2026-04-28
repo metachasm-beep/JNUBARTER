@@ -16,11 +16,26 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Package, Briefcase, Zap, MessageSquare, ShieldCheck, Clock, Share2, Star, Loader2, AlertCircle } from "lucide-react";
+import { 
+  Package, 
+  Briefcase, 
+  Zap, 
+  MessageSquare, 
+  ShieldCheck, 
+  Clock, 
+  Share2, 
+  Loader2, 
+  Mail, 
+  Link as LinkIcon 
+} from "lucide-react";
 import SpotlightCard from "./SpotlightCard";
 import { ProfileViewDrawer } from "./ProfileViewDrawer";
 import { useSession } from "next-auth/react";
-
+import { 
+  Popover, 
+  PopoverContent, 
+  PopoverTrigger 
+} from "@/components/ui/popover";
 interface ListingDetailDrawerProps {
   listing: any;
   isOpen: boolean;
@@ -37,6 +52,36 @@ export function ListingDetailDrawer({ listing, isOpen, onOpenChange }: ListingDe
   
   const isService = listing.category === "SERVICE";
   const isOffer = listing.type === "OFFER";
+
+  const shareUrl = typeof window !== 'undefined' ? `${window.location.origin}/?listing=${listing.id}` : '';
+  const shareText = `Check out this scholarly asset on JNU Barter: ${listing.title}`;
+
+  const shareOptions = [
+    {
+      name: 'WhatsApp',
+      icon: <MessageSquare className="h-4 w-4" />,
+      url: `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + ' ' + shareUrl)}`,
+      color: 'text-green-500'
+    },
+    {
+      name: 'Gmail',
+      icon: <Mail className="h-4 w-4" />,
+      url: `mailto:?subject=${encodeURIComponent('JNU Barter Listing')}&body=${encodeURIComponent(shareText + '\n\n' + shareUrl)}`,
+      color: 'text-red-500'
+    },
+    {
+      name: 'Outlook',
+      icon: <Mail className="h-4 w-4" />,
+      url: `mailto:?subject=${encodeURIComponent('JNU Barter Listing')}&body=${encodeURIComponent(shareText + '\n\n' + shareUrl)}`,
+      color: 'text-blue-500'
+    },
+    {
+      name: 'Text Message',
+      icon: <MessageSquare className="h-4 w-4" />,
+      url: `sms:?body=${encodeURIComponent(shareText + ' ' + shareUrl)}`,
+      color: 'text-stone-500'
+    }
+  ];
 
   const handlePropose = async () => {
     console.log("[ListingDetailDrawer] Propose Swap clicked. Lister ID:", listerId);
@@ -96,17 +141,48 @@ export function ListingDetailDrawer({ listing, isOpen, onOpenChange }: ListingDe
                       {listing.type} • {listing.category}
                    </Badge>
                    <div className="flex items-center gap-2">
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-10 w-10 rounded-full text-stone-300 hover:text-accent hover:bg-accent/5"
-                        onClick={() => {
-                          navigator.clipboard.writeText(window.location.href);
-                          toast.success("Protocol Link copied.");
-                        }}
-                      >
-                         <Share2 className="h-4 w-4" />
-                      </Button>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-10 w-10 rounded-full text-stone-300 hover:text-accent hover:bg-accent/5"
+                          >
+                            <Share2 className="h-4 w-4" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent align="end" className="w-48 p-2 glass-card border-stone-100 shadow-xl">
+                          <div className="flex flex-col gap-1">
+                            <p className="text-[9px] font-mono font-bold uppercase text-stone-400 px-2 py-1 mb-1 tracking-widest">Transmit Link</p>
+                            {shareOptions.map((option) => (
+                              <a 
+                                key={option.name} 
+                                href={option.url} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-stone-50 transition-colors group"
+                              >
+                                <div className={`p-1.5 rounded-lg bg-stone-100 group-hover:bg-white transition-colors ${option.color}`}>
+                                  {option.icon}
+                                </div>
+                                <span className="text-[11px] font-bold text-stone-600">{option.name}</span>
+                              </a>
+                            ))}
+                            <button 
+                              onClick={() => {
+                                navigator.clipboard.writeText(shareUrl);
+                                toast.success("Protocol Link copied to node buffer.");
+                              }}
+                              className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-stone-50 transition-colors group w-full text-left"
+                            >
+                              <div className="p-1.5 rounded-lg bg-stone-100 group-hover:bg-white transition-colors text-stone-500">
+                                <LinkIcon className="h-4 w-4" />
+                              </div>
+                              <span className="text-[11px] font-bold text-stone-600">Copy Link</span>
+                            </button>
+                          </div>
+                        </PopoverContent>
+                      </Popover>
                       <div className="h-12 w-12 rounded-2xl bg-stone-50 border border-stone-100 flex items-center justify-center shadow-sm">
                          {isService ? <Briefcase className="h-6 w-6 text-accent" /> : <Package className="h-6 w-6 text-accent" />}
                       </div>
