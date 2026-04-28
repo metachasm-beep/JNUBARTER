@@ -153,7 +153,7 @@ export function Dashboard({ openSetup }: DashboardProps) {
             <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tighter italic text-primary">
               Greetings, Scholar <span className="text-accent">{session?.user?.name?.split(" ")[0]}</span>
             </h1>
-            <p className="text-sm text-secondary font-medium mt-2 max-w-xl">
+            <p className="text-sm text-stone-800 font-bold mt-2 max-w-xl">
               Your exchange node is currently active in the <span className="text-primary font-bold">{(session?.user as any)?.school ?? "General Registry"}</span>. Network reciprocity potential is high.
             </p>
           </div>
