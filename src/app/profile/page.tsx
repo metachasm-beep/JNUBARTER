@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
-import prisma from "@/lib/prisma";
+import { authOptions } from "@/auth";
+import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { ProfileForm } from "@/components/ProfileForm";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
