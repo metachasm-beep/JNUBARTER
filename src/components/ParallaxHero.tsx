@@ -103,15 +103,29 @@ export const ParallaxHero = ({ scrollToMarket, onSignIn }: { scrollToMarket: () 
               <ArrowRight className="ml-2 size-4 group-hover:translate-x-1 transition-transform text-stone-900" />
             </Button>
 
-            <Button 
-              variant="outline" 
-              size="lg"
-              onClick={onSignIn}
-              className="rounded-full h-16 px-8 text-[11px] font-black uppercase tracking-widest border-white/20 bg-black/40 backdrop-blur-xl text-white hover:bg-black/60 shadow-xl transition-all group"
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+              className="relative group"
             >
-              Initialize Node
-              <Zap className="ml-2 size-4 group-hover:scale-125 transition-transform text-accent" />
-            </Button>
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-accent to-yellow-500 rounded-full blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
+              <Button 
+                variant="outline" 
+                size="lg"
+                onClick={onSignIn}
+                className="relative rounded-full h-16 px-8 text-[11px] font-black uppercase tracking-widest border-white/20 bg-black/40 backdrop-blur-xl text-white hover:bg-black/60 shadow-2xl transition-all flex items-center gap-3 overflow-hidden"
+              >
+                <ShinyText 
+                  text="Start Barter" 
+                  disabled={false} 
+                  speed={3} 
+                  className="font-black uppercase tracking-widest text-[11px]"
+                  color="rgba(255,255,255,0.5)"
+                  shineColor="rgba(255,255,255,1)"
+                />
+                <Zap className="size-4 group-hover:scale-125 transition-transform text-accent" />
+              </Button>
+            </motion.div>
           </motion.div>
 
 
