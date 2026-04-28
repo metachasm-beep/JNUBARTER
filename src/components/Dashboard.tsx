@@ -279,10 +279,10 @@ export function Dashboard({ openSetup }: DashboardProps) {
               </div>
             </section>
 
-            <section className="glass-card p-8 rounded-[2.5rem] border-stone-100 bg-accent text-white shadow-2xl shadow-accent/20">
-              <Sparkles className="h-8 w-8 mb-4 opacity-50" />
+            <section className="glass-card p-8 rounded-[2.5rem] border-stone-100 bg-accent text-accent-foreground shadow-2xl shadow-accent/20">
+              <Sparkles className="h-8 w-8 mb-4 opacity-50 text-accent-foreground" />
               <h3 className="text-xl font-black uppercase tracking-tighter italic leading-tight mb-2">Network Expansion</h3>
-              <p className="text-[11px] opacity-80 leading-relaxed mb-6">
+              <p className="text-[11px] leading-relaxed mb-6 font-bold">
                 Nodes with 5+ assets see a 400% increase in triangular match probability.
               </p>
               <Button 
