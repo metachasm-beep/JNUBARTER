@@ -142,14 +142,16 @@ export function ListingDetailDrawer({ listing, isOpen, onOpenChange }: ListingDe
                    </Badge>
                    <div className="flex items-center gap-2">
                       <Popover>
-                        <PopoverTrigger asChild>
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="h-10 w-10 rounded-full text-stone-300 hover:text-accent hover:bg-accent/5"
-                          >
-                            <Share2 className="h-4 w-4" />
-                          </Button>
+                        <PopoverTrigger 
+                          render={
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-10 w-10 rounded-full text-stone-300 hover:text-accent hover:bg-accent/5"
+                            />
+                          }
+                        >
+                          <Share2 className="h-4 w-4" />
                         </PopoverTrigger>
                         <PopoverContent align="end" className="w-48 p-2 glass-card border-stone-100 shadow-xl">
                           <div className="flex flex-col gap-1">
