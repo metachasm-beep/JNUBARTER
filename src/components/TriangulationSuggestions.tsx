@@ -121,7 +121,7 @@ export function TriangulationSuggestions() {
         </div>
         <div>
           <h3 className="text-xl font-black uppercase tracking-tighter italic text-primary">Triangulation Routes</h3>
-          <p className="text-xs font-medium text-stone-500">Complex 3-way reciprocities detected based on your unfulfilled needs.</p>
+          <p className="text-xs font-medium text-stone-600">Complex 3-way reciprocities detected based on your unfulfilled needs.</p>
         </div>
       </div>
 

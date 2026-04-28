@@ -106,7 +106,7 @@ export function ListingCard({ listing, className, onOpenSignIn }: ListingCardPro
                     }
                   }} 
                   disabled={isDeleting}
-                  className="text-stone-300 hover:text-destructive transition-colors disabled:opacity-50"
+                  className="text-stone-500 hover:text-destructive transition-colors disabled:opacity-50"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>

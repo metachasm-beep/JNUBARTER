@@ -104,7 +104,7 @@ export function ProfileViewDrawer({
                        {user.name}
                     </DrawerTitle>
                     <div className="flex items-center gap-3 mt-2">
-                       <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-400 flex items-center gap-1">
+                       <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-600 flex items-center gap-1">
                           <MapPin className="h-3 w-3" /> {user.school || "CAMPUS"}
                        </span>
                     </div>
@@ -134,14 +134,14 @@ export function ProfileViewDrawer({
 
         <div className="space-y-12 flex-1 overflow-y-auto pb-20 px-1">
            <div className="space-y-4">
-              <h4 className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-stone-300">Manifesto</h4>
+              <h4 className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-stone-500">Manifesto</h4>
               <p className="text-sm italic leading-relaxed text-secondary font-medium border-l-2 border-stone-100 pl-4">
                  "{user.bio || "No research manifesto provided yet."}"
               </p>
            </div>
 
            <div className="space-y-6">
-              <h4 className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-stone-300">Registry Listings ({user.listings?.length || 0})</h4>
+              <h4 className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-stone-500">Registry Listings ({user.listings?.length || 0})</h4>
               <div className="grid grid-cols-1 gap-4">
                  {user.listings?.map((listing: any, idx: number) => (
                     <SpotlightCard key={idx} className="p-6 rounded-3xl border-stone-100 bg-white shadow-sm glass-card iridescent-hover">
@@ -159,7 +159,7 @@ export function ProfileViewDrawer({
                                 </div>
                              </div>
                           </div>
-                          <Button size="icon" variant="ghost" className="h-8 w-8 rounded-full text-stone-300 hover:text-accent">
+                          <Button size="icon" variant="ghost" className="h-8 w-8 rounded-full text-stone-500 hover:text-accent">
                              <Zap className="h-4 w-4" />
                           </Button>
                        </div>
@@ -174,7 +174,7 @@ export function ProfileViewDrawer({
               Propose Exchange
            </Button>
            <DrawerClose asChild>
-              <Button variant="ghost" className="text-[10px] font-bold uppercase tracking-widest text-stone-400">
+              <Button variant="ghost" className="text-[10px] font-bold uppercase tracking-widest text-stone-600">
                  Back to Discovery
               </Button>
            </DrawerClose>

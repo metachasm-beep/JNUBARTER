@@ -183,7 +183,7 @@ export function Dashboard({ openSetup }: DashboardProps) {
                   <stat.icon className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-mono font-bold text-stone-400 uppercase tracking-widest">{stat.label}</p>
+                  <p className="text-[10px] font-mono font-bold text-stone-600 uppercase tracking-widest">{stat.label}</p>
                   <h4 className="text-2xl font-black text-primary">{stat.value}</h4>
                 </div>
               </HoverCardTrigger>
@@ -257,16 +257,16 @@ export function Dashboard({ openSetup }: DashboardProps) {
                              {listing.status}
                            </Badge>
                         </div>
-                        <p className="text-[9px] text-stone-400 font-mono italic">{listing.type} • {listing.category}</p>
+                        <p className="text-[9px] text-stone-600 font-mono italic">{listing.type} • {listing.category}</p>
                       </div>
                     ))}
                     {myListings.length > 3 && (
-                      <p className="text-[9px] text-center text-stone-300 font-bold uppercase tracking-widest">+ {myListings.length - 3} more nodes</p>
+                      <p className="text-[9px] text-center text-stone-500 font-bold uppercase tracking-widest">+ {myListings.length - 3} more nodes</p>
                     )}
                   </div>
                 ) : (
                   <div className="text-center py-4">
-                    <p className="text-[10px] text-stone-400 italic">No active nodes in the registry.</p>
+                    <p className="text-[10px] text-stone-600 italic">No active nodes in the registry.</p>
                   </div>
                 )}
                 

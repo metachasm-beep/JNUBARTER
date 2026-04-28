@@ -168,7 +168,7 @@ export function ListingDetailDrawer({ listing, isOpen, onOpenChange }: ListingDe
                             <Button 
                               variant="ghost" 
                               size="icon" 
-                              className="h-10 w-10 rounded-full text-stone-300 hover:text-accent hover:bg-accent/5"
+                              className="h-10 w-10 rounded-full text-stone-500 hover:text-accent hover:bg-accent/5"
                             />
                           }
                         >
@@ -219,17 +219,17 @@ export function ListingDetailDrawer({ listing, isOpen, onOpenChange }: ListingDe
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
              <div className="space-y-8">
                 <div className="space-y-4">
-                   <h4 className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-stone-300">Description</h4>
+                   <h4 className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-stone-500">Description</h4>
                    <p className="text-base text-secondary leading-relaxed font-medium">
                       {listing.description}
                    </p>
                 </div>
 
                 <div className="space-y-4">
-                   <h4 className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-stone-300">Registry Metadata</h4>
+                   <h4 className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-stone-500">Registry Metadata</h4>
                    <div className="flex flex-wrap gap-2">
                       {listing.tags?.map((tag: string) => (
-                        <Badge key={tag} className="bg-stone-50 text-stone-400 text-[10px] font-mono font-bold uppercase border-stone-100 px-3 py-1">
+                        <Badge key={tag} className="bg-stone-50 text-stone-600 text-[10px] font-mono font-bold uppercase border-stone-100 px-3 py-1">
                            #{tag}
                         </Badge>
                       ))}
@@ -254,11 +254,11 @@ export function ListingDetailDrawer({ listing, isOpen, onOpenChange }: ListingDe
                     </div>
                    <div className="grid grid-cols-2 gap-3">
                       <div className="p-3 bg-white/50 rounded-2xl border border-white/50">
-                         <p className="text-[9px] font-mono font-bold text-stone-400 uppercase">Trust Score</p>
+                         <p className="text-[9px] font-mono font-bold text-stone-600 uppercase">Trust Score</p>
                          <p className="text-xl font-black text-primary">{listing.user?.reputation || 0}</p>
                       </div>
                       <div className="p-3 bg-white/50 rounded-2xl border border-white/50">
-                         <p className="text-[9px] font-mono font-bold text-stone-400 uppercase">Status</p>
+                         <p className="text-[9px] font-mono font-bold text-stone-600 uppercase">Status</p>
                          <p className="text-sm font-black text-green-600 uppercase flex items-center gap-1">
                             <ShieldCheck className="h-3 w-3" /> Active
                          </p>
@@ -268,8 +268,8 @@ export function ListingDetailDrawer({ listing, isOpen, onOpenChange }: ListingDe
 
                 <div className="p-6 border border-stone-100 rounded-[2rem] bg-stone-50/50">
                    <div className="flex items-center gap-2 mb-4">
-                      <Clock className="h-4 w-4 text-stone-400" />
-                      <span className="text-[10px] font-mono font-bold uppercase text-stone-400 tracking-widest">Listing Timeline</span>
+                      <Clock className="h-4 w-4 text-stone-600" />
+                      <span className="text-[10px] font-mono font-bold uppercase text-stone-600 tracking-widest">Listing Timeline</span>
                    </div>
                    <p className="text-xs font-bold text-stone-600">Established 2 days ago in the Peer-to-Peer network.</p>
                 </div>
