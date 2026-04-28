@@ -83,23 +83,30 @@ export function ListingDetailDrawer({ listing, isOpen, onOpenChange }: ListingDe
     }
   ];
 
+  // Dynamically add System Share if supported
+  const finalOptions = [...shareOptions];
+  if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
+    finalOptions.unshift({
+      name: 'System Share',
+      icon: <Share2 className="h-4 w-4" />,
+      url: 'native',
+      color: 'text-primary'
+    });
+  }
+
   const handlePropose = async () => {
-    console.log("[ListingDetailDrawer] Propose Swap clicked. Lister ID:", listerId);
     if (!session?.user?.id) {
-      console.warn("[ListingDetailDrawer] No session user ID");
       toast.error("Protocol Access Denied: Please sign in to initiate exchange.");
       return;
     }
 
     if (isOwnListing) {
-      console.warn("[ListingDetailDrawer] Attempted to swap with self");
       toast.error("Self-Reciprocity Error: You cannot swap with yourself.");
       return;
     }
 
     setIsActionPending(true);
     try {
-      console.log("[ListingDetailDrawer] Sending POST to /api/swaps");
       const res = await fetch("/api/swaps", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -109,24 +116,38 @@ export function ListingDetailDrawer({ listing, isOpen, onOpenChange }: ListingDe
         })
       });
 
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error("[ListingDetailDrawer] Swap initiation failed:", res.status, errorText);
-        throw new Error(errorText);
-      }
+      if (!res.ok) throw new Error(await res.text());
       
       const swap = await res.json();
-      console.log("[ListingDetailDrawer] Swap initiated:", swap.id);
       toast.success("Protocol synchronization established.");
       router.push(`/swap/${swap.id}`);
     } catch (error) {
-      console.error("[ListingDetailDrawer] handlePropose error:", error);
       toast.error("Failed to connect with peer node.");
     } finally {
       setIsActionPending(false);
     }
   };
 
+  const handleShare = async (option: any) => {
+    if (option.url === 'native' && typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
+      try {
+        await navigator.share({
+          title: 'JNU Barter',
+          text: shareText,
+          url: shareUrl,
+        });
+        return;
+      } catch (err) {
+        // Fallback if user cancels or it fails
+      }
+    }
+
+    if (option.url.startsWith('mailto:') || option.url.startsWith('sms:')) {
+      window.location.href = option.url;
+    } else {
+      window.open(option.url, '_blank', 'noopener,noreferrer');
+    }
+  };
 
   return (
     <Drawer open={isOpen} onOpenChange={onOpenChange}>
@@ -153,22 +174,20 @@ export function ListingDetailDrawer({ listing, isOpen, onOpenChange }: ListingDe
                         >
                           <Share2 className="h-4 w-4" />
                         </PopoverTrigger>
-                        <PopoverContent align="end" className="w-48 p-2 glass-card border-stone-100 shadow-xl">
+                        <PopoverContent align="end" className="w-56 p-2 glass-card border-stone-100 shadow-xl z-[100]">
                           <div className="flex flex-col gap-1">
                             <p className="text-[9px] font-mono font-bold uppercase text-stone-400 px-2 py-1 mb-1 tracking-widest">Transmit Link</p>
-                            {shareOptions.map((option) => (
-                              <a 
+                            {finalOptions.map((option) => (
+                              <button 
                                 key={option.name} 
-                                href={option.url} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-stone-50 transition-colors group"
+                                onClick={() => handleShare(option)}
+                                className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-stone-50 transition-colors group w-full text-left"
                               >
                                 <div className={`p-1.5 rounded-lg bg-stone-100 group-hover:bg-white transition-colors ${option.color}`}>
                                   {option.icon}
                                 </div>
                                 <span className="text-[11px] font-bold text-stone-600">{option.name}</span>
-                              </a>
+                              </button>
                             ))}
                             <button 
                               onClick={() => {
