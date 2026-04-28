@@ -13,7 +13,7 @@ import ShinyText from "./bits/ShinyText";
 import CountUp from "./bits/CountUp";
 import Lanyard from "./bits/Lanyard";
 
-export const ParallaxHero = ({ scrollToMarket }: { scrollToMarket: () => void }) => {
+export const ParallaxHero = ({ scrollToMarket, onSignIn }: { scrollToMarket: () => void, onSignIn: () => void }) => {
   const [stats, setStats] = React.useState({ verifiedNodes: 0, activeSwaps: 0 });
 
   React.useEffect(() => {
@@ -74,7 +74,6 @@ export const ParallaxHero = ({ scrollToMarket }: { scrollToMarket: () => void })
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent via-accent/80 to-accent/40 italic">
                 <DecryptedText 
                   text="Currency." 
-                  animateOn="view"
                   revealDirection="center"
                   speed={80}
                 />
@@ -103,7 +102,18 @@ export const ParallaxHero = ({ scrollToMarket }: { scrollToMarket: () => void })
               Enter Registry
               <ArrowRight className="ml-2 size-4 group-hover:translate-x-1 transition-transform text-stone-900" />
             </Button>
+
+            <Button 
+              variant="outline" 
+              size="lg"
+              onClick={onSignIn}
+              className="rounded-full h-16 px-8 text-[11px] font-black uppercase tracking-widest border-white/20 bg-black/40 backdrop-blur-xl text-white hover:bg-black/60 shadow-xl transition-all group"
+            >
+              Initialize Node
+              <Zap className="ml-2 size-4 group-hover:scale-125 transition-transform text-accent" />
+            </Button>
           </motion.div>
+
 
           {/* STATS with COUNTUP */}
           <motion.div

@@ -17,6 +17,7 @@ import { useSession } from "next-auth/react";
 import { Dashboard } from "@/components/Dashboard";
 import { usePathname } from "next/navigation";
 import { ParallaxHero } from "@/components/ParallaxHero";
+import { SignInModal } from "@/components/SignInModal";
 
 export default function DiscoveryPage() {
   const { data: session, status } = useSession();
@@ -31,6 +32,7 @@ export default function DiscoveryPage() {
   const searchResults = searchData?.results ?? [];
 
   const [isHowItWorksOpen, setIsHowItWorksOpen] = useState(false);
+  const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
   const [isSetupModalOpen, setIsSetupModalOpen] = useState(false);
   const [setupStep, setSetupStep] = useState(1);
   const [hasAttemptedAutoOpen, setHasAttemptedAutoOpen] = useState(false);
@@ -52,6 +54,8 @@ export default function DiscoveryPage() {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: "smooth" });
   };
+
+  const openSignIn = () => setIsSignInModalOpen(true);
 
   if (status === "authenticated") {
     if (isAdmin) return <div className="min-h-screen bg-background flex items-center justify-center font-mono text-[10px] uppercase tracking-widest text-stone-400 italic">Redirection to Command Center...</div>;
@@ -87,7 +91,10 @@ export default function DiscoveryPage() {
         
         {/* HERO SECTION */}
         <section className="relative min-h-screen flex items-center justify-center">
-          <ParallaxHero scrollToMarket={() => scrollToFold('market')} />
+          <ParallaxHero 
+            scrollToMarket={() => scrollToFold('market')} 
+            onSignIn={openSignIn}
+          />
         </section>
 
         {/* MARKETPLACE SECTION */}
@@ -124,7 +131,7 @@ export default function DiscoveryPage() {
                  ) : (
                    searchResults.map((listing, idx) => (
                      <motion.div key={listing.id} initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: idx * 0.05 }}>
-                       <ListingCard listing={listing} />
+                       <ListingCard listing={listing} onOpenSignIn={openSignIn} />
                      </motion.div>
                    ))
                  )
@@ -135,7 +142,7 @@ export default function DiscoveryPage() {
                    listings.length > 0 ? (
                      listings.map((listing, idx) => (
                        <motion.div key={listing.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-                         <ListingCard listing={listing} />
+                         <ListingCard listing={listing} onOpenSignIn={openSignIn} />
                        </motion.div>
                      ))
                    ) : (
@@ -160,6 +167,7 @@ export default function DiscoveryPage() {
         
         <InstallPWA />
         <VouchModal />
+        <SignInModal isOpen={isSignInModalOpen} onClose={() => setIsSignInModalOpen(false)} />
         <HowItWorksModal isOpen={isHowItWorksOpen} onClose={() => setIsHowItWorksOpen(false)} />
         <InitializeNodeModal 
           isOpen={isSetupModalOpen} 
@@ -167,6 +175,7 @@ export default function DiscoveryPage() {
           initialStep={setupStep}
         />
       </div>
+
 
       <footer className="py-12 border-t bg-muted/20 text-center">
         <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest">

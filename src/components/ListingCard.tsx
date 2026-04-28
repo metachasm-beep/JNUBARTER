@@ -12,9 +12,10 @@ import { ListingDetailDrawer } from "./ListingDetailDrawer";
 interface ListingCardProps {
   listing: any;
   className?: string;
+  onOpenSignIn?: () => void;
 }
 
-export function ListingCard({ listing, className }: ListingCardProps) {
+export function ListingCard({ listing, className, onOpenSignIn }: ListingCardProps) {
   const { data: session } = useSession();
   const isAdmin = (session?.user as any)?.role === "ADMIN";
   const [isDeleting, setIsDeleting] = useState(false);
@@ -27,7 +28,13 @@ export function ListingCard({ listing, className }: ListingCardProps) {
   return (
     <>
       <SpotlightCard 
-        onClick={() => setIsDetailOpen(true)}
+        onClick={() => {
+          if (!session) {
+            onOpenSignIn?.();
+          } else {
+            setIsDetailOpen(true);
+          }
+        }}
         className={`h-full glass-card border-iridescent iridescent-hover cursor-pointer group ${className}`}
       >
         <Card className="h-full bg-transparent border-none rounded-none shadow-none flex flex-col">
