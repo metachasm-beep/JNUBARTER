@@ -103,11 +103,19 @@ export function ProfileViewDrawer({
                     <DrawerTitle className="text-3xl md:text-4xl font-sans font-extrabold tracking-tighter uppercase text-primary">
                        {user.name}
                     </DrawerTitle>
-                    <div className="flex items-center gap-3 mt-2">
-                       <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-600 flex items-center gap-1">
-                          <MapPin className="h-3 w-3" /> {user.school || "CAMPUS"}
-                       </span>
-                    </div>
+                     <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-2">
+                        <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-600 flex items-center gap-1">
+                           <MapPin className="h-3 w-3" /> {user.hostel || "CAMPUS"} {user.roomNumber ? `(${user.roomNumber})` : ""}
+                        </span>
+                        <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-600 flex items-center gap-1">
+                           <GraduationCap className="h-3 w-3" /> {user.school || "REGISTRY"}
+                        </span>
+                        {user.program && (
+                           <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-600 flex items-center gap-1">
+                              <Zap className="h-3 w-3" /> {user.program}
+                           </span>
+                        )}
+                     </div>
                  </div>
               </div>
                {/* Suggestion #7: Reputation Dial integration */}

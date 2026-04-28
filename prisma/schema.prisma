@@ -19,8 +19,12 @@ model User {
   bio           String?
   school        String?   // E.g. SIS, SLL&CS, SSS
   hostel        String?   // E.g. Tapti, Mahi-Mandavi
+  roomNumber    String?   // E.g. 242
   program       String?   // E.g. PhD, MA, BA
   year          String?   
+  dob           DateTime? // Date of Birth
+  gender        String?   
+  phone         String?   
   skills        String[]  // Array of skill tags
   interests     String[]  // Things they want to learn
   reputation    Int       @default(0)

@@ -6,8 +6,12 @@ export const ProfileSchema = z.object({
   bio: z.string().max(500),
   school: z.string().optional(),
   hostel: z.string().optional(),
+  roomNumber: z.string().optional(),
   program: z.string().optional(),
   year: z.string().optional(),
+  dob: z.string().optional(),
+  gender: z.string().optional(),
+  phone: z.string().optional(),
   offers: z.array(z.object({
     title: z.string().min(3),
     category: z.enum(["SERVICE", "COMMODITY"]),
