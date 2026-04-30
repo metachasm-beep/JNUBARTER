@@ -39,6 +39,7 @@ export default function RootLayout({
           className={`${firaSans.variable} ${firaCode.variable} h-full antialiased`}
         >
           <head>
+            <meta name="google-site-verification" content="E-1cSMTzl78PGugEqO7xJ7-dCk8Xsf1PMMQ4RoRe7bI" />
             <meta name="google-adsense-account" content="ca-pub-8618345567810746" />
             <Script
               async
